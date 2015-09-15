@@ -1,0 +1,277 @@
+[
+  {
+    "kind": "paramdecl",
+    "id": "ELEVATORS",
+    "type": {
+      "kind": "range",
+      "start": 1,
+      "end": 1024
+    },
+    "default": 6
+  },
+  {
+    "kind": "paramdecl",
+    "id": "PEOPLE",
+    "type": {
+      "kind": "range",
+      "start": 1,
+      "end": {
+        "kind": "apply",
+        "func": "*",
+        "args": [
+          "ELEVATORS",
+          100
+        ]
+      }
+    },
+    "default": 100
+  },
+  {
+    "kind": "paramdecl",
+    "id": "FLOORS",
+    "type": {
+      "kind": "range",
+      "start": 2,
+      "end": 1000
+    },
+    "default": 10
+  },
+  {
+    "kind": "typedecl",
+    "id": "ElevatorId",
+    "type": {
+      "kind": "range",
+      "start": 1,
+      "end": "ELEVATORS"
+    }
+  },
+  {
+    "kind": "typedecl",
+    "id": "Floor",
+    "type": {
+      "kind": "range",
+      "start": 1,
+      "end": "FLOORS"
+    }
+  },
+  {
+    "kind": "distributiondecl",
+    "id": "openTime",
+    "args": [],
+    "returntype": "Time",
+    "code": [
+      {
+        "kind": "returnstmt",
+        "value": {
+          "kind": "numberWithUnit",
+          "number": "3",
+          "unit": "s"
+        }
+      }
+    ]
+  },
+  {
+    "kind": "distributiondecl",
+    "id": "doorTime",
+    "args": [],
+    "returntype": "Time",
+    "code": [
+      {
+        "kind": "returnstmt",
+        "value": {
+          "kind": "numberWithUnit",
+          "number": "1",
+          "unit": "s"
+        }
+      }
+    ]
+  },
+  {
+    "kind": "distributiondecl",
+    "id": "makeDestination",
+    "args": [
+      {
+        "id": "start",
+        "type": "Floor"
+      }
+    ],
+    "returntype": "Floor",
+    "code": [
+      {
+        "kind": "returnstmt",
+        "value": "start"
+      }
+    ]
+  },
+  {
+    "kind": "typedecl",
+    "id": "Person",
+    "type": {
+      "kind": "node",
+      "fields": [
+        {
+          "id": "state",
+          "type": {
+            "kind": "either",
+            "fields": [
+              {
+                "id": "Sleeping",
+                "fields": [
+                  {
+                    "id": "floor",
+                    "type": "Floor"
+                  }
+                ]
+              },
+              {
+                "id": "Waiting",
+                "fields": [
+                  {
+                    "id": "floor",
+                    "type": "Floor"
+                  },
+                  {
+                    "id": "destination",
+                    "type": "Floor"
+                  }
+                ]
+              },
+              {
+                "id": "Riding",
+                "fields": [
+                  {
+                    "id": "elevator",
+                    "type": "ElevatorId"
+                  },
+                  {
+                    "id": "destination",
+                    "type": "Floor"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "kind": "typedecl",
+    "id": "FloorControl",
+    "type": {
+      "kind": "node",
+      "fields": [
+        {
+          "id": "downActive",
+          "type": "Boolean"
+        },
+        {
+          "id": "upActive",
+          "type": "Boolean"
+        }
+      ]
+    }
+  },
+  {
+    "kind": "typedecl",
+    "id": "Elevator",
+    "type": {
+      "kind": "node",
+      "fields": [
+        {
+          "id": "destinations",
+          "type": {
+            "kind": "generic",
+            "base": "Set",
+            "args": [
+              "Floor"
+            ]
+          }
+        },
+        {
+          "id": "riders",
+          "type": {
+            "kind": "generic",
+            "base": "Set",
+            "args": [
+              "PersonId"
+            ]
+          }
+        },
+        {
+          "id": "direction",
+          "type": {
+            "kind": "either",
+            "fields": [
+              "Neutral",
+              "Up",
+              "Down"
+            ]
+          }
+        },
+        {
+          "id": "location",
+          "type": {
+            "kind": "either",
+            "fields": [
+              {
+                "id": "AtFloor",
+                "fields": [
+                  {
+                    "id": "at",
+                    "type": "Floor"
+                  },
+                  {
+                    "id": "doors",
+                    "type": {
+                      "kind": "either",
+                      "fields": [
+                        "Closed",
+                        {
+                          "id": "Opening",
+                          "fields": [
+                            {
+                              "id": "openAt",
+                              "type": "Time"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "Open",
+                          "fields": [
+                            {
+                              "id": "closeAt",
+                              "type": "Time"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "Closing",
+                          "fields": [
+                            {
+                              "id": "closedAt",
+                              "type": "Time"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "Between",
+                "fields": [
+                  {
+                    "id": "next",
+                    "type": "Floor"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+]
