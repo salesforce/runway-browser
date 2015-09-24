@@ -1,151 +1,363 @@
 [
   {
     "kind": "paramdecl",
-    "id": "ELEVATORS",
+    "id": {
+      "start": 6,
+      "value": "ELEVATORS",
+      "end": 15
+    },
     "type": {
       "kind": "range",
-      "start": 1,
-      "end": 1024
+      "low": {
+        "start": 17,
+        "value": 1,
+        "end": 18
+      },
+      "high": {
+        "start": 20,
+        "value": 1024,
+        "end": 25
+      },
+      "start": 17,
+      "end": 25
     },
-    "default": 6
+    "default": {
+      "start": 27,
+      "value": 6,
+      "end": 28
+    },
+    "start": 0,
+    "end": 30
   },
   {
     "kind": "paramdecl",
-    "id": "PEOPLE",
+    "id": {
+      "start": 36,
+      "value": "PEOPLE",
+      "end": 42
+    },
     "type": {
       "kind": "range",
-      "start": 1,
-      "end": {
+      "low": {
+        "start": 44,
+        "value": 1,
+        "end": 45
+      },
+      "high": {
         "kind": "apply",
         "func": "*",
         "args": [
-          "ELEVATORS",
-          100
+          {
+            "start": 48,
+            "value": "ELEVATORS",
+            "end": 57
+          },
+          {
+            "start": 58,
+            "value": 100,
+            "end": 61
+          }
         ]
-      }
+      },
+      "start": 44,
+      "end": 63
     },
-    "default": 100
+    "default": {
+      "start": 65,
+      "value": 100,
+      "end": 68
+    },
+    "start": 30,
+    "end": 70
   },
   {
     "kind": "paramdecl",
-    "id": "FLOORS",
-    "type": {
-      "kind": "range",
-      "start": 2,
-      "end": 1000
+    "id": {
+      "start": 76,
+      "value": "FLOORS",
+      "end": 82
     },
-    "default": 10
+    "type": {
+      "kind": "range",
+      "low": {
+        "start": 84,
+        "value": 2,
+        "end": 85
+      },
+      "high": {
+        "start": 87,
+        "value": 1000,
+        "end": 92
+      },
+      "start": 84,
+      "end": 92
+    },
+    "default": {
+      "start": 94,
+      "value": 10,
+      "end": 96
+    },
+    "start": 70,
+    "end": 99
   },
   {
     "kind": "typedecl",
-    "id": "ElevatorId",
+    "id": {
+      "start": 104,
+      "value": "ElevatorId",
+      "end": 114
+    },
     "type": {
       "kind": "range",
-      "start": 1,
-      "end": "ELEVATORS"
-    }
+      "low": {
+        "start": 116,
+        "value": 1,
+        "end": 117
+      },
+      "high": {
+        "start": 119,
+        "value": "ELEVATORS",
+        "end": 128
+      },
+      "start": 116,
+      "end": 128
+    },
+    "start": 99,
+    "end": 130
   },
   {
     "kind": "typedecl",
-    "id": "Floor",
+    "id": {
+      "start": 135,
+      "value": "Floor",
+      "end": 140
+    },
     "type": {
       "kind": "range",
-      "start": 1,
-      "end": "FLOORS"
-    }
+      "low": {
+        "start": 142,
+        "value": 1,
+        "end": 143
+      },
+      "high": {
+        "start": 145,
+        "value": "FLOORS",
+        "end": 151
+      },
+      "start": 142,
+      "end": 151
+    },
+    "start": 130,
+    "end": 186
   },
   {
     "kind": "distributiondecl",
-    "id": "openTime",
+    "id": {
+      "start": 199,
+      "value": "openTime",
+      "end": 207
+    },
     "args": [],
-    "returntype": "Time",
+    "returntype": {
+      "start": 213,
+      "value": "Time",
+      "end": 218
+    },
     "code": [
       {
         "kind": "returnstmt",
         "value": {
-          "kind": "numberWithUnit",
-          "number": "3",
-          "unit": "s"
-        }
-      }
-    ]
-  },
-  {
-    "kind": "distributiondecl",
-    "id": "doorTime",
-    "args": [],
-    "returntype": "Time",
-    "code": [
-      {
-        "kind": "returnstmt",
-        "value": {
-          "kind": "numberWithUnit",
-          "number": "1",
-          "unit": "s"
-        }
-      }
-    ]
-  },
-  {
-    "kind": "distributiondecl",
-    "id": "makeDestination",
-    "args": [
-      {
-        "id": "start",
-        "type": "Floor"
+          "start": 231,
+          "value": {
+            "kind": "numberWithUnit",
+            "number": "3",
+            "unit": "s"
+          },
+          "end": 233
+        },
+        "start": 224,
+        "end": 235
       }
     ],
-    "returntype": "Floor",
+    "start": 186,
+    "end": 282
+  },
+  {
+    "kind": "distributiondecl",
+    "id": {
+      "start": 295,
+      "value": "doorTime",
+      "end": 303
+    },
+    "args": [],
+    "returntype": {
+      "start": 309,
+      "value": "Time",
+      "end": 314
+    },
     "code": [
       {
         "kind": "returnstmt",
-        "value": "start"
+        "value": {
+          "start": 327,
+          "value": {
+            "kind": "numberWithUnit",
+            "number": "1",
+            "unit": "s"
+          },
+          "end": 329
+        },
+        "start": 320,
+        "end": 331
       }
-    ]
+    ],
+    "start": 282,
+    "end": 334
+  },
+  {
+    "kind": "distributiondecl",
+    "id": {
+      "start": 347,
+      "value": "makeDestination",
+      "end": 362
+    },
+    "args": [
+      {
+        "id": {
+          "start": 363,
+          "value": "start",
+          "end": 368
+        },
+        "type": {
+          "start": 370,
+          "value": "Floor",
+          "end": 375
+        }
+      }
+    ],
+    "returntype": {
+      "start": 380,
+      "value": "Floor",
+      "end": 386
+    },
+    "code": [
+      {
+        "kind": "returnstmt",
+        "value": {
+          "start": 399,
+          "value": "start",
+          "end": 404
+        },
+        "start": 392,
+        "end": 406
+      }
+    ],
+    "start": 334,
+    "end": 409
   },
   {
     "kind": "typedecl",
-    "id": "Person",
+    "id": {
+      "start": 414,
+      "value": "Person",
+      "end": 420
+    },
     "type": {
       "kind": "node",
       "fields": [
         {
-          "id": "state",
+          "id": {
+            "start": 433,
+            "value": "state",
+            "end": 438
+          },
           "type": {
             "kind": "either",
             "fields": [
               {
-                "id": "Sleeping",
+                "id": {
+                  "start": 457,
+                  "value": "Sleeping",
+                  "end": 466
+                },
                 "fields": [
                   {
-                    "id": "floor",
-                    "type": "Floor"
+                    "id": {
+                      "start": 480,
+                      "value": "floor",
+                      "end": 485
+                    },
+                    "type": {
+                      "start": 487,
+                      "value": "Floor",
+                      "end": 492
+                    }
                   }
                 ]
               },
               {
-                "id": "Waiting",
+                "id": {
+                  "start": 513,
+                  "value": "Waiting",
+                  "end": 521
+                },
                 "fields": [
                   {
-                    "id": "floor",
-                    "type": "Floor"
+                    "id": {
+                      "start": 535,
+                      "value": "floor",
+                      "end": 540
+                    },
+                    "type": {
+                      "start": 542,
+                      "value": "Floor",
+                      "end": 547
+                    }
                   },
                   {
-                    "id": "destination",
-                    "type": "Floor"
+                    "id": {
+                      "start": 561,
+                      "value": "destination",
+                      "end": 572
+                    },
+                    "type": {
+                      "start": 574,
+                      "value": "Floor",
+                      "end": 579
+                    }
                   }
                 ]
               },
               {
-                "id": "Riding",
+                "id": {
+                  "start": 600,
+                  "value": "Riding",
+                  "end": 607
+                },
                 "fields": [
                   {
-                    "id": "elevator",
-                    "type": "ElevatorId"
+                    "id": {
+                      "start": 621,
+                      "value": "elevator",
+                      "end": 629
+                    },
+                    "type": {
+                      "start": 631,
+                      "value": "ElevatorId",
+                      "end": 641
+                    }
                   },
                   {
-                    "id": "destination",
-                    "type": "Floor"
+                    "id": {
+                      "start": 655,
+                      "value": "destination",
+                      "end": 666
+                    },
+                    "type": {
+                      "start": 668,
+                      "value": "Floor",
+                      "end": 673
+                    }
                   }
                 ]
               }
@@ -153,104 +365,232 @@
           }
         }
       ]
-    }
+    },
+    "start": 409,
+    "end": 696
   },
   {
     "kind": "typedecl",
-    "id": "FloorControl",
+    "id": {
+      "start": 701,
+      "value": "FloorControl",
+      "end": 713
+    },
     "type": {
       "kind": "node",
       "fields": [
         {
-          "id": "downActive",
-          "type": "Boolean"
+          "id": {
+            "start": 726,
+            "value": "downActive",
+            "end": 736
+          },
+          "type": {
+            "start": 738,
+            "value": "Boolean",
+            "end": 745
+          }
         },
         {
-          "id": "upActive",
-          "type": "Boolean"
+          "id": {
+            "start": 751,
+            "value": "upActive",
+            "end": 759
+          },
+          "type": {
+            "start": 761,
+            "value": "Boolean",
+            "end": 769
+          }
         }
       ]
-    }
+    },
+    "start": 696,
+    "end": 772
   },
   {
     "kind": "typedecl",
-    "id": "Elevator",
+    "id": {
+      "start": 777,
+      "value": "Elevator",
+      "end": 785
+    },
     "type": {
       "kind": "node",
       "fields": [
         {
-          "id": "destinations",
+          "id": {
+            "start": 798,
+            "value": "destinations",
+            "end": 810
+          },
           "type": {
             "kind": "generic",
-            "base": "Set",
+            "base": {
+              "start": 812,
+              "value": "Set",
+              "end": 815
+            },
             "args": [
-              "Floor"
+              {
+                "start": 816,
+                "value": "Floor",
+                "end": 821
+              }
             ]
           }
         },
         {
-          "id": "riders",
+          "id": {
+            "start": 828,
+            "value": "riders",
+            "end": 834
+          },
           "type": {
             "kind": "generic",
-            "base": "Set",
+            "base": {
+              "start": 836,
+              "value": "Set",
+              "end": 839
+            },
             "args": [
-              "PersonId"
+              {
+                "start": 840,
+                "value": "PersonId",
+                "end": 848
+              }
             ]
           }
         },
         {
-          "id": "direction",
-          "type": {
-            "kind": "either",
-            "fields": [
-              "Neutral",
-              "Up",
-              "Down"
-            ]
-          }
-        },
-        {
-          "id": "location",
+          "id": {
+            "start": 855,
+            "value": "direction",
+            "end": 864
+          },
           "type": {
             "kind": "either",
             "fields": [
               {
-                "id": "AtFloor",
+                "start": 883,
+                "value": "Neutral",
+                "end": 890
+              },
+              {
+                "start": 900,
+                "value": "Up",
+                "end": 902
+              },
+              {
+                "start": 912,
+                "value": "Down",
+                "end": 916
+              }
+            ]
+          }
+        },
+        {
+          "id": {
+            "start": 929,
+            "value": "location",
+            "end": 937
+          },
+          "type": {
+            "kind": "either",
+            "fields": [
+              {
+                "id": {
+                  "start": 956,
+                  "value": "AtFloor",
+                  "end": 964
+                },
                 "fields": [
                   {
-                    "id": "at",
-                    "type": "Floor"
+                    "id": {
+                      "start": 978,
+                      "value": "at",
+                      "end": 980
+                    },
+                    "type": {
+                      "start": 982,
+                      "value": "Floor",
+                      "end": 987
+                    }
                   },
                   {
-                    "id": "doors",
+                    "id": {
+                      "start": 1001,
+                      "value": "doors",
+                      "end": 1006
+                    },
                     "type": {
                       "kind": "either",
                       "fields": [
-                        "Closed",
                         {
-                          "id": "Opening",
+                          "start": 1033,
+                          "value": "Closed",
+                          "end": 1039
+                        },
+                        {
+                          "id": {
+                            "start": 1057,
+                            "value": "Opening",
+                            "end": 1065
+                          },
                           "fields": [
                             {
-                              "id": "openAt",
-                              "type": "Time"
+                              "id": {
+                                "start": 1087,
+                                "value": "openAt",
+                                "end": 1093
+                              },
+                              "type": {
+                                "start": 1095,
+                                "value": "Time",
+                                "end": 1099
+                              }
                             }
                           ]
                         },
                         {
-                          "id": "Open",
+                          "id": {
+                            "start": 1136,
+                            "value": "Open",
+                            "end": 1141
+                          },
                           "fields": [
                             {
-                              "id": "closeAt",
-                              "type": "Time"
+                              "id": {
+                                "start": 1163,
+                                "value": "closeAt",
+                                "end": 1170
+                              },
+                              "type": {
+                                "start": 1172,
+                                "value": "Time",
+                                "end": 1176
+                              }
                             }
                           ]
                         },
                         {
-                          "id": "Closing",
+                          "id": {
+                            "start": 1213,
+                            "value": "Closing",
+                            "end": 1221
+                          },
                           "fields": [
                             {
-                              "id": "closedAt",
-                              "type": "Time"
+                              "id": {
+                                "start": 1243,
+                                "value": "closedAt",
+                                "end": 1251
+                              },
+                              "type": {
+                                "start": 1253,
+                                "value": "Time",
+                                "end": 1257
+                              }
                             }
                           ]
                         }
@@ -260,11 +600,23 @@
                 ]
               },
               {
-                "id": "Between",
+                "id": {
+                  "start": 1312,
+                  "value": "Between",
+                  "end": 1320
+                },
                 "fields": [
                   {
-                    "id": "next",
-                    "type": "Floor"
+                    "id": {
+                      "start": 1334,
+                      "value": "next",
+                      "end": 1338
+                    },
+                    "type": {
+                      "start": 1340,
+                      "value": "Floor",
+                      "end": 1345
+                    }
                   }
                 ]
               }
@@ -272,6 +624,8 @@
           }
         }
       ]
-    }
+    },
+    "start": 772,
+    "end": 1419
   }
 ]

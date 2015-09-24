@@ -2,6 +2,15 @@ var Parsimmon = require('./parsimmon/build/parsimmon.commonjs.js');
 var fs = require('fs');
 var input = fs.readFileSync('input.model.js').toString();
 
+// like .mark() except puts start and end in same object as value
+Parsimmon.Parser.prototype.source = function() {
+    return Parsimmon.Parser.prototype.mark.call(this).map(function(marked) {
+        marked.value.start = marked.start;
+        marked.value.end = marked.end;
+        return marked.value;
+    });
+}
+
 
 var alt = Parsimmon.alt;
 var lazy = Parsimmon.lazy;
@@ -48,9 +57,9 @@ var numberWithUnit = lexeme(regex(re))
                                 number: result[1],
                                 unit: result[2],
                         }; })
-                        .desc('number with unit');
-var number = lexeme(regex(/[0-9]+/).map(parseInt)).desc('number');
-var id = lexeme(regex(/[a-z_]\w*/i)).desc('identifier');
+                        .desc('number with unit').mark();
+var number = lexeme(regex(/[0-9]+/).map(parseInt)).desc('number').mark();
+var id = lexeme(regex(/[a-z_]\w*/i)).desc('identifier').mark();
 
 var atom = numberWithUnit.or(number).or(id);
 var group = lazy(function() { return lparen.then(expr).skip(rparen) });
@@ -68,11 +77,11 @@ var expr = alt(seqMap(atom,
                  .desc('expression');
 
 var range = seqMap(expr, dots, expr,
-                   function(start, _, end) { return {
+                   function(low, _, high) { return {
                         kind: 'range',
-                        start: start,
-                        end: end
-                   }; });
+                        low: low,
+                        high: high
+                   }; }).source();
 
 var field = lazy(function() { return seqMap(
                 id,
@@ -191,12 +200,13 @@ var returnStmt = lexeme(string('return'))
                         value: v, }; })
                     .skip(semicolon);
 
+
 var statement = Parsimmon.alt(
                     param,
                     typedecl,
                     distribution,
                     returnStmt,
-                    vardecl);
+                    vardecl).source();
 
 // main parser
 var file = lazy(function() { return lexeme(string('')).then(statement.many()); });
