@@ -211,48 +211,70 @@ var statement = Parsimmon.alt(
 // main parser
 var file = lazy(function() { return lexeme(string('')).then(statement.many()); });
 
+var parse = function(input) {
+    var r = file.parse(input);
+    r.input = input;
+    return r;
+}
 
-var r = file.parse(input);
-if (r.status) {
-    console.log(JSON.stringify(r.value, null, 2));
-} else {
-    console.log('Parsing failed');
-    var startsAt = input.lastIndexOf("\n", r.index);
-    if (startsAt == -1) {
-        startsAt = r.index;
+var parseFile = function(filename) {
+    return parse(fs.readFileSync(filename).toString());
+}
+
+var consoleOutput = function(parseResult) {
+    var r = parseResult;
+    var input = r.input;
+    if (r.status) {
+        console.log(JSON.stringify(r.value, null, 2));
     } else {
-        startsAt += 1;
-    }
-    var endsAt = input.indexOf("\n", r.index);
-    var lineno = 1;
-    var nl = - 1;
-    while (true) {
-        var nl = input.indexOf("\n", nl + 1);
-        if (nl == -1 || nl > r.index)
-            break;
-        lineno += 1;
-    }
-    console.log('line %d: %s', lineno, input.slice(startsAt, endsAt));
-    var w = '';
-    for (var i = 0; i < r.index - startsAt + 7 + lineno.toString().length; i += 1) {
-        w += ' ';
-    }
-    console.log('%s^', w);
-    //console.log('Starting:', input.slice(r.index, endsAt));
+        console.log('Parsing failed');
+        var startsAt = input.lastIndexOf("\n", r.index);
+        if (startsAt == -1) {
+            startsAt = r.index;
+        } else {
+            startsAt += 1;
+        }
+        var endsAt = input.indexOf("\n", r.index);
+        var lineno = 1;
+        var nl = - 1;
+        while (true) {
+            var nl = input.indexOf("\n", nl + 1);
+            if (nl == -1 || nl > r.index)
+                break;
+            lineno += 1;
+        }
+        console.log('line %d: %s', lineno, input.slice(startsAt, endsAt));
+        var w = '';
+        for (var i = 0; i < r.index - startsAt + 7 + lineno.toString().length; i += 1) {
+            w += ' ';
+        }
+        console.log('%s^', w);
+        //console.log('Starting:', input.slice(r.index, endsAt));
 
-    var unique = [];
-    r.expected.forEach(function(v) {
-        if (unique.indexOf(v) == -1) {
-            unique.push(v);
-        }
-    });
-    unique.sort();
-    var exp = '';
-    unique.forEach(function(v, i) {
-        exp += v.toString();
-        if (i < unique.length - 1) {
-            exp += ', ';
-        }
-    });
-    console.log('expected:', exp);
+        var unique = [];
+        r.expected.forEach(function(v) {
+            if (unique.indexOf(v) == -1) {
+                unique.push(v);
+            }
+        });
+        unique.sort();
+        var exp = '';
+        unique.forEach(function(v, i) {
+            exp += v.toString();
+            if (i < unique.length - 1) {
+                exp += ', ';
+            }
+        });
+        console.log('expected:', exp);
+    }
+};
+
+module.exports = {
+    parse: parse,
+    parseFile: parseFile,
+    consoleOutput: consoleOutput,
+};
+
+if (require.main === module) {
+    consoleOutput(parseFile('input.model.js'));
 }
