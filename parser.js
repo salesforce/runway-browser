@@ -99,7 +99,7 @@ var fieldlist = sepByOptTrail(field, comma);
 var node = lexeme(string('node'))
             .skip(lbrace)
             .then(fieldlist.map(function(fields) {
-                return { kind: 'node',
+                return { kind: 'record',
                          fields: fields }; }))
             .skip(rbrace);
 
@@ -109,7 +109,8 @@ var eitherfield = seqMap(id,
                          rbrace,
                          function(id, _, fields, _) { return {
                             id: id,
-                            fields: fields
+                            fields: fields,
+                            kind: 'record',
                          }; }).or(id);
 var eitherfieldlist = sepByOptTrail(eitherfield, comma);
 
