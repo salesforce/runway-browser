@@ -1,13 +1,13 @@
 "use strict";
 
-var parser = require('./parser.js');
+let parser = require('./parser.js');
 
-var out = function(o) {
+let out = function(o) {
   console.log(JSON.stringify(o, null, 2));
 };
 
-var constructDefaultHelper = function(fieldtype) {
-  var value = {};
+let constructDefaultHelper = function(fieldtype) {
+  let value = {};
   if (fieldtype.kind == 'range') {
     value['value'] = fieldtype.low;
   } else if (fieldtype.kind == 'record') {
@@ -15,18 +15,18 @@ var constructDefaultHelper = function(fieldtype) {
       value[field.id.value] = constructDefaultHelper(field.type);
     });
   } else if (fieldtype.kind == 'either') {
-    var first = fieldtype.fields[0];
+    let first = fieldtype.fields[0];
     value['value'] = first.id.value;
     value[first.id.value] = constructDefaultHelper(first.type);
   } else {
-    var o = JSON.stringify(fieldtype, null, 2);
+    let o = JSON.stringify(fieldtype, null, 2);
     throw Error(`Unknown field type: ${o}`);
   }
   return value;
 };
 
-var constructDefault = function(typedecl) {
-  var value = {
+let constructDefault = function(typedecl) {
+  let value = {
     type: typedecl.id.value,
   };
   Object.assign(value, constructDefaultHelper(typedecl.type));
@@ -38,13 +38,13 @@ module.exports = {
 };
 
 if (require.main === module) {
-  var r = parser.parseFile('input.model');
+  let r = parser.parseFile('input.model');
   if (!r.status) {
     parser.consoleOutput(r);
     return;
   }
-  var ast = r.value;
-  var person = ast[8];
+  let ast = r.value;
+  let person = ast[8];
   out(person);
   out(constructDefault(person));
 }

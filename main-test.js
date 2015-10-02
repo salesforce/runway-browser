@@ -1,7 +1,7 @@
 "use strict";
 
-var assert = require("assert");
-var main = require("./main.js");
+let assert = require("assert");
+let main = require("./main.js");
 
 describe('main.js', function() {
   describe('constructDefault', function() {

@@ -1,8 +1,8 @@
 "use strict";
 
-var Parsimmon = require('./bower_components/parsimmon/build/parsimmon.commonjs.js');
-var fs = require('fs');
-var input = fs.readFileSync('input.model').toString();
+let Parsimmon = require('./bower_components/parsimmon/build/parsimmon.commonjs.js');
+let fs = require('fs');
+let input = fs.readFileSync('input.model').toString();
 
 // like .mark() except puts start and end in same object as value
 Parsimmon.Parser.prototype.source = function() {
@@ -14,44 +14,44 @@ Parsimmon.Parser.prototype.source = function() {
 }
 
 
-var alt = Parsimmon.alt;
-var lazy = Parsimmon.lazy;
-var optWhitespace = Parsimmon.optWhitespace;
-var regex = Parsimmon.regex;
-var sepBy = Parsimmon.sepBy;
-var seq = Parsimmon.seq;
-var seqMap = Parsimmon.seqMap;
-var string = Parsimmon.string;
-var whitespace = Parsimmon.whitespace;
+let alt = Parsimmon.alt;
+let lazy = Parsimmon.lazy;
+let optWhitespace = Parsimmon.optWhitespace;
+let regex = Parsimmon.regex;
+let sepBy = Parsimmon.sepBy;
+let seq = Parsimmon.seq;
+let seqMap = Parsimmon.seqMap;
+let string = Parsimmon.string;
+let whitespace = Parsimmon.whitespace;
 
-var sepByOptTrail = function(content, separator) {
+let sepByOptTrail = function(content, separator) {
   return sepBy(content, separator)
     .skip(separator.or(Parsimmon.succeed()));
 }
-var comment = regex(/\/\/[^\n]*/).desc('single-line comment');
-var lexeme = function(p) {
+let comment = regex(/\/\/[^\n]*/).desc('single-line comment');
+let lexeme = function(p) {
   return p.skip(whitespace.or(comment).many());
 }
-var arrow = lexeme(string('->'));
-var colon = lexeme(string(':'));
-var comma = lexeme(string(','));
-var dots = lexeme(string('..'));
-var equals = lexeme(string('='));
-var langle = lexeme(string('<'));
-var lbrace = lexeme(string('{'));
-var lparen = lexeme(string('('));
-var minus = lexeme(string('-'));
-var plus = lexeme(string('+'));
-var rangle = lexeme(string('>'));
-var rbrace = lexeme(string('}'));
-var rparen = lexeme(string(')'));
-var semicolon = lexeme(string(';'));
-var times = lexeme(string('*'));
+let arrow = lexeme(string('->'));
+let colon = lexeme(string(':'));
+let comma = lexeme(string(','));
+let dots = lexeme(string('..'));
+let equals = lexeme(string('='));
+let langle = lexeme(string('<'));
+let lbrace = lexeme(string('{'));
+let lparen = lexeme(string('('));
+let minus = lexeme(string('-'));
+let plus = lexeme(string('+'));
+let rangle = lexeme(string('>'));
+let rbrace = lexeme(string('}'));
+let rparen = lexeme(string(')'));
+let semicolon = lexeme(string(';'));
+let times = lexeme(string('*'));
 
-var re = /([0-9]+)([a-z]+)/i;
-var numberWithUnit = lexeme(regex(re))
+let re = /([0-9]+)([a-z]+)/i;
+let numberWithUnit = lexeme(regex(re))
   .map((s) => {
-    var result = re.exec(s);
+    let result = re.exec(s);
     return {
       kind: 'numberWithUnit',
       number: result[1],
@@ -59,15 +59,15 @@ var numberWithUnit = lexeme(regex(re))
     };
   })
   .desc('number with unit').mark();
-var number = lexeme(regex(/[0-9]+/).map(parseInt)).desc('number').mark();
-var id = lexeme(regex(/[a-z_]\w*/i)).desc('identifier').mark();
+let number = lexeme(regex(/[0-9]+/).map(parseInt)).desc('number').mark();
+let id = lexeme(regex(/[a-z_]\w*/i)).desc('identifier').mark();
 
-var atom = numberWithUnit.or(number).or(id);
-var group = lazy(() => {
+let atom = numberWithUnit.or(number).or(id);
+let group = lazy(() => {
   return lparen.then(expr).skip(rparen)
 });
-var binop = alt(times, plus, minus);
-var expr = alt(seqMap(atom,
+let binop = alt(times, plus, minus);
+let expr = alt(seqMap(atom,
   binop,
   atom,
   (left, op, right) => {
@@ -81,7 +81,7 @@ var expr = alt(seqMap(atom,
   group)
   .desc('expression');
 
-var range = seqMap(expr, dots, expr,
+let range = seqMap(expr, dots, expr,
   (low, _, high) => {
     return {
       kind: 'range',
@@ -90,7 +90,7 @@ var range = seqMap(expr, dots, expr,
     };
   }).source();
 
-var field = lazy(() => {
+let field = lazy(() => {
   return seqMap(
     id,
     colon,
@@ -104,9 +104,9 @@ var field = lazy(() => {
 });
 
 
-var fieldlist = sepByOptTrail(field, comma);
+let fieldlist = sepByOptTrail(field, comma);
 
-var node = lexeme(string('node'))
+let node = lexeme(string('node'))
   .skip(lbrace)
   .then(fieldlist.map((fields) => {
     return {
@@ -116,7 +116,7 @@ var node = lexeme(string('node'))
   }))
   .skip(rbrace);
 
-var eitherfield = seqMap(id,
+let eitherfield = seqMap(id,
   lbrace,
   fieldlist,
   rbrace,
@@ -127,9 +127,9 @@ var eitherfield = seqMap(id,
       kind: 'record',
     };
   }).or(id);
-var eitherfieldlist = sepByOptTrail(eitherfield, comma);
+let eitherfieldlist = sepByOptTrail(eitherfield, comma);
 
-var either = lexeme(string('either'))
+let either = lexeme(string('either'))
   .skip(lbrace)
   .then(eitherfieldlist.map((fields) => {
     return {
@@ -138,7 +138,7 @@ var either = lexeme(string('either'))
     };
   }))
   .skip(rbrace);
-var generic = seqMap(id,
+let generic = seqMap(id,
   langle,
   id,
   rangle,
@@ -149,13 +149,13 @@ var generic = seqMap(id,
       args: [arg],
     };
   });
-var type = alt(range, generic, id);
+let type = alt(range, generic, id);
 
-var complexType = Parsimmon.alt(
+let complexType = Parsimmon.alt(
   node,
   either);
 
-var param = seqMap(lexeme(string('param')),
+let param = seqMap(lexeme(string('param')),
   id,
   colon,
   type,
@@ -171,7 +171,7 @@ var param = seqMap(lexeme(string('param')),
     };
   });
 
-var typedecl = seqMap(lexeme(string('type')),
+let typedecl = seqMap(lexeme(string('type')),
   id,
   colon,
   complexType.or(type.skip(semicolon)),
@@ -183,19 +183,19 @@ var typedecl = seqMap(lexeme(string('type')),
     };
   });
 
-var vardecl = lexeme(string('var'))
+let vardecl = lexeme(string('var'))
   .then(id)
   .skip(colon)
   .then(type)
   .skip(semicolon);
 
-var block = lazy(() => {
+let block = lazy(() => {
   return lbrace
     .then(statement.many())
     .skip(rbrace);
 });
 
-var arg = seqMap(id,
+let arg = seqMap(id,
   colon,
   type,
   (id, _, type) => {
@@ -205,11 +205,11 @@ var arg = seqMap(id,
     };
   });
 
-var arglist = lparen
+let arglist = lparen
   .then(sepBy(arg, comma))
   .skip(rparen);
 
-var distribution = seqMap(lexeme(string('distribution')),
+let distribution = seqMap(lexeme(string('distribution')),
   id,
   arglist,
   arrow,
@@ -225,7 +225,7 @@ var distribution = seqMap(lexeme(string('distribution')),
     };
   });
 
-var returnStmt = lexeme(string('return'))
+let returnStmt = lexeme(string('return'))
   .then(expr).map((v) => {
   return {
     kind: 'returnstmt',
@@ -235,7 +235,7 @@ var returnStmt = lexeme(string('return'))
   .skip(semicolon);
 
 
-var statement = Parsimmon.alt(
+let statement = Parsimmon.alt(
   param,
   typedecl,
   distribution,
@@ -243,57 +243,57 @@ var statement = Parsimmon.alt(
   vardecl).source();
 
 // main parser
-var file = lazy(() => {
+let file = lazy(() => {
   return lexeme(string('')).then(statement.many());
 });
 
-var parse = function(input) {
-  var r = file.parse(input);
+let parse = function(input) {
+  let r = file.parse(input);
   r.input = input;
   return r;
 }
-var parseFile = function(filename) {
+let parseFile = function(filename) {
   return parse(fs.readFileSync(filename).toString());
 }
-var consoleOutput = function(parseResult) {
-  var r = parseResult;
-  var input = r.input;
+let consoleOutput = function(parseResult) {
+  let r = parseResult;
+  let input = r.input;
   if (r.status) {
     console.log(JSON.stringify(r.value, null, 2));
   } else {
     console.log('Parsing failed');
-    var startsAt = input.lastIndexOf("\n", r.index);
+    let startsAt = input.lastIndexOf("\n", r.index);
     if (startsAt == -1) {
       startsAt = r.index;
     } else {
       startsAt += 1;
     }
-    var endsAt = input.indexOf("\n", r.index);
-    var lineno = 1;
-    var nl = -1;
+    let endsAt = input.indexOf("\n", r.index);
+    let lineno = 1;
+    let nl = -1;
     while (true) {
-      var nl = input.indexOf("\n", nl + 1);
+      let nl = input.indexOf("\n", nl + 1);
       if (nl == -1 || nl > r.index) {
         break;
       }
       lineno += 1;
     }
     console.log('line %d: %s', lineno, input.slice(startsAt, endsAt));
-    var w = '';
-    for (var i = 0; i < r.index - startsAt + 7 + lineno.toString().length; i += 1) {
+    let w = '';
+    for (let i = 0; i < r.index - startsAt + 7 + lineno.toString().length; i += 1) {
       w += ' ';
     }
     console.log('%s^', w);
     //console.log('Starting:', input.slice(r.index, endsAt));
 
-    var unique = [];
+    let unique = [];
     r.expected.forEach((v) => {
       if (unique.indexOf(v) == -1) {
         unique.push(v);
       }
     });
     unique.sort();
-    var exp = '';
+    let exp = '';
     unique.forEach((v, i) => {
       exp += v.toString();
       if (i < unique.length - 1) {
