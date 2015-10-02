@@ -1,4 +1,4 @@
-var Parsimmon = require('./parsimmon/build/parsimmon.commonjs.js');
+var Parsimmon = require('./bower_components/parsimmon/build/parsimmon.commonjs.js');
 var fs = require('fs');
 var input = fs.readFileSync('input.model.js').toString();
 
