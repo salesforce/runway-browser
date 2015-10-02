@@ -9,7 +9,7 @@ var constructDefaultHelper = function(fieldtype) {
   if (fieldtype.kind == 'range') {
     value['value'] = fieldtype.low;
   } else if (fieldtype.kind == 'record') {
-    fieldtype.fields.forEach(function(field) {
+    fieldtype.fields.forEach((field) => {
       value[field.id.value] = constructDefaultHelper(field.type);
     });
   } else if (fieldtype.kind == 'either') {
