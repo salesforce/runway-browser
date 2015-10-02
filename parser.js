@@ -1,6 +1,6 @@
 var Parsimmon = require('./bower_components/parsimmon/build/parsimmon.commonjs.js');
 var fs = require('fs');
-var input = fs.readFileSync('input.model.js').toString();
+var input = fs.readFileSync('input.model').toString();
 
 // like .mark() except puts start and end in same object as value
 Parsimmon.Parser.prototype.source = function() {
@@ -301,5 +301,5 @@ module.exports = {
 };
 
 if (require.main === module) {
-  consoleOutput(parseFile('input.model.js'));
+  consoleOutput(parseFile('input.model'));
 }

@@ -33,10 +33,10 @@ unit-test: $(wildcard *-test.js)
 system-test: system-test-parser
 
 .PHONY: system-test-parser
-system-test-parser: parser.js input.model.js
+system-test-parser: parser.js input.model
 	node parser.js >output.json 2>&1 || echo Exit status $$? >>output.json
 	git diff -w --exit-code output.json
 
 .PHONY: format
-format: parser.js
+format: $(shell git ls-files *.js)
 	./node_modules/jsfmt/bin/jsfmt --write $^
