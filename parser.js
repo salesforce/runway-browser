@@ -107,7 +107,7 @@ var eitherfield = seqMap(id,
                          lbrace,
                          fieldlist,
                          rbrace,
-                         function(id, _, fields, _) { return {
+                         function(id, _, fields, _2) { return {
                             id: id,
                             fields: fields,
                             kind: 'record',
@@ -124,7 +124,7 @@ var generic = seqMap(id,
                      langle,
                      id,
                      rangle,
-                     function(base, _, arg, _) { return {
+                     function(base, _, arg, _2) { return {
                         kind: 'generic',
                         base: base,
                         args: [arg],
@@ -142,7 +142,7 @@ var param = seqMap(lexeme(string('param')),
                    equals,
                    expr,
                    semicolon,
-                   function(_, id, _, type, _, value, _) { return {
+                   function(_, id, _2, type, _3, value, _4) { return {
                        kind: 'paramdecl',
                        id: id,
                        type: type,
@@ -153,7 +153,7 @@ var typedecl = seqMap(lexeme(string('type')),
                       id,
                       colon,
                       complexType.or(type.skip(semicolon)),
-                      function(_, id, _, type) { return {
+                      function(_, id, _2, type) { return {
                         kind: 'typedecl',
                         id: id,
                         type: type,
@@ -187,7 +187,7 @@ var distribution = seqMap(lexeme(string('distribution')),
                           arrow,
                           type,
                           block,
-                          function(_, id, args, _, returntype, block) { return {
+                          function(_, id, args, _2, returntype, block) { return {
                                kind: 'distributiondecl',
                                id: id,
                                args: args,
