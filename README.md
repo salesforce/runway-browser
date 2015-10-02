@@ -1,3 +1,3 @@
 # modeling-compiler
 
-Requires Parsimmon from https://github.com/jneen/parsimmon, built in parsimmon/ subdirectory.
+Requires node >=v4.x, bower, npm.
