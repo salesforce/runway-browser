@@ -1,3 +1,5 @@
+"use strict";
+
 var Parsimmon = require('./bower_components/parsimmon/build/parsimmon.commonjs.js');
 var fs = require('fs');
 var input = fs.readFileSync('input.model').toString();

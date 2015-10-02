@@ -1,3 +1,5 @@
+"use strict";
+
 var parser = require('./parser.js');
 
 var out = function(o) {
@@ -41,8 +43,8 @@ if (require.main === module) {
     parser.consoleOutput(r);
     return;
   }
-  ast = r.value;
-  person = ast[8];
+  var ast = r.value;
+  var person = ast[8];
   out(person);
   out(constructDefault(person));
 }
