@@ -1,7 +1,8 @@
 "use strict";
 
-let assert = require("assert");
-let main = require("./main.js");
+let assert = require('assert');
+let Environment = require('./environment.js');
+let main = require('./main.js');
 
 describe('main.js', function() {
   describe('constructDefault', function() {
@@ -106,5 +107,17 @@ describe('main.js', function() {
     }); // either
 
   }); // constructDefault
+
+  describe('loadPrelude', function() {
+    it('prelude loads', function() {
+      let prelude = main.loadPrelude();
+      let myBoolean = prelude.getType('Boolean');
+      assert.deepEqual({
+        type: 'Boolean',
+        value: 'False',
+        False: {}
+      }, main.constructDefault(myBoolean));
+    });
+  }); // loadPrelude
 
 });

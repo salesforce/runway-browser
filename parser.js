@@ -126,7 +126,13 @@ let eitherfield = seqMap(id,
       fields: fields,
       kind: 'record',
     };
-  }).or(id);
+  }).or(id).map((id) => ({
+    id: id,
+    type: {
+      fields: [],
+      kind: 'record',
+    },
+}));
 let eitherfieldlist = sepByOptTrail(eitherfield, comma);
 
 let either = lexeme(string('either'))

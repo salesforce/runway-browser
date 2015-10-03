@@ -1,6 +1,7 @@
 "use strict";
 
 let parser = require('./parser.js');
+let Environment = require('./environment.js');
 
 let out = function(o) {
   console.log(JSON.stringify(o, null, 2));
@@ -33,8 +34,25 @@ let constructDefault = function(typedecl) {
   return value;
 };
 
+let loadPrelude = function() {
+  let prelude = new Environment();
+  let r = parser.parseFile('prelude.model');
+  if (!r.status) {
+    throw Error(r);
+  }
+  r.value.forEach((decl) => {
+    if (decl.kind == 'typedecl') {
+      prelude.assignType(decl.id.value, decl);
+    } else {
+      let o = JSON.stringify(fieldtype, null, 2);
+      throw Error(`unknown statement: ${o}`);
+    }
+  });
+  return prelude;
+}
 module.exports = {
   constructDefault: constructDefault,
+  loadPrelude: loadPrelude,
 };
 
 if (require.main === module) {
