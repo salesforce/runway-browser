@@ -70,37 +70,31 @@ let binop = alt(times, plus, minus);
 let expr = alt(seqMap(atom,
   binop,
   atom,
-  (left, op, right) => {
-    return {
+  (left, op, right) => ({
       kind: 'apply',
       func: op,
       args: [left, right]
-    };
-  }),
+  })),
   atom,
   group)
   .desc('expression');
 
 let range = seqMap(expr, dots, expr,
-  (low, _, high) => {
-    return {
+  (low, _, high) => ({
       kind: 'range',
       low: low,
       high: high
-    };
-  }).source();
+  })).source();
 
 let field = lazy(() => {
   return seqMap(
     id,
     colon,
     complexType.or(type),
-    (id, _, type) => {
-      return {
+    (id, _, type) => ({
         id: id,
         type: type
-      };
-    });
+    }));
 });
 
 
@@ -109,25 +103,21 @@ let fieldlist = sepByOptTrail(field, comma);
 let node = alt(lexeme(string('node')),
   lexeme(string('record')))
   .skip(lbrace)
-  .then(fieldlist.map((fields) => {
-    return {
+  .then(fieldlist.map((fields) => ({
       kind: 'record',
       fields: fields
-    };
-  }))
+  })))
   .skip(rbrace);
 
 let eitherfield = seqMap(id,
   lbrace,
   fieldlist,
   rbrace,
-  (id, _, fields, _2) => {
-    return {
+  (id, _, fields, _2) => ({
       id: id,
       fields: fields,
       kind: 'record',
-    };
-  }).or(id.map((id) => ({
+  })).or(id.map((id) => ({
     id: id,
     type: {
       fields: [],
@@ -138,24 +128,20 @@ let eitherfieldlist = sepByOptTrail(eitherfield, comma);
 
 let either = lexeme(string('either'))
   .skip(lbrace)
-  .then(eitherfieldlist.map((fields) => {
-    return {
+  .then(eitherfieldlist.map((fields) => ({
       kind: 'either',
       fields: fields
-    };
-  }))
+  })))
   .skip(rbrace);
 let generic = seqMap(id,
   langle,
   id,
   rangle,
-  (base, _, arg, _2) => {
-    return {
+  (base, _, arg, _2) => ({
       kind: 'generic',
       base: base,
       args: [arg],
-    };
-  });
+  }));
 let type = alt(range, generic, id);
 
 let complexType = Parsimmon.alt(
@@ -169,27 +155,23 @@ let param = seqMap(lexeme(string('param')),
   equals,
   expr,
   semicolon,
-  (_, id, _2, type, _3, value, _4) => {
-    return {
+  (_, id, _2, type, _3, value, _4) => ({
       kind: 'paramdecl',
       id: id,
       type: type,
       default: value
-    };
-  });
+  }));
 
 let typedecl = seqMap(lexeme(string('type')),
   id,
   colon,
   alt(complexType.skip(semicolon.times(0, 1)),
     type.skip(semicolon)),
-  (_, id, _2, type) => {
-    return {
+  (_, id, _2, type) => ({
       kind: 'typedecl',
       id: id,
       type: type,
-    };
-  });
+  }));
 
 let vardecl = lexeme(string('var'))
   .then(id)
@@ -206,12 +188,10 @@ let block = lazy(() => {
 let arg = seqMap(id,
   colon,
   type,
-  (id, _, type) => {
-    return {
+  (id, _, type) => ({
       id: id,
       type: type,
-    };
-  });
+  }));
 
 let arglist = lparen
   .then(sepBy(arg, comma))
@@ -223,23 +203,19 @@ let distribution = seqMap(lexeme(string('distribution')),
   arrow,
   type,
   block,
-  (_, id, args, _2, returntype, block) => {
-    return {
+  (_, id, args, _2, returntype, block) => ({
       kind: 'distributiondecl',
       id: id,
       args: args,
       returntype: returntype,
       code: block
-    };
-  });
+  }));
 
 let returnStmt = lexeme(string('return'))
-  .then(expr).map((v) => {
-  return {
+  .then(expr).map((v) => ({
     kind: 'returnstmt',
     value: v,
-  };
-})
+}))
   .skip(semicolon);
 
 
