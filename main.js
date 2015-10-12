@@ -13,12 +13,10 @@ class Value {
   }
 }
 
-class RangeValue {
+class RangeValue extends Value {
 
   constructor(type) {
-    // super(type); // syntax error?
-    this.type = type;
-
+    super(type);
     this.value = this.type.decl.low.value;
   }
 
@@ -44,15 +42,13 @@ class RangeValue {
   }
 }
 
-class RecordValue {
+class RecordValue extends Value {
 
   constructor(type) {
-    // super(type); // syntax error?
-    this.type = type;
-
+    super(type);
     this.type.decl.fields.forEach((field) => {
       // XXX- should share field Type objects for all instances
-      let fieldtype = new Type(field.type, this.type.env);
+      let fieldtype = Type.make(field.type, this.type.env);
       this[field.id.value] = fieldtype.makeDefaultValue();
     });
   }
@@ -75,16 +71,14 @@ class RecordValue {
   }
 }
 
-class EitherValue {
+class EitherValue extends Value {
 
   constructor(type) {
-    // super(type); // syntax error?
-    this.type = type;
-
+    super(type);
     let first = this.type.decl.fields[0];
     this.value = first.id.value;
     // XXX- should share field Type objects for all instances
-    let fieldtype = new Type(first.type, this.type.env);
+    let fieldtype = Type.make(first.type, this.type.env);
     this[first.id.value] = fieldtype.makeDefaultValue();
   }
 
@@ -93,11 +87,11 @@ class EitherValue {
     this.type.decl.fields.forEach((field) => {
       if (field.id.value == newValue) {
         this.value = field.id.value;
-        this[field.id.value] = new RecordValue(
-          new Type({
-            kind: 'record',
-            fields: []
-          }));
+        // XXX- should share field Type objects for all instances
+        this[field.id.value] = Type.make({
+          kind: 'record',
+          fields: []
+        }, this.type.env).makeDefaultValue();
         assigned = true;
       }
     });
@@ -128,24 +122,42 @@ class Type {
     this.env = env;
     this.name = name; // may be undefined
   }
-  makeDefaultValue() {
-    if (this.decl.kind == 'range') {
-      return new RangeValue(this);
-    } else if (this.decl.kind == 'record') {
-      return new RecordValue(this);
-    } else if (this.decl.kind == 'either') {
-      return new EitherValue(this);
-    } else {
-      let o = JSON.stringify(this.decl, null, 2);
-      throw Error(`Unknown type: ${o}`);
-    }
-  }
   getName() {
     if (this.name === undefined) {
       return undefined;
     } else {
       return this.name.value;
     }
+  }
+  static make(decl, env, name) {
+    if (decl.kind == 'range') {
+      return new RangeType(decl, env, name);
+    } else if (decl.kind == 'record') {
+      return new RecordType(decl, env, name);
+    } else if (decl.kind == 'either') {
+      return new EitherType(decl, env, name);
+    } else {
+      let o = JSON.stringify(decl, null, 2);
+      throw Error(`Unknown type '${name}': ${o}`);
+    }
+  }
+}
+
+class RangeType extends Type {
+  makeDefaultValue() {
+    return new RangeValue(this);
+  }
+}
+
+class RecordType extends Type {
+  makeDefaultValue() {
+    return new RecordValue(this);
+  }
+}
+
+class EitherType extends Type {
+  makeDefaultValue() {
+    return new EitherValue(this);
   }
 }
 
@@ -157,7 +169,7 @@ let loadPrelude = function() {
   }
   r.value.forEach((decl) => {
     if (decl.kind == 'typedecl') {
-      prelude.assignType(decl.id.value, new Type(decl.type, prelude, decl.id));
+      prelude.assignType(decl.id.value, Type.make(decl.type, prelude, decl.id));
     } else {
       let o = JSON.stringify(fieldtype, null, 2);
       throw Error(`unknown statement: ${o}`);
