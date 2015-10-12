@@ -11,81 +11,116 @@ class Value {
   constructor(type) {
     this.type = type;
   }
-  assign(newValue) {
-    let kind = this.type.decl.kind;
-    if (kind == 'range') {
-      if (newValue < this.type.decl.low.value ||
-        newValue > this.type.decl.high.value) {
-        throw Error(`Cannot assign value of ${newValue} to range ${this.type.getName()}: ${this.type.decl.low.value}..${this.type.decl.high.value};`);
-      }
-      this.value = newValue;
-      return;
-    } else if (kind == 'either') {
-      let assigned = false;
-      this.type.decl.fields.forEach((field) => {
-        if (field.id.value == newValue) {
-          this.value = field.id.value;
-          this[field.id.value] = new Value(
-            new Type({
-              kind: 'record',
-              fields: []
-            }));
-          assigned = true;
-        }
-      });
-      if (assigned) {
-        return;
-      }
-      throw Error(`Cannot assign value of ${newValue} to either-type ${this.type.getName()}`);
+}
 
+class RangeValue {
+
+  constructor(type) {
+    // super(type); // syntax error?
+    this.type = type;
+
+    this.value = this.type.decl.low.value;
+  }
+
+  assign(newValue) {
+    if (newValue < this.type.decl.low.value ||
+      newValue > this.type.decl.high.value) {
+      throw Error(`Cannot assign value of ${newValue} to range ${this.type.getName()}: ${this.type.decl.low.value}..${this.type.decl.high.value};`);
     }
-    throw Error(`Not implemented: assign to ${kind}`);
+    this.value = newValue;
   }
 
   innerToString() {
-    let name = this.type.getName();
-    let kind = this.type.decl.kind;
-    if (kind == 'range') {
-      return `${this.value}`;
-    } else if (kind == 'record') {
-      let fields = this.type.decl.fields.map((v) => {
-        let rhs = this[v.id.value].toString();
-        return `${v.id.value}: ${rhs}`;
-      }).join(', ');
-      return fields;
-    } else if (kind == 'either') {
-      return this[this.value].toString();
-    }
-    throw Error(`Not implemented: innerToString for ${kind}`);
+    return `${this.value}`;
   }
-
 
   toString() {
     let name = this.type.getName();
-    let kind = this.type.decl.kind;
-    if (kind == 'range') {
-      if (name === undefined) {
-        return `${this.value}`;
-      } else {
-        return `${name}(${this.value})`;
-      }
-    } else if (kind == 'record') {
-      let fields = this.type.decl.fields.map((v) => {
-        let rhs = this[v.id.value].toString();
-        return `${v.id.value}: ${rhs}`;
-      }).join(', ');
-      return `${name} { ${fields} }`;
-    } else if (kind == 'either') {
-      let fields = this[this.value].innerToString();
-      if (fields == '') {
-        return `${this.value}`;
-      } else {
-        return `${this.value} { ${fields} }`;
-      }
+    if (name === undefined) {
+      return `${this.value}`;
+    } else {
+      return `${name}(${this.value})`;
     }
-    return name;
   }
 }
+
+class RecordValue {
+
+  constructor(type) {
+    // super(type); // syntax error?
+    this.type = type;
+
+    this.type.decl.fields.forEach((field) => {
+      // XXX- should share field Type objects for all instances
+      let fieldtype = new Type(field.type, this.type.env);
+      this[field.id.value] = fieldtype.makeDefaultValue();
+    });
+  }
+
+  innerToString() {
+    let fields = this.type.decl.fields.map((v) => {
+      let rhs = this[v.id.value].toString();
+      return `${v.id.value}: ${rhs}`;
+    }).join(', ');
+    return fields;
+  }
+
+  toString() {
+    let name = this.type.getName();
+    let fields = this.type.decl.fields.map((v) => {
+      let rhs = this[v.id.value].toString();
+      return `${v.id.value}: ${rhs}`;
+    }).join(', ');
+    return `${name} { ${fields} }`;
+  }
+}
+
+class EitherValue {
+
+  constructor(type) {
+    // super(type); // syntax error?
+    this.type = type;
+
+    let first = this.type.decl.fields[0];
+    this.value = first.id.value;
+    // XXX- should share field Type objects for all instances
+    let fieldtype = new Type(first.type, this.type.env);
+    this[first.id.value] = fieldtype.makeDefaultValue();
+  }
+
+  assign(newValue) {
+    let assigned = false;
+    this.type.decl.fields.forEach((field) => {
+      if (field.id.value == newValue) {
+        this.value = field.id.value;
+        this[field.id.value] = new RecordValue(
+          new Type({
+            kind: 'record',
+            fields: []
+          }));
+        assigned = true;
+      }
+    });
+    if (assigned) {
+      return;
+    }
+    throw Error(`Cannot assign value of ${newValue} to either-type ${this.type.getName()}`);
+  }
+
+  innerToString() {
+    return this[this.value].toString();
+  }
+
+  toString() {
+    let fields = this[this.value].innerToString();
+    if (fields == '') {
+      return `${this.value}`;
+    } else {
+      return `${this.value} { ${fields} }`;
+    }
+  }
+}
+
 
 class Type {
   constructor(decl, env, name) {
@@ -94,26 +129,16 @@ class Type {
     this.name = name; // may be undefined
   }
   makeDefaultValue() {
-    let value = new Value(this);
-
     if (this.decl.kind == 'range') {
-      value.value = this.decl.low.value;
+      return new RangeValue(this);
     } else if (this.decl.kind == 'record') {
-      this.decl.fields.forEach((field) => {
-        let type = new Type(field.type, this.env);
-        value[field.id.value] = type.makeDefaultValue();
-      });
+      return new RecordValue(this);
     } else if (this.decl.kind == 'either') {
-      let first = this.decl.fields[0];
-      value.value = first.id.value;
-      let type = new Type(first.type, this.env);
-      value[first.id.value] = type.makeDefaultValue();
+      return new EitherValue(this);
     } else {
       let o = JSON.stringify(this.decl, null, 2);
-      throw Error(`Unknown field type: ${o}`);
+      throw Error(`Unknown type: ${o}`);
     }
-
-    return value;
   }
   getName() {
     if (this.name === undefined) {
