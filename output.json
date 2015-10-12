@@ -475,19 +475,37 @@
             "kind": "either",
             "fields": [
               {
-                "start": 883,
-                "value": "Neutral",
-                "end": 890
+                "id": {
+                  "start": 883,
+                  "value": "Neutral",
+                  "end": 890
+                },
+                "type": {
+                  "fields": [],
+                  "kind": "record"
+                }
               },
               {
-                "start": 900,
-                "value": "Up",
-                "end": 902
+                "id": {
+                  "start": 900,
+                  "value": "Up",
+                  "end": 902
+                },
+                "type": {
+                  "fields": [],
+                  "kind": "record"
+                }
               },
               {
-                "start": 912,
-                "value": "Down",
-                "end": 916
+                "id": {
+                  "start": 912,
+                  "value": "Down",
+                  "end": 916
+                },
+                "type": {
+                  "fields": [],
+                  "kind": "record"
+                }
               }
             ]
           }
@@ -530,9 +548,15 @@
                       "kind": "either",
                       "fields": [
                         {
-                          "start": 1033,
-                          "value": "Closed",
-                          "end": 1039
+                          "id": {
+                            "start": 1033,
+                            "value": "Closed",
+                            "end": 1039
+                          },
+                          "type": {
+                            "fields": [],
+                            "kind": "record"
+                          }
                         },
                         {
                           "id": {
