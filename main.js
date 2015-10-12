@@ -17,13 +17,12 @@ class RangeValue extends Value {
 
   constructor(type) {
     super(type);
-    this.value = this.type.decl.low.value;
+    this.value = this.type.low;
   }
 
   assign(newValue) {
-    if (newValue < this.type.decl.low.value ||
-      newValue > this.type.decl.high.value) {
-      throw Error(`Cannot assign value of ${newValue} to range ${this.type.getName()}: ${this.type.decl.low.value}..${this.type.decl.high.value};`);
+    if (newValue < this.type.low || newValue > this.type.high) {
+      throw Error(`Cannot assign value of ${newValue} to range ${this.type.getName()}: ${this.type.low}..${this.type.high};`);
     }
     this.value = newValue;
   }
@@ -46,10 +45,8 @@ class RecordValue extends Value {
 
   constructor(type) {
     super(type);
-    this.type.decl.fields.forEach((field) => {
-      // XXX- should share field Type objects for all instances
-      let fieldtype = Type.make(field.type, this.type.env);
-      this[field.id.value] = fieldtype.makeDefaultValue();
+    this.type.fieldtypes.forEach((fieldtype) => {
+      this[fieldtype.name] = fieldtype.type.makeDefaultValue();
     });
   }
 
@@ -75,23 +72,17 @@ class EitherValue extends Value {
 
   constructor(type) {
     super(type);
-    let first = this.type.decl.fields[0];
-    this.value = first.id.value;
-    // XXX- should share field Type objects for all instances
-    let fieldtype = Type.make(first.type, this.type.env);
-    this[first.id.value] = fieldtype.makeDefaultValue();
+    let first = this.type.fieldtypes[0];
+    this.value = first.name;
+    this[this.value] = first.type.makeDefaultValue();
   }
 
   assign(newValue) {
     let assigned = false;
-    this.type.decl.fields.forEach((field) => {
-      if (field.id.value == newValue) {
-        this.value = field.id.value;
-        // XXX- should share field Type objects for all instances
-        this[field.id.value] = Type.make({
-          kind: 'record',
-          fields: []
-        }, this.type.env).makeDefaultValue();
+    this.type.fieldtypes.forEach((fieldtype) => {
+      if (fieldtype.name == newValue) {
+        this.value = fieldtype.name;
+        this[this.value] = fieldtype.type.makeDefaultValue();
         assigned = true;
       }
     });
@@ -144,18 +135,37 @@ class Type {
 }
 
 class RangeType extends Type {
+  constructor(decl, env, name) {
+    super(decl, env, name);
+    this.low = this.decl.low.value;
+    this.high = this.decl.high.value;
+  }
   makeDefaultValue() {
     return new RangeValue(this);
   }
 }
 
 class RecordType extends Type {
+  constructor(decl, env, name) {
+    super(decl, env, name);
+    this.fieldtypes = this.decl.fields.map((field) => ({
+        name: field.id.value,
+        type: Type.make(field.type, this.env),
+    }));
+  }
   makeDefaultValue() {
     return new RecordValue(this);
   }
 }
 
 class EitherType extends Type {
+  constructor(decl, env, name) {
+    super(decl, env, name);
+    this.fieldtypes = this.decl.fields.map((field) => ({
+        name: field.id.value,
+        type: Type.make(field.type, this.env),
+    }));
+  }
   makeDefaultValue() {
     return new EitherValue(this);
   }
