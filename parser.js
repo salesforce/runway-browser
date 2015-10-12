@@ -106,7 +106,8 @@ let field = lazy(() => {
 
 let fieldlist = sepByOptTrail(field, comma);
 
-let node = lexeme(string('node'))
+let node = alt(lexeme(string('node')),
+  lexeme(string('record')))
   .skip(lbrace)
   .then(fieldlist.map((fields) => {
     return {
@@ -180,7 +181,8 @@ let param = seqMap(lexeme(string('param')),
 let typedecl = seqMap(lexeme(string('type')),
   id,
   colon,
-  complexType.or(type.skip(semicolon)),
+  alt(complexType.skip(semicolon.times(0, 1)),
+    type.skip(semicolon)),
   (_, id, _2, type) => {
     return {
       kind: 'typedecl',

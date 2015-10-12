@@ -7,32 +7,98 @@ let out = function(o) {
   console.log(JSON.stringify(o, null, 2));
 };
 
-let constructDefaultHelper = function(fieldtype) {
-  let value = {};
-  if (fieldtype.kind == 'range') {
-    value['value'] = fieldtype.low;
-  } else if (fieldtype.kind == 'record') {
-    fieldtype.fields.forEach((field) => {
-      value[field.id.value] = constructDefaultHelper(field.type);
-    });
-  } else if (fieldtype.kind == 'either') {
-    let first = fieldtype.fields[0];
-    value['value'] = first.id.value;
-    value[first.id.value] = constructDefaultHelper(first.type);
-  } else {
-    let o = JSON.stringify(fieldtype, null, 2);
-    throw Error(`Unknown field type: ${o}`);
+class Value {
+  constructor(type) {
+    this.type = type;
   }
-  return value;
-};
+  assign(newValue) {
+    let kind = this.type.decl.kind;
+    if (kind == 'range') {
+      if (newValue < this.type.decl.low.value ||
+        newValue > this.type.decl.high.value) {
+        throw Error(`Cannot assign value of ${newValue} to range ${this.type.getName()}: ${this.type.decl.low.value}..${this.type.decl.high.value};`);
+      }
+      this.value = newValue;
+      return;
+    } else if (kind == 'either') {
+      let assigned = false;
+      this.type.decl.fields.forEach((field) => {
+        if (field.id.value == newValue) {
+          this.value = field.id.value;
+          this[field.id.value] = new Value(
+            new Type({
+              kind: 'record',
+              fields: []
+            }));
+          assigned = true;
+        }
+      });
+      if (assigned) {
+        return;
+      }
+      throw Error(`Cannot assign value of ${newValue} to either-type ${this.type.getName()}`);
 
-let constructDefault = function(typedecl) {
-  let value = {
-    type: typedecl.id.value,
-  };
-  Object.assign(value, constructDefaultHelper(typedecl.type));
-  return value;
-};
+    }
+    throw Error(`Not implemented: assign to ${kind}`);
+  }
+  toString() {
+    let name = this.type.getName();
+    let kind = this.type.decl.kind;
+    if (kind == 'range') {
+      if (name === undefined) {
+        return `${this.value}`;
+      } else {
+        return `${name}(${this.value})`;
+      }
+    } else if (kind == 'record') {
+      let fields = this.type.decl.fields.map((v) => {
+        let rhs = this[v.id.value].toString();
+        return `${v.id.value}: ${rhs}`;
+      }).join(', ');
+      return `${name} { ${fields} }`;
+    } else if (kind == 'either') {
+      return `${this.value}`;
+    }
+    return name;
+  }
+}
+
+class Type {
+  constructor(decl, env, name) {
+    this.decl = decl;
+    this.env = env;
+    this.name = name; // may be undefined
+  }
+  makeDefaultValue() {
+    let value = new Value(this);
+
+    if (this.decl.kind == 'range') {
+      value.value = this.decl.low.value;
+    } else if (this.decl.kind == 'record') {
+      this.decl.fields.forEach((field) => {
+        let type = new Type(field.type, this.env);
+        value[field.id.value] = type.makeDefaultValue();
+      });
+    } else if (this.decl.kind == 'either') {
+      let first = this.decl.fields[0];
+      value.value = first.id.value;
+      let type = new Type(first.type, this.env);
+      value[first.id.value] = type.makeDefaultValue();
+    } else {
+      let o = JSON.stringify(this.decl, null, 2);
+      throw Error(`Unknown field type: ${o}`);
+    }
+
+    return value;
+  }
+  getName() {
+    if (this.name === undefined) {
+      return undefined;
+    } else {
+      return this.name.value;
+    }
+  }
+}
 
 let loadPrelude = function() {
   let prelude = new Environment();
@@ -42,7 +108,7 @@ let loadPrelude = function() {
   }
   r.value.forEach((decl) => {
     if (decl.kind == 'typedecl') {
-      prelude.assignType(decl.id.value, decl);
+      prelude.assignType(decl.id.value, new Type(decl.type, prelude, decl.id));
     } else {
       let o = JSON.stringify(fieldtype, null, 2);
       throw Error(`unknown statement: ${o}`);
@@ -51,7 +117,7 @@ let loadPrelude = function() {
   return prelude;
 }
 module.exports = {
-  constructDefault: constructDefault,
+  Type: Type,
   loadPrelude: loadPrelude,
 };
 
@@ -64,5 +130,4 @@ if (require.main === module) {
   let ast = r.value;
   let person = ast[8];
   out(person);
-  out(constructDefault(person));
 }
