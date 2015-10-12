@@ -67,6 +67,31 @@ describe('main.js', function() {
         value.assign('Whatever');
       });
     });
+
+    it('sum type', function() {
+      let parsed = Parser.parse(`
+        type Maybe: either {
+          Something {
+            thing: 10..31,
+          },
+          Nothing,
+        };
+      `);
+      assert.ok(parsed.status);
+      let typedecl = parsed.value[0];
+      assert.equal('typedecl', typedecl.kind);
+      let env = new Environment();
+      let type = new Type(typedecl.type, env, typedecl.id);
+      let value = type.makeDefaultValue();
+      assert.equal('Something { thing: 10 }',
+        value.toString());
+      value.assign('Nothing');
+      assert.equal('Nothing',
+        value.toString());
+      assert.throws(() => {
+        value.assign('Whatever');
+      });
+    });
   });
 
   describe('loadPrelude', function() {

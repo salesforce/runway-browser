@@ -115,8 +115,10 @@ let eitherfield = seqMap(id,
   rbrace,
   (id, _, fields, _2) => ({
       id: id,
-      fields: fields,
-      kind: 'record',
+      type: {
+        fields: fields,
+        kind: 'record',
+      },
   })).or(id.map((id) => ({
     id: id,
     type: {

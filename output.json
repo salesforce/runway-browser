@@ -280,21 +280,23 @@
                   "value": "Sleeping",
                   "end": 466
                 },
-                "fields": [
-                  {
-                    "id": {
-                      "start": 480,
-                      "value": "floor",
-                      "end": 485
-                    },
-                    "type": {
-                      "start": 487,
-                      "value": "Floor",
-                      "end": 492
+                "type": {
+                  "fields": [
+                    {
+                      "id": {
+                        "start": 480,
+                        "value": "floor",
+                        "end": 485
+                      },
+                      "type": {
+                        "start": 487,
+                        "value": "Floor",
+                        "end": 492
+                      }
                     }
-                  }
-                ],
-                "kind": "record"
+                  ],
+                  "kind": "record"
+                }
               },
               {
                 "id": {
@@ -302,33 +304,35 @@
                   "value": "Waiting",
                   "end": 521
                 },
-                "fields": [
-                  {
-                    "id": {
-                      "start": 535,
-                      "value": "floor",
-                      "end": 540
+                "type": {
+                  "fields": [
+                    {
+                      "id": {
+                        "start": 535,
+                        "value": "floor",
+                        "end": 540
+                      },
+                      "type": {
+                        "start": 542,
+                        "value": "Floor",
+                        "end": 547
+                      }
                     },
-                    "type": {
-                      "start": 542,
-                      "value": "Floor",
-                      "end": 547
+                    {
+                      "id": {
+                        "start": 561,
+                        "value": "destination",
+                        "end": 572
+                      },
+                      "type": {
+                        "start": 574,
+                        "value": "Floor",
+                        "end": 579
+                      }
                     }
-                  },
-                  {
-                    "id": {
-                      "start": 561,
-                      "value": "destination",
-                      "end": 572
-                    },
-                    "type": {
-                      "start": 574,
-                      "value": "Floor",
-                      "end": 579
-                    }
-                  }
-                ],
-                "kind": "record"
+                  ],
+                  "kind": "record"
+                }
               },
               {
                 "id": {
@@ -336,33 +340,35 @@
                   "value": "Riding",
                   "end": 607
                 },
-                "fields": [
-                  {
-                    "id": {
-                      "start": 621,
-                      "value": "elevator",
-                      "end": 629
+                "type": {
+                  "fields": [
+                    {
+                      "id": {
+                        "start": 621,
+                        "value": "elevator",
+                        "end": 629
+                      },
+                      "type": {
+                        "start": 631,
+                        "value": "ElevatorId",
+                        "end": 641
+                      }
                     },
-                    "type": {
-                      "start": 631,
-                      "value": "ElevatorId",
-                      "end": 641
+                    {
+                      "id": {
+                        "start": 655,
+                        "value": "destination",
+                        "end": 666
+                      },
+                      "type": {
+                        "start": 668,
+                        "value": "Floor",
+                        "end": 673
+                      }
                     }
-                  },
-                  {
-                    "id": {
-                      "start": 655,
-                      "value": "destination",
-                      "end": 666
-                    },
-                    "type": {
-                      "start": 668,
-                      "value": "Floor",
-                      "end": 673
-                    }
-                  }
-                ],
-                "kind": "record"
+                  ],
+                  "kind": "record"
+                }
               }
             ]
           }
@@ -525,110 +531,118 @@
                   "value": "AtFloor",
                   "end": 964
                 },
-                "fields": [
-                  {
-                    "id": {
-                      "start": 978,
-                      "value": "at",
-                      "end": 980
+                "type": {
+                  "fields": [
+                    {
+                      "id": {
+                        "start": 978,
+                        "value": "at",
+                        "end": 980
+                      },
+                      "type": {
+                        "start": 982,
+                        "value": "Floor",
+                        "end": 987
+                      }
                     },
-                    "type": {
-                      "start": 982,
-                      "value": "Floor",
-                      "end": 987
-                    }
-                  },
-                  {
-                    "id": {
-                      "start": 1001,
-                      "value": "doors",
-                      "end": 1006
-                    },
-                    "type": {
-                      "kind": "either",
-                      "fields": [
-                        {
-                          "id": {
-                            "start": 1033,
-                            "value": "Closed",
-                            "end": 1039
+                    {
+                      "id": {
+                        "start": 1001,
+                        "value": "doors",
+                        "end": 1006
+                      },
+                      "type": {
+                        "kind": "either",
+                        "fields": [
+                          {
+                            "id": {
+                              "start": 1033,
+                              "value": "Closed",
+                              "end": 1039
+                            },
+                            "type": {
+                              "fields": [],
+                              "kind": "record"
+                            }
                           },
-                          "type": {
-                            "fields": [],
-                            "kind": "record"
+                          {
+                            "id": {
+                              "start": 1057,
+                              "value": "Opening",
+                              "end": 1065
+                            },
+                            "type": {
+                              "fields": [
+                                {
+                                  "id": {
+                                    "start": 1087,
+                                    "value": "openAt",
+                                    "end": 1093
+                                  },
+                                  "type": {
+                                    "start": 1095,
+                                    "value": "Time",
+                                    "end": 1099
+                                  }
+                                }
+                              ],
+                              "kind": "record"
+                            }
+                          },
+                          {
+                            "id": {
+                              "start": 1136,
+                              "value": "Open",
+                              "end": 1141
+                            },
+                            "type": {
+                              "fields": [
+                                {
+                                  "id": {
+                                    "start": 1163,
+                                    "value": "closeAt",
+                                    "end": 1170
+                                  },
+                                  "type": {
+                                    "start": 1172,
+                                    "value": "Time",
+                                    "end": 1176
+                                  }
+                                }
+                              ],
+                              "kind": "record"
+                            }
+                          },
+                          {
+                            "id": {
+                              "start": 1213,
+                              "value": "Closing",
+                              "end": 1221
+                            },
+                            "type": {
+                              "fields": [
+                                {
+                                  "id": {
+                                    "start": 1243,
+                                    "value": "closedAt",
+                                    "end": 1251
+                                  },
+                                  "type": {
+                                    "start": 1253,
+                                    "value": "Time",
+                                    "end": 1257
+                                  }
+                                }
+                              ],
+                              "kind": "record"
+                            }
                           }
-                        },
-                        {
-                          "id": {
-                            "start": 1057,
-                            "value": "Opening",
-                            "end": 1065
-                          },
-                          "fields": [
-                            {
-                              "id": {
-                                "start": 1087,
-                                "value": "openAt",
-                                "end": 1093
-                              },
-                              "type": {
-                                "start": 1095,
-                                "value": "Time",
-                                "end": 1099
-                              }
-                            }
-                          ],
-                          "kind": "record"
-                        },
-                        {
-                          "id": {
-                            "start": 1136,
-                            "value": "Open",
-                            "end": 1141
-                          },
-                          "fields": [
-                            {
-                              "id": {
-                                "start": 1163,
-                                "value": "closeAt",
-                                "end": 1170
-                              },
-                              "type": {
-                                "start": 1172,
-                                "value": "Time",
-                                "end": 1176
-                              }
-                            }
-                          ],
-                          "kind": "record"
-                        },
-                        {
-                          "id": {
-                            "start": 1213,
-                            "value": "Closing",
-                            "end": 1221
-                          },
-                          "fields": [
-                            {
-                              "id": {
-                                "start": 1243,
-                                "value": "closedAt",
-                                "end": 1251
-                              },
-                              "type": {
-                                "start": 1253,
-                                "value": "Time",
-                                "end": 1257
-                              }
-                            }
-                          ],
-                          "kind": "record"
-                        }
-                      ]
+                        ]
+                      }
                     }
-                  }
-                ],
-                "kind": "record"
+                  ],
+                  "kind": "record"
+                }
               },
               {
                 "id": {
@@ -636,21 +650,23 @@
                   "value": "Between",
                   "end": 1320
                 },
-                "fields": [
-                  {
-                    "id": {
-                      "start": 1334,
-                      "value": "next",
-                      "end": 1338
-                    },
-                    "type": {
-                      "start": 1340,
-                      "value": "Floor",
-                      "end": 1345
+                "type": {
+                  "fields": [
+                    {
+                      "id": {
+                        "start": 1334,
+                        "value": "next",
+                        "end": 1338
+                      },
+                      "type": {
+                        "start": 1340,
+                        "value": "Floor",
+                        "end": 1345
+                      }
                     }
-                  }
-                ],
-                "kind": "record"
+                  ],
+                  "kind": "record"
+                }
               }
             ]
           }

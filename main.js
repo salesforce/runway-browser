@@ -41,6 +41,25 @@ class Value {
     }
     throw Error(`Not implemented: assign to ${kind}`);
   }
+
+  innerToString() {
+    let name = this.type.getName();
+    let kind = this.type.decl.kind;
+    if (kind == 'range') {
+      return `${this.value}`;
+    } else if (kind == 'record') {
+      let fields = this.type.decl.fields.map((v) => {
+        let rhs = this[v.id.value].toString();
+        return `${v.id.value}: ${rhs}`;
+      }).join(', ');
+      return fields;
+    } else if (kind == 'either') {
+      return this[this.value].toString();
+    }
+    throw Error(`Not implemented: innerToString for ${kind}`);
+  }
+
+
   toString() {
     let name = this.type.getName();
     let kind = this.type.decl.kind;
@@ -57,7 +76,12 @@ class Value {
       }).join(', ');
       return `${name} { ${fields} }`;
     } else if (kind == 'either') {
-      return `${this.value}`;
+      let fields = this[this.value].innerToString();
+      if (fields == '') {
+        return `${this.value}`;
+      } else {
+        return `${this.value} { ${fields} }`;
+      }
     }
     return name;
   }
