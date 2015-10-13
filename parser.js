@@ -1,5 +1,6 @@
 "use strict";
 
+let process = require('process');
 let Parsimmon = require('./bower_components/parsimmon/build/parsimmon.commonjs.js');
 let fs = require('fs');
 let input = fs.readFileSync('input.model').toString();
@@ -139,14 +140,14 @@ let either = lexeme(string('either'))
   .skip(rbrace);
 
 let generic = lazy(() => seqMap(id,
-    langle,
-    type,
-    rangle,
-    (base, _, arg, _2) => ({
-        kind: 'generic',
-        base: base,
-        args: [arg],
-    })));
+  langle,
+  type,
+  rangle,
+  (base, _, arg, _2) => ({
+      kind: 'generic',
+      base: base,
+      args: [arg],
+  })));
 
 let genericIndexable = lazy(() => seqMap(generic,
     lbracket,
@@ -328,5 +329,9 @@ module.exports = {
 };
 
 if (require.main === module) {
-  consoleOutput(parseFile('input.model'));
+  let filename = 'input.model';
+  if (process.argv.length > 2) {
+    filename = process.argv[2];
+  }
+  consoleOutput(parseFile(filename));
 }

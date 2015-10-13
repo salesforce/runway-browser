@@ -30,12 +30,17 @@ unit-test: $(wildcard *-test.js)
 	./node_modules/mocha/bin/mocha $^
 
 .PHONY: system-test
-system-test: system-test-parser
+system-test: system-test-parser system-test-parser-tokenring
 
 .PHONY: system-test-parser
 system-test-parser: parser.js input.model
 	node parser.js >output.json 2>&1 || echo Exit status $$? >>output.json
 	git diff -w --exit-code output.json
+
+.PHONY: system-test-parser-tokenring
+system-test-parser-tokenring: parser.js tokenring.model
+	node parser.js tokenring.model >output-tokenring.json 2>&1 || echo Exit status $$? >>output-tokenring.json
+	git diff -w --exit-code output-tokenring.json
 
 .PHONY: format
 format: $(shell git ls-files *.js)

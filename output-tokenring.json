@@ -1,0 +1,168 @@
+[
+  {
+    "kind": "typedecl",
+    "id": {
+      "start": 6,
+      "value": "ServerId",
+      "end": 14
+    },
+    "type": {
+      "kind": "range",
+      "low": {
+        "start": 16,
+        "value": 1,
+        "end": 17
+      },
+      "high": {
+        "start": 19,
+        "value": 5,
+        "end": 20
+      },
+      "start": 16,
+      "end": 20
+    },
+    "start": 1,
+    "end": 23
+  },
+  {
+    "kind": "typedecl",
+    "id": {
+      "start": 28,
+      "value": "Token",
+      "end": 33
+    },
+    "type": {
+      "kind": "either",
+      "fields": [
+        {
+          "id": {
+            "start": 46,
+            "value": "AtServer",
+            "end": 55
+          },
+          "type": {
+            "fields": [
+              {
+                "id": {
+                  "start": 57,
+                  "value": "at",
+                  "end": 59
+                },
+                "type": {
+                  "start": 61,
+                  "value": "ServerId",
+                  "end": 70,
+                  "kind": "alias"
+                }
+              }
+            ],
+            "kind": "record"
+          }
+        },
+        {
+          "id": {
+            "start": 75,
+            "value": "InTransit",
+            "end": 85
+          },
+          "type": {
+            "fields": [
+              {
+                "id": {
+                  "start": 87,
+                  "value": "to",
+                  "end": 89
+                },
+                "type": {
+                  "start": 91,
+                  "value": "ServerId",
+                  "end": 100,
+                  "kind": "alias"
+                }
+              }
+            ],
+            "kind": "record"
+          }
+        }
+      ]
+    },
+    "start": 23,
+    "end": 105
+  },
+  {
+    "kind": "vardecl",
+    "id": {
+      "start": 109,
+      "value": "token",
+      "end": 114
+    },
+    "type": {
+      "start": 116,
+      "value": "Token",
+      "end": 121,
+      "kind": "alias"
+    },
+    "start": 105,
+    "end": 124
+  },
+  {
+    "kind": "typedecl",
+    "id": {
+      "start": 129,
+      "value": "Server",
+      "end": 135
+    },
+    "type": {
+      "kind": "record",
+      "fields": [
+        {
+          "id": {
+            "start": 148,
+            "value": "hasToken",
+            "end": 156
+          },
+          "type": {
+            "start": 158,
+            "value": "Boolean",
+            "end": 165,
+            "kind": "alias"
+          }
+        }
+      ]
+    },
+    "start": 124,
+    "end": 170
+  },
+  {
+    "kind": "vardecl",
+    "id": {
+      "start": 174,
+      "value": "servers",
+      "end": 181
+    },
+    "type": {
+      "kind": "generic",
+      "base": {
+        "start": 183,
+        "value": "Array",
+        "end": 188
+      },
+      "args": [
+        {
+          "start": 189,
+          "value": "Server",
+          "end": 195,
+          "kind": "alias"
+        }
+      ],
+      "indexBy": {
+        "start": 197,
+        "value": "ServerId",
+        "end": 205,
+        "kind": "alias"
+      }
+    },
+    "start": 170,
+    "end": 208
+  }
+]

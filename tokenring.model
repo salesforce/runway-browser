@@ -1,0 +1,14 @@
+
+type ServerId: 1..5;
+
+type Token: either {
+  AtServer { at: ServerId },
+  InTransit { to: ServerId },
+}
+var token: Token;
+
+type Server: record {
+  hasToken: Boolean,
+}
+
+var servers: Array<Server>[ServerId];
