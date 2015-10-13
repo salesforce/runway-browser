@@ -285,6 +285,7 @@
                   "end": 466
                 },
                 "type": {
+                  "kind": "record",
                   "fields": [
                     {
                       "id": {
@@ -299,8 +300,7 @@
                         "kind": "alias"
                       }
                     }
-                  ],
-                  "kind": "record"
+                  ]
                 }
               },
               {
@@ -310,6 +310,7 @@
                   "end": 521
                 },
                 "type": {
+                  "kind": "record",
                   "fields": [
                     {
                       "id": {
@@ -337,8 +338,7 @@
                         "kind": "alias"
                       }
                     }
-                  ],
-                  "kind": "record"
+                  ]
                 }
               },
               {
@@ -348,6 +348,7 @@
                   "end": 607
                 },
                 "type": {
+                  "kind": "record",
                   "fields": [
                     {
                       "id": {
@@ -375,8 +376,7 @@
                         "kind": "alias"
                       }
                     }
-                  ],
-                  "kind": "record"
+                  ]
                 }
               }
             ]
@@ -609,6 +609,7 @@
                   "end": 1048
                 },
                 "type": {
+                  "kind": "record",
                   "fields": [
                     {
                       "id": {
@@ -650,6 +651,7 @@
                               "end": 1149
                             },
                             "type": {
+                              "kind": "record",
                               "fields": [
                                 {
                                   "id": {
@@ -664,8 +666,7 @@
                                     "kind": "alias"
                                   }
                                 }
-                              ],
-                              "kind": "record"
+                              ]
                             }
                           },
                           {
@@ -675,6 +676,7 @@
                               "end": 1225
                             },
                             "type": {
+                              "kind": "record",
                               "fields": [
                                 {
                                   "id": {
@@ -689,8 +691,7 @@
                                     "kind": "alias"
                                   }
                                 }
-                              ],
-                              "kind": "record"
+                              ]
                             }
                           },
                           {
@@ -700,6 +701,7 @@
                               "end": 1305
                             },
                             "type": {
+                              "kind": "record",
                               "fields": [
                                 {
                                   "id": {
@@ -714,15 +716,13 @@
                                     "kind": "alias"
                                   }
                                 }
-                              ],
-                              "kind": "record"
+                              ]
                             }
                           }
                         ]
                       }
                     }
-                  ],
-                  "kind": "record"
+                  ]
                 }
               },
               {
@@ -732,6 +732,7 @@
                   "end": 1404
                 },
                 "type": {
+                  "kind": "record",
                   "fields": [
                     {
                       "id": {
@@ -746,8 +747,7 @@
                         "kind": "alias"
                       }
                     }
-                  ],
-                  "kind": "record"
+                  ]
                 }
               }
             ]

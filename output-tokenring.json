@@ -41,6 +41,7 @@
             "end": 55
           },
           "type": {
+            "kind": "record",
             "fields": [
               {
                 "id": {
@@ -55,8 +56,7 @@
                   "kind": "alias"
                 }
               }
-            ],
-            "kind": "record"
+            ]
           }
         },
         {
@@ -66,6 +66,7 @@
             "end": 85
           },
           "type": {
+            "kind": "record",
             "fields": [
               {
                 "id": {
@@ -80,8 +81,7 @@
                   "kind": "alias"
                 }
               }
-            ],
-            "kind": "record"
+            ]
           }
         }
       ]
@@ -163,6 +163,310 @@
       }
     },
     "start": 170,
-    "end": 208
+    "end": 209
+  },
+  {
+    "kind": "foreach",
+    "id": {
+      "start": 213,
+      "value": "server",
+      "end": 220
+    },
+    "expr": {
+      "start": 223,
+      "value": "servers",
+      "end": 231
+    },
+    "code": [
+      {
+        "kind": "rule",
+        "id": {
+          "start": 242,
+          "value": "passToken",
+          "end": 252
+        },
+        "code": [
+          {
+            "kind": "ifelse",
+            "condition": {
+              "kind": "lookup",
+              "child": {
+                "start": 272,
+                "value": "hasToken",
+                "end": 281
+              },
+              "parent": {
+                "start": 265,
+                "value": "server",
+                "end": 271
+              }
+            },
+            "thenblock": [
+              {
+                "kind": "vardecl",
+                "id": {
+                  "start": 299,
+                  "value": "next",
+                  "end": 304
+                },
+                "type": {
+                  "start": 306,
+                  "value": "ServerId",
+                  "end": 315,
+                  "kind": "alias"
+                },
+                "default": {
+                  "start": 317,
+                  "value": 1,
+                  "end": 318
+                },
+                "start": 295,
+                "end": 332
+              },
+              {
+                "kind": "ifelse",
+                "condition": {
+                  "kind": "apply",
+                  "func": "<",
+                  "args": [
+                    {
+                      "kind": "lookup",
+                      "child": {
+                        "start": 342,
+                        "value": "id",
+                        "end": 345
+                      },
+                      "parent": {
+                        "start": 335,
+                        "value": "server",
+                        "end": 341
+                      }
+                    },
+                    {
+                      "start": 347,
+                      "value": 5,
+                      "end": 349
+                    }
+                  ]
+                },
+                "thenblock": [
+                  {
+                    "kind": "assign",
+                    "id": {
+                      "start": 367,
+                      "value": "next",
+                      "end": 372
+                    },
+                    "expr": {
+                      "kind": "apply",
+                      "func": "+",
+                      "args": [
+                        {
+                          "kind": "lookup",
+                          "child": {
+                            "start": 381,
+                            "value": "id",
+                            "end": 384
+                          },
+                          "parent": {
+                            "start": 374,
+                            "value": "server",
+                            "end": 380
+                          }
+                        },
+                        {
+                          "start": 386,
+                          "value": 1,
+                          "end": 387
+                        }
+                      ]
+                    },
+                    "start": 367,
+                    "end": 401
+                  }
+                ],
+                "elseblock": [],
+                "start": 332,
+                "end": 415
+              },
+              {
+                "kind": "assign",
+                "id": {
+                  "start": 415,
+                  "value": "token",
+                  "end": 421
+                },
+                "expr": {
+                  "kind": "recordvalue",
+                  "type": {
+                    "start": 423,
+                    "value": "InTransit",
+                    "end": 433
+                  },
+                  "fields": [
+                    {
+                      "id": {
+                        "start": 435,
+                        "value": "to",
+                        "end": 437
+                      },
+                      "expr": {
+                        "start": 439,
+                        "value": "next",
+                        "end": 444
+                      }
+                    }
+                  ]
+                },
+                "start": 415,
+                "end": 459
+              },
+              {
+                "kind": "assign",
+                "id": {
+                  "kind": "lookup",
+                  "child": {
+                    "start": 466,
+                    "value": "hasToken",
+                    "end": 475
+                  },
+                  "parent": {
+                    "start": 459,
+                    "value": "server",
+                    "end": 465
+                  }
+                },
+                "expr": {
+                  "start": 477,
+                  "value": "False",
+                  "end": 482
+                },
+                "start": 459,
+                "end": 492
+              }
+            ],
+            "elseblock": [],
+            "start": 262,
+            "end": 498
+          }
+        ],
+        "start": 237,
+        "end": 504
+      },
+      {
+        "kind": "rule",
+        "id": {
+          "start": 509,
+          "value": "deliverToken",
+          "end": 522
+        },
+        "code": [
+          {
+            "kind": "ifelse",
+            "condition": {
+              "kind": "matches",
+              "expr": {
+                "start": 535,
+                "value": "token",
+                "end": 541
+              },
+              "variant": {
+                "start": 549,
+                "value": "Intransit",
+                "end": 559
+              }
+            },
+            "thenblock": [
+              {
+                "kind": "assign",
+                "id": {
+                  "kind": "lookup",
+                  "child": {
+                    "start": 591,
+                    "value": "hasToken",
+                    "end": 600
+                  },
+                  "parent": {
+                    "kind": "index",
+                    "by": {
+                      "kind": "lookup",
+                      "child": {
+                        "start": 587,
+                        "value": "to",
+                        "end": 589
+                      },
+                      "parent": {
+                        "start": 581,
+                        "value": "token",
+                        "end": 586
+                      }
+                    },
+                    "parent": {
+                      "start": 573,
+                      "value": "servers",
+                      "end": 580
+                    }
+                  }
+                },
+                "expr": {
+                  "start": 602,
+                  "value": "True",
+                  "end": 606
+                },
+                "start": 573,
+                "end": 620
+              },
+              {
+                "kind": "assign",
+                "id": {
+                  "start": 620,
+                  "value": "token",
+                  "end": 626
+                },
+                "expr": {
+                  "kind": "recordvalue",
+                  "type": {
+                    "start": 628,
+                    "value": "AtServer",
+                    "end": 637
+                  },
+                  "fields": [
+                    {
+                      "id": {
+                        "start": 639,
+                        "value": "at",
+                        "end": 641
+                      },
+                      "expr": {
+                        "kind": "lookup",
+                        "child": {
+                          "start": 649,
+                          "value": "to",
+                          "end": 652
+                        },
+                        "parent": {
+                          "start": 643,
+                          "value": "token",
+                          "end": 648
+                        }
+                      }
+                    }
+                  ]
+                },
+                "start": 620,
+                "end": 663
+              }
+            ],
+            "elseblock": [],
+            "start": 532,
+            "end": 669
+          }
+        ],
+        "start": 504,
+        "end": 671
+      }
+    ],
+    "start": 209,
+    "end": 673
   }
 ]

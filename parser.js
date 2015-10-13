@@ -36,17 +36,20 @@ let lexeme = function(p) {
 let arrow = lexeme(string('->'));
 let colon = lexeme(string(':'));
 let comma = lexeme(string(','));
+let dot = lexeme(string('.'));
 let dots = lexeme(string('..'));
 let equals = lexeme(string('='));
 let langle = lexeme(string('<'));
 let lbrace = lexeme(string('{'));
 let lbracket = lexeme(string('['));
+let leq = lexeme(string('<='));
 let lparen = lexeme(string('('));
 let minus = lexeme(string('-'));
 let plus = lexeme(string('+'));
 let rangle = lexeme(string('>'));
 let rbrace = lexeme(string('}'));
 let rbracket = lexeme(string(']'));
+let req = lexeme(string('>='));
 let rparen = lexeme(string(')'));
 let semicolon = lexeme(string(';'));
 let times = lexeme(string('*'));
@@ -65,22 +68,68 @@ let numberWithUnit = lexeme(regex(re))
 let number = lexeme(regex(/[0-9]+/).map(parseInt)).desc('number').mark();
 let id = lexeme(regex(/[a-z_]\w*/i)).desc('identifier').mark();
 
-let atom = numberWithUnit.or(number).or(id);
+let binop = alt(times, plus, minus, langle, rangle, leq, req);
+
 let group = lazy(() => {
   return lparen.then(expr).skip(rparen)
 });
-let binop = alt(times, plus, minus);
-let expr = alt(seqMap(atom,
-  binop,
-  atom,
-  (left, op, right) => ({
-      kind: 'apply',
-      func: op,
-      args: [left, right]
-  })),
-  atom,
-  group)
-  .desc('expression');
+
+let lhsmore = lazy(() => alt(
+    seqMap(lbracket,
+      expr,
+      rbracket,
+      (_, expr, _2) => ({
+          kind: 'index',
+          by: expr,
+      })),
+    seqMap(dot,
+      id,
+      (_, id) => ({
+          kind: 'lookup',
+          child: id,
+      }))));
+
+
+let lhshelper = function(lhsparent, more) {
+  if (more.length == 0) {
+    return lhsparent;
+  }
+  let ret = more.shift(0);
+  ret.parent = lhsparent;
+  return lhshelper(ret, more);
+};
+
+let lhs = seqMap(id,
+  lhsmore.many(),
+  lhshelper);
+
+
+let expratom = lazy(() => alt(
+    numberWithUnit,
+    number,
+    recordvalue,
+    group,
+    lhs));
+
+let expr = lazy(() => alt(
+    seqMap(expratom,
+      binop,
+      expr,
+      (left, op, right) => ({
+          kind: 'apply',
+          func: op,
+          args: [left, right]
+      })),
+    seqMap(expratom,
+      lexeme(string('matches')),
+      id,
+      (expr, _, id) => ({
+          kind: 'matches',
+          expr: expr,
+          variant: id
+      })),
+    expratom)
+    .desc('expression'));
 
 let range = seqMap(expr, dots, expr,
   (low, _, high) => ({
@@ -89,27 +138,47 @@ let range = seqMap(expr, dots, expr,
       high: high
   })).source();
 
-let field = lazy(() => {
-  return seqMap(
+let field = lazy(() => seqMap(
     id,
     colon,
     complexType.or(type),
     (id, _, type) => ({
         id: id,
         type: type
-    }));
-});
+    })));
 
 
-let fieldlist = sepByOptTrail(field, comma);
+let fieldlist = sepByOptTrail(field, comma).map((fields) => ({
+    kind: 'record',
+    fields: fields
+}));
 
-let node = alt(lexeme(string('node')),
+
+let fieldvalue = lazy(() => seqMap(
+    id,
+    colon,
+    expr,
+    (id, _, expr) => ({
+        id: id,
+        expr: expr,
+    })));
+
+
+let recordvalue = seqMap(id,
+  lbrace,
+  sepByOptTrail(fieldvalue, comma),
+  rbrace,
+  (id, _, fields, _2) => ({
+      kind: 'recordvalue',
+      type: id,
+      fields: fields,
+  }));
+
+
+let record = alt(lexeme(string('node')),
   lexeme(string('record')))
   .skip(lbrace)
-  .then(fieldlist.map((fields) => ({
-      kind: 'record',
-      fields: fields
-  })))
+  .then(fieldlist)
   .skip(rbrace);
 
 let eitherfield = seqMap(id,
@@ -118,10 +187,7 @@ let eitherfield = seqMap(id,
   rbrace,
   (id, _, fields, _2) => ({
       id: id,
-      type: {
-        fields: fields,
-        kind: 'record',
-      },
+      type: fields,
   })).or(id.map((id) => ({
     id: id,
     type: {
@@ -140,14 +206,14 @@ let either = lexeme(string('either'))
   .skip(rbrace);
 
 let generic = lazy(() => seqMap(id,
-  langle,
-  type,
-  rangle,
-  (base, _, arg, _2) => ({
-      kind: 'generic',
-      base: base,
-      args: [arg],
-  })));
+    langle,
+    type,
+    rangle,
+    (base, _, arg, _2) => ({
+        kind: 'generic',
+        base: base,
+        args: [arg],
+    })));
 
 let genericIndexable = lazy(() => seqMap(generic,
     lbracket,
@@ -167,7 +233,7 @@ let type = alt(range,
   }));
 
 let complexType = Parsimmon.alt(
-  node,
+  record,
   either);
 
 let param = seqMap(lexeme(string('param')),
@@ -252,11 +318,57 @@ let returnStmt = lexeme(string('return'))
 }))
   .skip(semicolon);
 
+let assignment = seqMap(
+  lhs,
+  equals,
+  expr,
+  semicolon,
+  (id, _, expr, _2) => ({
+      kind: 'assign',
+      id: id,
+      expr: expr,
+  }));
+
+let foreachLoop = seqMap(lexeme(string('for')),
+  id,
+  lexeme(string('in')),
+  expr,
+  block,
+  (_, id, _2, expr, block) => ({
+      kind: 'foreach',
+      id: id,
+      expr: expr,
+      code: block,
+  }));
+
+let ifElse = seqMap(lexeme(string('if')),
+  expr,
+  block,
+  lexeme(string('else')).then(block).times(0, 1),
+  (_, condition, thenblock, elseblock) => ({
+      kind: 'ifelse',
+      condition: condition,
+      thenblock: thenblock,
+      elseblock: elseblock,
+  }));
+
+let rule = seqMap(lexeme(string('rule')),
+  id,
+  block,
+  (_, id, block) => ({
+      kind: 'rule',
+      id: id,
+      code: block,
+  }));
 
 let statement = Parsimmon.alt(
   param,
   typedecl,
   distribution,
+  ifElse,
+  foreachLoop,
+  assignment,
+  rule,
   returnStmt,
   vardecl).source();
 
