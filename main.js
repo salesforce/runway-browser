@@ -2,6 +2,7 @@
 
 let parser = require('./parser.js');
 let Environment = require('./environment.js');
+let process = require('process');
 
 let out = function(o) {
   console.log(JSON.stringify(o, null, 2));
@@ -252,5 +253,10 @@ module.exports = {
 if (require.main === module) {
   let prelude = loadPrelude();
   let env = new Environment(prelude);
-  load(parser.parseFile('input.model'), env);
+  let filename = 'input.model';
+  if (process.argv.length > 2) {
+    filename = process.argv[2];
+  }
+  load(parser.parseFile(filename), env);
+  console.log(env.toString());
 }
