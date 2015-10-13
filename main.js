@@ -127,6 +127,12 @@ class Type {
       return new RecordType(decl, env, name);
     } else if (decl.kind == 'either') {
       return new EitherType(decl, env, name);
+    } else if (decl.kind == 'alias') {
+      let t = env.getType(decl.value);
+      if (t === undefined) {
+        throw Error(`Unknown type ${decl.value}`);
+      }
+      return t;
     } else {
       let o = JSON.stringify(decl, null, 2);
       throw Error(`Unknown type '${name}': ${o}`);
@@ -171,24 +177,30 @@ class EitherType extends Type {
   }
 }
 
-let loadPrelude = function() {
-  let prelude = new Environment();
-  let r = parser.parseFile('prelude.model');
-  if (!r.status) {
-    throw Error(r);
+let load = function(parsed, env) {
+  if (!parsed.status) {
+    throw Error(parsed);
   }
-  r.value.forEach((decl) => {
+  parsed.value.forEach((decl) => {
     if (decl.kind == 'typedecl') {
-      prelude.assignType(decl.id.value, Type.make(decl.type, prelude, decl.id));
+      env.assignType(decl.id.value, Type.make(decl.type, env, decl.id));
     } else {
       let o = JSON.stringify(fieldtype, null, 2);
       throw Error(`unknown statement: ${o}`);
     }
   });
-  return prelude;
-}
+  return env;
+};
+
+let loadPrelude = function() {
+  let env = new Environment();
+  load(parser.parseFile('prelude.model'), env);
+  return env;
+};
+
 module.exports = {
   Type: Type,
+  load: load,
   loadPrelude: loadPrelude,
 };
 

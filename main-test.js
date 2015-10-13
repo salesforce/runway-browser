@@ -94,6 +94,30 @@ describe('main.js', function() {
     });
   });
 
+  describe('alias', function() {
+    it('missing', function() {
+      let parsed = Parser.parse(`
+        type FailBoat: WhatIsThis;
+      `);
+      let env = new Environment();
+      assert.throws(() => {
+        main.load(parsed, env);
+      });
+    });
+
+    it('basic', function() {
+      let parsed = Parser.parse(`
+        type Boolean: either { False, True };
+        type Truthful: Boolean;
+      `);
+      let env = new Environment();
+      main.load(parsed, env);
+      let value = env.getType('Truthful').makeDefaultValue();
+      assert.equal('False',
+        value.toString());
+    });
+  });
+
   describe('loadPrelude', function() {
     it('prelude loads', function() {
       let prelude = main.loadPrelude();

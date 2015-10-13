@@ -161,7 +161,8 @@
     "returntype": {
       "start": 213,
       "value": "Time",
-      "end": 218
+      "end": 218,
+      "kind": "alias"
     },
     "code": [
       {
@@ -193,7 +194,8 @@
     "returntype": {
       "start": 309,
       "value": "Time",
-      "end": 314
+      "end": 314,
+      "kind": "alias"
     },
     "code": [
       {
@@ -231,14 +233,16 @@
         "type": {
           "start": 370,
           "value": "Floor",
-          "end": 375
+          "end": 375,
+          "kind": "alias"
         }
       }
     ],
     "returntype": {
       "start": 380,
       "value": "Floor",
-      "end": 386
+      "end": 386,
+      "kind": "alias"
     },
     "code": [
       {
@@ -291,7 +295,8 @@
                       "type": {
                         "start": 487,
                         "value": "Floor",
-                        "end": 492
+                        "end": 492,
+                        "kind": "alias"
                       }
                     }
                   ],
@@ -315,7 +320,8 @@
                       "type": {
                         "start": 542,
                         "value": "Floor",
-                        "end": 547
+                        "end": 547,
+                        "kind": "alias"
                       }
                     },
                     {
@@ -327,7 +333,8 @@
                       "type": {
                         "start": 574,
                         "value": "Floor",
-                        "end": 579
+                        "end": 579,
+                        "kind": "alias"
                       }
                     }
                   ],
@@ -351,7 +358,8 @@
                       "type": {
                         "start": 631,
                         "value": "ElevatorId",
-                        "end": 641
+                        "end": 641,
+                        "kind": "alias"
                       }
                     },
                     {
@@ -363,7 +371,8 @@
                       "type": {
                         "start": 668,
                         "value": "Floor",
-                        "end": 673
+                        "end": 673,
+                        "kind": "alias"
                       }
                     }
                   ],
@@ -397,7 +406,8 @@
           "type": {
             "start": 738,
             "value": "Boolean",
-            "end": 745
+            "end": 745,
+            "kind": "alias"
           }
         },
         {
@@ -409,7 +419,8 @@
           "type": {
             "start": 761,
             "value": "Boolean",
-            "end": 769
+            "end": 769,
+            "kind": "alias"
           }
         }
       ]
@@ -542,7 +553,8 @@
                       "type": {
                         "start": 982,
                         "value": "Floor",
-                        "end": 987
+                        "end": 987,
+                        "kind": "alias"
                       }
                     },
                     {
@@ -582,7 +594,8 @@
                                   "type": {
                                     "start": 1095,
                                     "value": "Time",
-                                    "end": 1099
+                                    "end": 1099,
+                                    "kind": "alias"
                                   }
                                 }
                               ],
@@ -606,7 +619,8 @@
                                   "type": {
                                     "start": 1172,
                                     "value": "Time",
-                                    "end": 1176
+                                    "end": 1176,
+                                    "kind": "alias"
                                   }
                                 }
                               ],
@@ -630,7 +644,8 @@
                                   "type": {
                                     "start": 1253,
                                     "value": "Time",
-                                    "end": 1257
+                                    "end": 1257,
+                                    "kind": "alias"
                                   }
                                 }
                               ],
@@ -661,7 +676,8 @@
                       "type": {
                         "start": 1340,
                         "value": "Floor",
-                        "end": 1345
+                        "end": 1345,
+                        "kind": "alias"
                       }
                     }
                   ],

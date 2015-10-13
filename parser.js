@@ -144,7 +144,10 @@ let generic = seqMap(id,
       base: base,
       args: [arg],
   }));
-let type = alt(range, generic, id);
+let type = alt(range, generic, id.map((id) => {
+  id.kind = 'alias';
+  return id;
+}));
 
 let complexType = Parsimmon.alt(
   node,
