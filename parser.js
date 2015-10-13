@@ -39,11 +39,13 @@ let dots = lexeme(string('..'));
 let equals = lexeme(string('='));
 let langle = lexeme(string('<'));
 let lbrace = lexeme(string('{'));
+let lbracket = lexeme(string('['));
 let lparen = lexeme(string('('));
 let minus = lexeme(string('-'));
 let plus = lexeme(string('+'));
 let rangle = lexeme(string('>'));
 let rbrace = lexeme(string('}'));
+let rbracket = lexeme(string(']'));
 let rparen = lexeme(string(')'));
 let semicolon = lexeme(string(';'));
 let times = lexeme(string('*'));
@@ -135,19 +137,33 @@ let either = lexeme(string('either'))
       fields: fields
   })))
   .skip(rbrace);
-let generic = seqMap(id,
-  langle,
-  id,
-  rangle,
-  (base, _, arg, _2) => ({
-      kind: 'generic',
-      base: base,
-      args: [arg],
+
+let generic = lazy(() => seqMap(id,
+    langle,
+    type,
+    rangle,
+    (base, _, arg, _2) => ({
+        kind: 'generic',
+        base: base,
+        args: [arg],
+    })));
+
+let genericIndexable = lazy(() => seqMap(generic,
+    lbracket,
+    type,
+    rbracket,
+    (generic, _, indexBy, _2) => {
+      generic.indexBy = indexBy;
+      return generic;
+    }));
+
+let type = alt(range,
+  genericIndexable,
+  generic,
+  id.map((id) => {
+    id.kind = 'alias';
+    return id;
   }));
-let type = alt(range, generic, id.map((id) => {
-  id.kind = 'alias';
-  return id;
-}));
 
 let complexType = Parsimmon.alt(
   node,
@@ -178,11 +194,23 @@ let typedecl = seqMap(lexeme(string('type')),
       type: type,
   }));
 
-let vardecl = lexeme(string('var'))
-  .then(id)
-  .skip(colon)
-  .then(type)
-  .skip(semicolon);
+let vardecl = seqMap(lexeme(string('var')),
+  id,
+  colon,
+  type,
+  equals.then(expr).times(0, 1),
+  semicolon,
+  (_, id, _2, type, value, _3) => {
+    let o = {
+      'kind': 'vardecl',
+      id: id,
+      type: type,
+    };
+    if (value.length > 0) {
+      o.default = value[0];
+    }
+    return o;
+  });
 
 let block = lazy(() => {
   return lbrace

@@ -136,4 +136,28 @@ describe('main.js', function() {
     });
   });
 
+  describe('variable declarations', function() {
+    it('basic', function() {
+      let parsed = Parser.parse(`
+        var foo: 0..10 = 8;
+        var bar: 11..20;
+      `);
+      let env = new Environment();
+      main.load(parsed, env);
+      assert.equal(8, env.getVar('foo').toString());
+      assert.equal(11, env.getVar('bar').toString());
+    });
+
+    it('array', function() {
+      let parsed = Parser.parse(`
+        var bitvector: Array<Boolean>[11..13];
+      `);
+      let env = new Environment(main.loadPrelude());
+      main.load(parsed, env);
+      assert.equal('[11: False, 12: False, 13: False]',
+        env.getVar('bitvector').toString());
+    });
+
+  });
+
 });

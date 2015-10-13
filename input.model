@@ -34,11 +34,13 @@ type Person: node {
         },
     },
 }
+var people: Array<Person>[PersonId];
 
 type FloorControl: node {
     downActive: Boolean,
     upActive: Boolean
 }
+var floorControls: Array<FloorControl>[Floor];
 
 type Elevator: node {
     destinations: Set<Floor>,
@@ -70,3 +72,4 @@ type Elevator: node {
         },
     },
 }
+var elevators: Array<Elevator>[ElevatorId];

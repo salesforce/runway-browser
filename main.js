@@ -106,6 +106,22 @@ class EitherValue extends Value {
   }
 }
 
+class ArrayValue extends Value {
+  constructor(type) {
+    super(type);
+    let length = type.indextype.high - type.indextype.low + 1;
+    this.items = Array.from({
+      length: length
+    },
+      () => this.type.valuetype.makeDefaultValue());
+  }
+  toString() {
+    let inner = this.items.map((v, i) => {
+      return `${this.type.indextype.low + i}: ${v.toString()}`;
+    }).join(', ');
+    return `[${inner}]`;
+  }
+}
 
 class Type {
   constructor(decl, env, name) {
@@ -133,10 +149,15 @@ class Type {
         throw Error(`Unknown type ${decl.value}`);
       }
       return t;
-    } else {
-      let o = JSON.stringify(decl, null, 2);
-      throw Error(`Unknown type '${name}': ${o}`);
+    } else if (decl.kind == 'generic') {
+      if (decl.base.value == 'Array') {
+        return new ArrayType(decl, env, name);
+      } else {
+        throw Error(`Unknown type '${decl.base.value}'`);
+      }
     }
+    let o = JSON.stringify(decl, null, 2);
+    throw Error(`Unknown type '${name}': ${o}`);
   }
 }
 
@@ -177,9 +198,21 @@ class EitherType extends Type {
   }
 }
 
+class ArrayType extends Type {
+  constructor(decl, env, name) {
+    super(decl, env, name);
+    this.valuetype = Type.make(this.decl.args[0], this.env);
+    this.indextype = Type.make(this.decl.indexBy, this.env);
+  }
+  makeDefaultValue() {
+    return new ArrayValue(this);
+  }
+}
+
 let load = function(parsed, env) {
   if (!parsed.status) {
-    throw Error(parsed);
+    let o = JSON.stringify(parsed, null, 2);
+    throw Error(`Parse error: ${o}`);
   }
   parsed.value.forEach((decl) => {
     if (decl.kind == 'typedecl') {
@@ -188,6 +221,13 @@ let load = function(parsed, env) {
       let type = Type.make(decl.type, env);
       let value = type.makeDefaultValue();
       value.assign(decl.default.value);
+      env.assignVar(decl.id.value, value);
+    } else if (decl.kind == 'vardecl') {
+      let type = Type.make(decl.type, env);
+      let value = type.makeDefaultValue();
+      if (decl.default !== undefined) {
+        value.assign(decl.default.value);
+      }
       env.assignVar(decl.id.value, value);
     } else {
       let o = JSON.stringify(decl, null, 2);
