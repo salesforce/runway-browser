@@ -261,7 +261,7 @@ let consoleOutput = function(parseResult) {
     let lineno = 1;
     let nl = -1;
     while (true) {
-      let nl = input.indexOf("\n", nl + 1);
+      nl = input.indexOf("\n", nl + 1);
       if (nl == -1 || nl > r.index) {
         break;
       }
