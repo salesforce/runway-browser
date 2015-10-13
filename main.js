@@ -185,7 +185,7 @@ let load = function(parsed, env) {
     if (decl.kind == 'typedecl') {
       env.assignType(decl.id.value, Type.make(decl.type, env, decl.id));
     } else {
-      let o = JSON.stringify(fieldtype, null, 2);
+      let o = JSON.stringify(decl, null, 2);
       throw Error(`unknown statement: ${o}`);
     }
   });
@@ -205,12 +205,7 @@ module.exports = {
 };
 
 if (require.main === module) {
-  let r = parser.parseFile('input.model');
-  if (!r.status) {
-    parser.consoleOutput(r);
-    return;
-  }
-  let ast = r.value;
-  let person = ast[8];
-  out(person);
+  let prelude = loadPrelude();
+  let env = new Environment(prelude);
+  load(parser.parseFile('input.model'), env);
 }
