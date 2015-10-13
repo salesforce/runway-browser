@@ -13,6 +13,13 @@ type Server: record {
 
 var servers: Array<Server>[ServerId];
 
+rule deliverToken {
+    if token matches Intransit {
+        servers[token.to].hasToken = True;
+        token = AtServer { at: token.to };
+    }
+}
+
 for server in servers {
     rule passToken {
         if server.hasToken {
@@ -22,12 +29,6 @@ for server in servers {
             }
             token = InTransit { to: next };
             server.hasToken = False;
-        }
-    }
-    rule deliverToken {
-        if token matches Intransit {
-            servers[token.to].hasToken = True;
-            token = AtServer { at: token.to };
         }
     }
 }
