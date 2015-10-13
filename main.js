@@ -184,6 +184,11 @@ let load = function(parsed, env) {
   parsed.value.forEach((decl) => {
     if (decl.kind == 'typedecl') {
       env.assignType(decl.id.value, Type.make(decl.type, env, decl.id));
+    } else if (decl.kind == 'paramdecl') {
+      let type = Type.make(decl.type, env);
+      let value = type.makeDefaultValue();
+      value.assign(decl.default.value);
+      env.assignVar(decl.id.value, value);
     } else {
       let o = JSON.stringify(decl, null, 2);
       throw Error(`unknown statement: ${o}`);

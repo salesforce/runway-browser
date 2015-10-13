@@ -127,4 +127,13 @@ describe('main.js', function() {
     });
   }); // loadPrelude
 
+  describe('params', function() {
+    it('basic', function() {
+      let parsed = Parser.parse('param ELEVATORS: 1..1024 = 6;');
+      let env = new Environment();
+      main.load(parsed, env);
+      assert.equal(6, env.getVar('ELEVATORS').toString());
+    });
+  });
+
 });
