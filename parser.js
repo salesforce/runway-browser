@@ -65,6 +65,7 @@ let keywords = {};
   'matches',
   'node',
   'param',
+  'print',
   'record',
   'return',
   'rule',
@@ -357,6 +358,15 @@ let assignment = seqMap(
       expr: expr,
   }));
 
+let print = seqMap(
+  keywords.print,
+  expr,
+  semicolon,
+  (_, expr, _2) => ({
+      kind: 'print',
+      expr: expr,
+  }));
+
 let foreachLoop = seqMap(keywords.for,
   id,
   keywords.in,
@@ -420,6 +430,7 @@ let statement = Parsimmon.alt(
   ifElse,
   foreachLoop,
   assignment,
+  print,
   rule,
   rulefor,
   returnStmt,

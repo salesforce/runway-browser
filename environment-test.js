@@ -16,6 +16,8 @@ describe('environment.js', function() {
       }, Error);
       assert.deepEqual('footype', inner.getType('foo'));
       assert.deepEqual('bartype', inner.getType('bar'));
+      assert.deepEqual(['foo'], outer.getTypeNames());
+      assert.deepEqual(['foo', 'bar'], inner.getTypeNames());
     });
 
     it('assignVar, getVar', function() {
@@ -29,6 +31,8 @@ describe('environment.js', function() {
       }, Error);
       assert.deepEqual('foovar', inner.getVar('foo'));
       assert.deepEqual('barvar', inner.getVar('bar'));
+      assert.deepEqual(['foo'], outer.getVarNames());
+      assert.deepEqual(['foo', 'bar'], inner.getVarNames());
     });
   });
 });

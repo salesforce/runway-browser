@@ -247,6 +247,8 @@ class Code {
     } else if (ast.kind == 'apply') {
       let args = ast.args.map(format).join(', ');
       return `${ast.func}(${args})`;
+    } else if (ast.kind == 'print') {
+      return `print ${format(ast.expr)}`;
     } else if (ast.kind == 'vardecl') {
       let def = '';
       if (ast.default !== undefined) {
@@ -257,6 +259,25 @@ class Code {
       out(ast);
       return `${ast.kind}`;
     }
+  }
+
+  evaluate() {
+    let evaluate = (ast) => {
+      if (ast.kind == 'print') {
+        console.log(evaluate(ast.expr).toString());
+      } else if (ast.kind == 'sequence') {
+        ast.statements.forEach(evaluate);
+      } else if (ast.kind == 'id') {
+        return this.env.getVar(ast.value);
+      } else if (ast.kind == 'assign') {
+        console.log(ast);
+        this.env.getVar(ast.id.value).assign(evaluate(ast.expr));
+      } else {
+        let o = JSON.stringify(ast, null, 2);
+        throw Error(`Evaluation not implemented for: ${o}`);
+      }
+    };
+    evaluate(this.decl);
   }
 
   toString() {
@@ -287,9 +308,17 @@ let load = function(parsed, env) {
     } else if (decl.kind == 'rule') {
       let rule = new Code(decl.code, env, decl.id.value);
       console.log(rule.toString());
+      if (env.rules === undefined) {
+        env.rules = {};
+      }
+      env.rules[decl.id.value] = rule;
     } else if (decl.kind == 'rulefor') {
       let rule = new Code(decl.code, env, decl.id.value);
       console.log(rule.toString());
+      if (env.rules === undefined) {
+        env.rules = {};
+      }
+      env.rules[decl.id.value] = rule;
     } else {
       let o = JSON.stringify(decl, null, 2);
       throw Error(`unknown statement: ${o}`);
@@ -313,10 +342,47 @@ module.exports = {
 if (require.main === module) {
   let prelude = loadPrelude();
   let env = new Environment(prelude);
-  let filename = 'input.model';
   if (process.argv.length > 2) {
     filename = process.argv[2];
+    load(parser.parseFile(filename), env);
+    console.log(env.toString());
+  } else { // run repl
+
+    var readline = require('readline').createInterface({
+      input: process.stdin,
+      output: process.stdout
+    });
+
+    var loop = function() {
+      readline.question('> ', function(input) {
+        if (input == '.types') {
+          readline.write(`${env.getTypeNames().join(' ')}\n`);
+        } else if (input == '.vars') {
+          readline.write(`${env.getVarNames().join(' ')}\n`);
+        } else if (input == 'exit') {
+          readline.close();
+          return;
+        } else if (input.length == 0) {
+          // do nothing
+        } else if (input[0] == '.') {
+          readline.write('huh?\n');
+        } else if (input.slice(0, 2) == 'do') {
+          try {
+            load(parser.parse(`rule interactive { ${input.slice(2)} }`), env);
+            env.rules['interactive'].evaluate();
+          } catch ( e ) {
+            readline.write(`${e}\n`);
+          }
+        } else {
+          try {
+            load(parser.parse(input), env);
+          } catch ( e ) {
+            readline.write(`${e}\n`);
+          }
+        }
+        loop();
+      });
+    };
+    loop();
   }
-  load(parser.parseFile(filename), env);
-  console.log(env.toString());
 }

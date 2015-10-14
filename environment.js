@@ -32,6 +32,15 @@ class Environment {
     return undefined;
   }
 
+  getTypeNames() {
+    let here = Array.from(this.types.keys());
+    if (this.enclosing != null) {
+      return this.enclosing.getTypeNames().concat(here);
+    } else {
+      return here;
+    }
+  }
+
   assignVar(id, decl) {
     let v = this.getVar(id);
     if (v != undefined) {
@@ -49,6 +58,15 @@ class Environment {
       return this.enclosing.getVar(id);
     }
     return undefined;
+  }
+
+  getVarNames() {
+    let here = Array.from(this.vars.keys());
+    if (this.enclosing != null) {
+      return this.enclosing.getVarNames().concat(here);
+    } else {
+      return here;
+    }
   }
 
   toString() {
