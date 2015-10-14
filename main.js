@@ -210,6 +210,60 @@ class ArrayType extends Type {
   }
 }
 
+class Code {
+  constructor(decl, env, name) {
+    this.decl = decl;
+    this.env = env;
+    this.name = name;
+  }
+
+  static format(ast) {
+    let format = Code.format;
+    if (ast.kind == 'sequence') {
+      return ast.statements.map((v) => format(v)).join("\n");
+    } else if (ast.kind == 'ifelse') {
+      return `if ${format(ast.condition)} {
+  ${format(ast.thenblock)}
+} else {
+  ${format(ast.elseblock)}
+}`;
+    } else if (ast.kind == 'matches') {
+      return `${format(ast.expr)} matches ${format(ast.variant)}`;
+    } else if (ast.kind == 'assign') {
+      return `${format(ast.id)} = ${format(ast.expr)};`;
+    } else if (ast.kind == 'recordvalue') {
+      let inner = ast.fields.map((f) => `${f.id.value}: ${format(f.expr)}`).join(', ');
+      return `${ast.type.value} { ${inner} }`;
+    } else if (ast.kind == 'lookup') {
+      return `${format(ast.parent)}.${format(ast.child)}`;
+    } else if (ast.kind == 'index') {
+      return `${format(ast.parent)}[${format(ast.by)}]`;
+    } else if (ast.kind == 'id') {
+      return `${ast.value}`;
+    } else if (ast.kind == 'alias') {
+      return `${ast.value}`;
+    } else if (ast.kind == 'number') {
+      return `${ast.value}`;
+    } else if (ast.kind == 'apply') {
+      let args = ast.args.map(format).join(', ');
+      return `${ast.func}(${args})`;
+    } else if (ast.kind == 'vardecl') {
+      let def = '';
+      if (ast.default !== undefined) {
+        def = ` = ${format(ast.default)}`;
+      }
+      return `var ${ast.id.value} : ${format(ast.type)}${def};`;
+    } else {
+      out(ast);
+      return `${ast.kind}`;
+    }
+  }
+
+  toString() {
+    return Code.format(this.decl);
+  }
+}
+
 let load = function(parsed, env) {
   if (!parsed.status) {
     let o = JSON.stringify(parsed, null, 2);
@@ -230,6 +284,12 @@ let load = function(parsed, env) {
         value.assign(decl.default.value);
       }
       env.assignVar(decl.id.value, value);
+    } else if (decl.kind == 'rule') {
+      let rule = new Code(decl.code, env, decl.id.value);
+      console.log(rule.toString());
+    } else if (decl.kind == 'rulefor') {
+      let rule = new Code(decl.code, env, decl.id.value);
+      console.log(rule.toString());
     } else {
       let o = JSON.stringify(decl, null, 2);
       throw Error(`unknown statement: ${o}`);

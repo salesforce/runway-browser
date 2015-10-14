@@ -65,8 +65,14 @@ let numberWithUnit = lexeme(regex(re))
     };
   })
   .desc('number with unit').mark();
-let number = lexeme(regex(/[0-9]+/).map(parseInt)).desc('number').mark();
-let id = lexeme(regex(/[a-z_]\w*/i)).desc('identifier').mark();
+let number = lexeme(regex(/[0-9]+/).map(parseInt)).desc('number').mark().map((v) => {
+  v.kind = 'number';
+  return v;
+});
+let id = lexeme(regex(/[a-z_]\w*/i)).desc('identifier').mark().map((v) => {
+  v.kind = 'id';
+  return v;
+});
 
 let binop = alt(times, plus, minus, langle, rangle, leq, req);
 
@@ -281,7 +287,10 @@ let vardecl = seqMap(lexeme(string('var')),
 
 let block = lazy(() => {
   return lbrace
-    .then(statement.many())
+    .then(statement.many()).map((statements) => ({
+      kind: 'sequence',
+      statements: statements,
+  }))
     .skip(rbrace);
 });
 
@@ -344,7 +353,16 @@ let foreachLoop = seqMap(lexeme(string('for')),
 let ifElse = seqMap(lexeme(string('if')),
   expr,
   block,
-  lexeme(string('else')).then(block).times(0, 1),
+  lexeme(string('else')).then(block).times(0, 1).map((elses) => {
+    if (elses.length == 0) {
+      return {
+        kind: 'sequence',
+        statements: [],
+      }
+    } else {
+      return elses[0];
+    }
+  }),
   (_, condition, thenblock, elseblock) => ({
       kind: 'ifelse',
       condition: condition,
@@ -361,6 +379,21 @@ let rule = seqMap(lexeme(string('rule')),
       code: block,
   }));
 
+let rulefor = seqMap(lexeme(string('rule')),
+  id,
+  lexeme(string('for')),
+  id,
+  lexeme(string('in')),
+  expr,
+  block,
+  (_, id, _2, variable, _3, expr, block) => ({
+      kind: 'rulefor',
+      id: id,
+      variable: variable,
+      expr: expr,
+      code: block,
+  }));
+
 let statement = Parsimmon.alt(
   param,
   typedecl,
@@ -369,6 +402,7 @@ let statement = Parsimmon.alt(
   foreachLoop,
   assignment,
   rule,
+  rulefor,
   returnStmt,
   vardecl).source();
 

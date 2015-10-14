@@ -4,19 +4,22 @@
     "id": {
       "start": 6,
       "value": "ELEVATORS",
-      "end": 15
+      "end": 15,
+      "kind": "id"
     },
     "type": {
       "kind": "range",
       "low": {
         "start": 17,
         "value": 1,
-        "end": 18
+        "end": 18,
+        "kind": "number"
       },
       "high": {
         "start": 20,
         "value": 1024,
-        "end": 25
+        "end": 25,
+        "kind": "number"
       },
       "start": 17,
       "end": 25
@@ -24,7 +27,8 @@
     "default": {
       "start": 27,
       "value": 6,
-      "end": 28
+      "end": 28,
+      "kind": "number"
     },
     "start": 0,
     "end": 30
@@ -34,14 +38,16 @@
     "id": {
       "start": 36,
       "value": "PEOPLE",
-      "end": 42
+      "end": 42,
+      "kind": "id"
     },
     "type": {
       "kind": "range",
       "low": {
         "start": 44,
         "value": 1,
-        "end": 45
+        "end": 45,
+        "kind": "number"
       },
       "high": {
         "kind": "apply",
@@ -50,12 +56,14 @@
           {
             "start": 48,
             "value": "ELEVATORS",
-            "end": 57
+            "end": 57,
+            "kind": "id"
           },
           {
             "start": 58,
             "value": 100,
-            "end": 61
+            "end": 61,
+            "kind": "number"
           }
         ]
       },
@@ -65,7 +73,8 @@
     "default": {
       "start": 65,
       "value": 100,
-      "end": 68
+      "end": 68,
+      "kind": "number"
     },
     "start": 30,
     "end": 70
@@ -75,19 +84,22 @@
     "id": {
       "start": 76,
       "value": "FLOORS",
-      "end": 82
+      "end": 82,
+      "kind": "id"
     },
     "type": {
       "kind": "range",
       "low": {
         "start": 84,
         "value": 2,
-        "end": 85
+        "end": 85,
+        "kind": "number"
       },
       "high": {
         "start": 87,
         "value": 1000,
-        "end": 92
+        "end": 92,
+        "kind": "number"
       },
       "start": 84,
       "end": 92
@@ -95,7 +107,8 @@
     "default": {
       "start": 94,
       "value": 10,
-      "end": 96
+      "end": 96,
+      "kind": "number"
     },
     "start": 70,
     "end": 99
@@ -105,19 +118,22 @@
     "id": {
       "start": 104,
       "value": "ElevatorId",
-      "end": 114
+      "end": 114,
+      "kind": "id"
     },
     "type": {
       "kind": "range",
       "low": {
         "start": 116,
         "value": 1,
-        "end": 117
+        "end": 117,
+        "kind": "number"
       },
       "high": {
         "start": 119,
         "value": "ELEVATORS",
-        "end": 128
+        "end": 128,
+        "kind": "id"
       },
       "start": 116,
       "end": 128
@@ -130,19 +146,22 @@
     "id": {
       "start": 135,
       "value": "Floor",
-      "end": 140
+      "end": 140,
+      "kind": "id"
     },
     "type": {
       "kind": "range",
       "low": {
         "start": 142,
         "value": 1,
-        "end": 143
+        "end": 143,
+        "kind": "number"
       },
       "high": {
         "start": 145,
         "value": "FLOORS",
-        "end": 151
+        "end": 151,
+        "kind": "id"
       },
       "start": 142,
       "end": 151
@@ -155,7 +174,8 @@
     "id": {
       "start": 199,
       "value": "openTime",
-      "end": 207
+      "end": 207,
+      "kind": "id"
     },
     "args": [],
     "returntype": {
@@ -164,22 +184,25 @@
       "end": 218,
       "kind": "alias"
     },
-    "code": [
-      {
-        "kind": "returnstmt",
-        "value": {
-          "start": 231,
+    "code": {
+      "kind": "sequence",
+      "statements": [
+        {
+          "kind": "returnstmt",
           "value": {
-            "kind": "numberWithUnit",
-            "number": "3",
-            "unit": "s"
+            "start": 231,
+            "value": {
+              "kind": "numberWithUnit",
+              "number": "3",
+              "unit": "s"
+            },
+            "end": 233
           },
-          "end": 233
-        },
-        "start": 224,
-        "end": 235
-      }
-    ],
+          "start": 224,
+          "end": 235
+        }
+      ]
+    },
     "start": 186,
     "end": 282
   },
@@ -188,7 +211,8 @@
     "id": {
       "start": 295,
       "value": "doorTime",
-      "end": 303
+      "end": 303,
+      "kind": "id"
     },
     "args": [],
     "returntype": {
@@ -197,22 +221,25 @@
       "end": 314,
       "kind": "alias"
     },
-    "code": [
-      {
-        "kind": "returnstmt",
-        "value": {
-          "start": 327,
+    "code": {
+      "kind": "sequence",
+      "statements": [
+        {
+          "kind": "returnstmt",
           "value": {
-            "kind": "numberWithUnit",
-            "number": "1",
-            "unit": "s"
+            "start": 327,
+            "value": {
+              "kind": "numberWithUnit",
+              "number": "1",
+              "unit": "s"
+            },
+            "end": 329
           },
-          "end": 329
-        },
-        "start": 320,
-        "end": 331
-      }
-    ],
+          "start": 320,
+          "end": 331
+        }
+      ]
+    },
     "start": 282,
     "end": 334
   },
@@ -221,14 +248,16 @@
     "id": {
       "start": 347,
       "value": "makeDestination",
-      "end": 362
+      "end": 362,
+      "kind": "id"
     },
     "args": [
       {
         "id": {
           "start": 363,
           "value": "start",
-          "end": 368
+          "end": 368,
+          "kind": "id"
         },
         "type": {
           "start": 370,
@@ -244,18 +273,22 @@
       "end": 386,
       "kind": "alias"
     },
-    "code": [
-      {
-        "kind": "returnstmt",
-        "value": {
-          "start": 399,
-          "value": "start",
-          "end": 404
-        },
-        "start": 392,
-        "end": 406
-      }
-    ],
+    "code": {
+      "kind": "sequence",
+      "statements": [
+        {
+          "kind": "returnstmt",
+          "value": {
+            "start": 399,
+            "value": "start",
+            "end": 404,
+            "kind": "id"
+          },
+          "start": 392,
+          "end": 406
+        }
+      ]
+    },
     "start": 334,
     "end": 409
   },
@@ -264,7 +297,8 @@
     "id": {
       "start": 414,
       "value": "Person",
-      "end": 420
+      "end": 420,
+      "kind": "id"
     },
     "type": {
       "kind": "record",
@@ -273,7 +307,8 @@
           "id": {
             "start": 433,
             "value": "state",
-            "end": 438
+            "end": 438,
+            "kind": "id"
           },
           "type": {
             "kind": "either",
@@ -282,7 +317,8 @@
                 "id": {
                   "start": 457,
                   "value": "Sleeping",
-                  "end": 466
+                  "end": 466,
+                  "kind": "id"
                 },
                 "type": {
                   "kind": "record",
@@ -291,7 +327,8 @@
                       "id": {
                         "start": 480,
                         "value": "floor",
-                        "end": 485
+                        "end": 485,
+                        "kind": "id"
                       },
                       "type": {
                         "start": 487,
@@ -307,7 +344,8 @@
                 "id": {
                   "start": 513,
                   "value": "Waiting",
-                  "end": 521
+                  "end": 521,
+                  "kind": "id"
                 },
                 "type": {
                   "kind": "record",
@@ -316,7 +354,8 @@
                       "id": {
                         "start": 535,
                         "value": "floor",
-                        "end": 540
+                        "end": 540,
+                        "kind": "id"
                       },
                       "type": {
                         "start": 542,
@@ -329,7 +368,8 @@
                       "id": {
                         "start": 561,
                         "value": "destination",
-                        "end": 572
+                        "end": 572,
+                        "kind": "id"
                       },
                       "type": {
                         "start": 574,
@@ -345,7 +385,8 @@
                 "id": {
                   "start": 600,
                   "value": "Riding",
-                  "end": 607
+                  "end": 607,
+                  "kind": "id"
                 },
                 "type": {
                   "kind": "record",
@@ -354,7 +395,8 @@
                       "id": {
                         "start": 621,
                         "value": "elevator",
-                        "end": 629
+                        "end": 629,
+                        "kind": "id"
                       },
                       "type": {
                         "start": 631,
@@ -367,7 +409,8 @@
                       "id": {
                         "start": 655,
                         "value": "destination",
-                        "end": 666
+                        "end": 666,
+                        "kind": "id"
                       },
                       "type": {
                         "start": 668,
@@ -392,14 +435,16 @@
     "id": {
       "start": 699,
       "value": "people",
-      "end": 705
+      "end": 705,
+      "kind": "id"
     },
     "type": {
       "kind": "generic",
       "base": {
         "start": 707,
         "value": "Array",
-        "end": 712
+        "end": 712,
+        "kind": "id"
       },
       "args": [
         {
@@ -424,7 +469,8 @@
     "id": {
       "start": 738,
       "value": "FloorControl",
-      "end": 750
+      "end": 750,
+      "kind": "id"
     },
     "type": {
       "kind": "record",
@@ -433,7 +479,8 @@
           "id": {
             "start": 763,
             "value": "downActive",
-            "end": 773
+            "end": 773,
+            "kind": "id"
           },
           "type": {
             "start": 775,
@@ -446,7 +493,8 @@
           "id": {
             "start": 788,
             "value": "upActive",
-            "end": 796
+            "end": 796,
+            "kind": "id"
           },
           "type": {
             "start": 798,
@@ -465,14 +513,16 @@
     "id": {
       "start": 812,
       "value": "floorControls",
-      "end": 825
+      "end": 825,
+      "kind": "id"
     },
     "type": {
       "kind": "generic",
       "base": {
         "start": 827,
         "value": "Array",
-        "end": 832
+        "end": 832,
+        "kind": "id"
       },
       "args": [
         {
@@ -497,7 +547,8 @@
     "id": {
       "start": 861,
       "value": "Elevator",
-      "end": 869
+      "end": 869,
+      "kind": "id"
     },
     "type": {
       "kind": "record",
@@ -506,14 +557,16 @@
           "id": {
             "start": 882,
             "value": "destinations",
-            "end": 894
+            "end": 894,
+            "kind": "id"
           },
           "type": {
             "kind": "generic",
             "base": {
               "start": 896,
               "value": "Set",
-              "end": 899
+              "end": 899,
+              "kind": "id"
             },
             "args": [
               {
@@ -529,14 +582,16 @@
           "id": {
             "start": 912,
             "value": "riders",
-            "end": 918
+            "end": 918,
+            "kind": "id"
           },
           "type": {
             "kind": "generic",
             "base": {
               "start": 920,
               "value": "Set",
-              "end": 923
+              "end": 923,
+              "kind": "id"
             },
             "args": [
               {
@@ -552,7 +607,8 @@
           "id": {
             "start": 939,
             "value": "direction",
-            "end": 948
+            "end": 948,
+            "kind": "id"
           },
           "type": {
             "kind": "either",
@@ -561,7 +617,8 @@
                 "id": {
                   "start": 967,
                   "value": "Neutral",
-                  "end": 974
+                  "end": 974,
+                  "kind": "id"
                 },
                 "type": {
                   "fields": [],
@@ -572,7 +629,8 @@
                 "id": {
                   "start": 984,
                   "value": "Up",
-                  "end": 986
+                  "end": 986,
+                  "kind": "id"
                 },
                 "type": {
                   "fields": [],
@@ -583,7 +641,8 @@
                 "id": {
                   "start": 996,
                   "value": "Down",
-                  "end": 1000
+                  "end": 1000,
+                  "kind": "id"
                 },
                 "type": {
                   "fields": [],
@@ -597,7 +656,8 @@
           "id": {
             "start": 1013,
             "value": "location",
-            "end": 1021
+            "end": 1021,
+            "kind": "id"
           },
           "type": {
             "kind": "either",
@@ -606,7 +666,8 @@
                 "id": {
                   "start": 1040,
                   "value": "AtFloor",
-                  "end": 1048
+                  "end": 1048,
+                  "kind": "id"
                 },
                 "type": {
                   "kind": "record",
@@ -615,7 +676,8 @@
                       "id": {
                         "start": 1062,
                         "value": "at",
-                        "end": 1064
+                        "end": 1064,
+                        "kind": "id"
                       },
                       "type": {
                         "start": 1066,
@@ -628,7 +690,8 @@
                       "id": {
                         "start": 1085,
                         "value": "doors",
-                        "end": 1090
+                        "end": 1090,
+                        "kind": "id"
                       },
                       "type": {
                         "kind": "either",
@@ -637,7 +700,8 @@
                             "id": {
                               "start": 1117,
                               "value": "Closed",
-                              "end": 1123
+                              "end": 1123,
+                              "kind": "id"
                             },
                             "type": {
                               "fields": [],
@@ -648,7 +712,8 @@
                             "id": {
                               "start": 1141,
                               "value": "Opening",
-                              "end": 1149
+                              "end": 1149,
+                              "kind": "id"
                             },
                             "type": {
                               "kind": "record",
@@ -657,7 +722,8 @@
                                   "id": {
                                     "start": 1171,
                                     "value": "openAt",
-                                    "end": 1177
+                                    "end": 1177,
+                                    "kind": "id"
                                   },
                                   "type": {
                                     "start": 1179,
@@ -673,7 +739,8 @@
                             "id": {
                               "start": 1220,
                               "value": "Open",
-                              "end": 1225
+                              "end": 1225,
+                              "kind": "id"
                             },
                             "type": {
                               "kind": "record",
@@ -682,7 +749,8 @@
                                   "id": {
                                     "start": 1247,
                                     "value": "closeAt",
-                                    "end": 1254
+                                    "end": 1254,
+                                    "kind": "id"
                                   },
                                   "type": {
                                     "start": 1256,
@@ -698,7 +766,8 @@
                             "id": {
                               "start": 1297,
                               "value": "Closing",
-                              "end": 1305
+                              "end": 1305,
+                              "kind": "id"
                             },
                             "type": {
                               "kind": "record",
@@ -707,7 +776,8 @@
                                   "id": {
                                     "start": 1327,
                                     "value": "closedAt",
-                                    "end": 1335
+                                    "end": 1335,
+                                    "kind": "id"
                                   },
                                   "type": {
                                     "start": 1337,
@@ -729,7 +799,8 @@
                 "id": {
                   "start": 1396,
                   "value": "Between",
-                  "end": 1404
+                  "end": 1404,
+                  "kind": "id"
                 },
                 "type": {
                   "kind": "record",
@@ -738,7 +809,8 @@
                       "id": {
                         "start": 1418,
                         "value": "next",
-                        "end": 1422
+                        "end": 1422,
+                        "kind": "id"
                       },
                       "type": {
                         "start": 1424,
@@ -763,14 +835,16 @@
     "id": {
       "start": 1507,
       "value": "elevators",
-      "end": 1516
+      "end": 1516,
+      "kind": "id"
     },
     "type": {
       "kind": "generic",
       "base": {
         "start": 1518,
         "value": "Array",
-        "end": 1523
+        "end": 1523,
+        "kind": "id"
       },
       "args": [
         {
