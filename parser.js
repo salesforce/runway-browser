@@ -54,6 +54,26 @@ let rparen = lexeme(string(')'));
 let semicolon = lexeme(string(';'));
 let times = lexeme(string('*'));
 
+let keywords = {};
+[
+  'distribution',
+  'either',
+  'else',
+  'for',
+  'if',
+  'in',
+  'matches',
+  'node',
+  'param',
+  'record',
+  'return',
+  'rule',
+  'type',
+  'var',
+].forEach((keyword) => {
+  keywords[keyword] = lexeme(string(keyword));
+});
+
 let re = /([0-9]+)([a-z]+)/i;
 let numberWithUnit = lexeme(regex(re))
   .map((s) => {
@@ -127,7 +147,7 @@ let expr = lazy(() => alt(
           args: [left, right]
       })),
     seqMap(expratom,
-      lexeme(string('matches')),
+      keywords.matches,
       id,
       (expr, _, id) => ({
           kind: 'matches',
@@ -181,8 +201,7 @@ let recordvalue = seqMap(id,
   }));
 
 
-let record = alt(lexeme(string('node')),
-  lexeme(string('record')))
+let record = alt(keywords.node, keywords.record)
   .skip(lbrace)
   .then(fieldlist)
   .skip(rbrace);
@@ -203,7 +222,7 @@ let eitherfield = seqMap(id,
 })));
 let eitherfieldlist = sepByOptTrail(eitherfield, comma);
 
-let either = lexeme(string('either'))
+let either = keywords.either
   .skip(lbrace)
   .then(eitherfieldlist.map((fields) => ({
       kind: 'either',
@@ -242,7 +261,7 @@ let complexType = Parsimmon.alt(
   record,
   either);
 
-let param = seqMap(lexeme(string('param')),
+let param = seqMap(keywords.param,
   id,
   colon,
   type,
@@ -256,7 +275,7 @@ let param = seqMap(lexeme(string('param')),
       default: value
   }));
 
-let typedecl = seqMap(lexeme(string('type')),
+let typedecl = seqMap(keywords.type,
   id,
   colon,
   alt(complexType.skip(semicolon.times(0, 1)),
@@ -267,7 +286,7 @@ let typedecl = seqMap(lexeme(string('type')),
       type: type,
   }));
 
-let vardecl = seqMap(lexeme(string('var')),
+let vardecl = seqMap(keywords.var,
   id,
   colon,
   type,
@@ -306,7 +325,7 @@ let arglist = lparen
   .then(sepBy(arg, comma))
   .skip(rparen);
 
-let distribution = seqMap(lexeme(string('distribution')),
+let distribution = seqMap(keywords.distribution,
   id,
   arglist,
   arrow,
@@ -320,7 +339,7 @@ let distribution = seqMap(lexeme(string('distribution')),
       code: block
   }));
 
-let returnStmt = lexeme(string('return'))
+let returnStmt = keywords.return
   .then(expr).map((v) => ({
     kind: 'returnstmt',
     value: v,
@@ -338,9 +357,9 @@ let assignment = seqMap(
       expr: expr,
   }));
 
-let foreachLoop = seqMap(lexeme(string('for')),
+let foreachLoop = seqMap(keywords.for,
   id,
-  lexeme(string('in')),
+  keywords.in,
   expr,
   block,
   (_, id, _2, expr, block) => ({
@@ -350,10 +369,10 @@ let foreachLoop = seqMap(lexeme(string('for')),
       code: block,
   }));
 
-let ifElse = seqMap(lexeme(string('if')),
+let ifElse = seqMap(keywords.if,
   expr,
   block,
-  lexeme(string('else')).then(block).times(0, 1).map((elses) => {
+  (keywords.else).then(block).times(0, 1).map((elses) => {
     if (elses.length == 0) {
       return {
         kind: 'sequence',
@@ -370,7 +389,7 @@ let ifElse = seqMap(lexeme(string('if')),
       elseblock: elseblock,
   }));
 
-let rule = seqMap(lexeme(string('rule')),
+let rule = seqMap(keywords.rule,
   id,
   block,
   (_, id, block) => ({
@@ -379,11 +398,11 @@ let rule = seqMap(lexeme(string('rule')),
       code: block,
   }));
 
-let rulefor = seqMap(lexeme(string('rule')),
+let rulefor = seqMap(keywords.rule,
   id,
-  lexeme(string('for')),
+  keywords.for,
   id,
-  lexeme(string('in')),
+  keywords.in,
   expr,
   block,
   (_, id, _2, variable, _3, expr, block) => ({
