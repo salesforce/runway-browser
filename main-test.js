@@ -123,7 +123,7 @@ describe('main.js', function() {
       let prelude = main.loadPrelude();
       let booleanType = prelude.getType('Boolean');
       let booleanValue = booleanType.makeDefaultValue();
-      assert.equal('False', booleanValue.value);
+      assert.equal('False', booleanValue.tag);
     });
   }); // loadPrelude
 
@@ -160,4 +160,19 @@ describe('main.js', function() {
 
   });
 
+  describe('code evaluation', function() {
+    it('basic', function() {
+      let prelude = main.loadPrelude();
+      let env = new Environment(prelude);
+      let parsed = Parser.parse(`
+        var x : Boolean;
+        rule foo {
+          x = True;
+        }
+      `);
+      main.load(parsed, env);
+      env.rules['foo'].evaluate();
+      assert.equal('True', env.getVar('x'));
+    });
+  });
 });

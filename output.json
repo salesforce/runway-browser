@@ -620,10 +620,7 @@
                   "end": 974,
                   "kind": "id"
                 },
-                "type": {
-                  "fields": [],
-                  "kind": "record"
-                }
+                "kind": "enumvariant"
               },
               {
                 "id": {
@@ -632,10 +629,7 @@
                   "end": 986,
                   "kind": "id"
                 },
-                "type": {
-                  "fields": [],
-                  "kind": "record"
-                }
+                "kind": "enumvariant"
               },
               {
                 "id": {
@@ -644,10 +638,7 @@
                   "end": 1000,
                   "kind": "id"
                 },
-                "type": {
-                  "fields": [],
-                  "kind": "record"
-                }
+                "kind": "enumvariant"
               }
             ]
           }
@@ -703,10 +694,7 @@
                               "end": 1123,
                               "kind": "id"
                             },
-                            "type": {
-                              "fields": [],
-                              "kind": "record"
-                            }
+                            "kind": "enumvariant"
                           },
                           {
                             "id": {

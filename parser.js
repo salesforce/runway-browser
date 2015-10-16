@@ -216,10 +216,7 @@ let eitherfield = seqMap(id,
       type: fields,
   })).or(id.map((id) => ({
     id: id,
-    type: {
-      fields: [],
-      kind: 'record',
-    },
+    kind: 'enumvariant',
 })));
 let eitherfieldlist = sepByOptTrail(eitherfield, comma);
 
