@@ -1,15 +1,15 @@
 "use strict";
 
+let Input = require('./input.js');
+let Source = require('./source.js');
 let process = require('process');
 let Parsimmon = require('./bower_components/parsimmon/build/parsimmon.commonjs.js');
-let fs = require('fs');
-let input = fs.readFileSync('input.model').toString();
 
-// like .mark() except puts start and end in same object as value
+// Like .mark() except puts start and end in a 'source' attribute hanging off value.
+// The 'input' attribute of the Source values is set later in parse().
 Parsimmon.Parser.prototype.source = function() {
   return Parsimmon.Parser.prototype.mark.call(this).map((marked) => {
-    marked.value.start = marked.start;
-    marked.value.end = marked.end;
+    marked.value.source = new Source(marked.start, marked.end);
     return marked.value;
   });
 }
@@ -85,15 +85,16 @@ let numberWithUnit = lexeme(regex(re))
       unit: result[2],
     };
   })
-  .desc('number with unit').mark();
-let number = lexeme(regex(/[0-9]+/).map(parseInt)).desc('number').mark().map((v) => {
-  v.kind = 'number';
-  return v;
-});
-let id = lexeme(regex(/[a-z_]\w*/i)).desc('identifier').mark().map((v) => {
-  v.kind = 'id';
-  return v;
-});
+  .source()
+  .desc('number with unit');
+let number = lexeme(regex(/[0-9]+/).map(parseInt)).desc('number').map((v) => ({
+    kind: 'number',
+    value: v,
+})).source();
+let id = lexeme(regex(/[a-z_]\w*/i)).desc('identifier').map((v) => ({
+    kind: 'id',
+    value: v,
+})).source();
 
 let binop = alt(times, plus, minus, langle, rangle, leq, req);
 
@@ -438,67 +439,43 @@ let file = lazy(() => {
   return lexeme(string('')).then(statement.many());
 });
 
+// Given an instance of Input, attempt to parse it.
+// Either returns an AST or throws an Error.
 let parse = function(input) {
-  let r = file.parse(input);
-  r.input = input;
-  return r;
-}
-let parseFile = function(filename) {
-  return parse(fs.readFileSync(filename).toString());
-}
-let consoleOutput = function(parseResult) {
-  let r = parseResult;
-  let input = r.input;
+  let r = file.parse(input.getText());
   if (r.status) {
-    console.log(JSON.stringify(r.value, null, 2));
+    let setInputAll = (obj) => {
+      for (var property in obj) {
+        var value = obj[property];
+        if (value instanceof Source) {
+          value.setInput(input);
+        } else if (typeof value == 'object') {
+          setInputAll(value);
+        }
+      }
+    };
+    setInputAll(r.value);
+    return r.value;
   } else {
-    console.log('Parsing failed');
-    let startsAt = input.lastIndexOf("\n", r.index);
-    if (startsAt == -1) {
-      startsAt = r.index;
-    } else {
-      startsAt += 1;
-    }
-    let endsAt = input.indexOf("\n", r.index);
-    let lineno = 1;
-    let nl = -1;
-    while (true) {
-      nl = input.indexOf("\n", nl + 1);
-      if (nl == -1 || nl > r.index) {
-        break;
-      }
-      lineno += 1;
-    }
-    console.log('line %d: %s', lineno, input.slice(startsAt, endsAt));
-    let w = '';
-    for (let i = 0; i < r.index - startsAt + 7 + lineno.toString().length; i += 1) {
-      w += ' ';
-    }
-    console.log('%s^', w);
-    //console.log('Starting:', input.slice(r.index, endsAt));
-
-    let unique = [];
+    let at = input.lookup(r.index);
+    let expected = [];
     r.expected.forEach((v) => {
-      if (unique.indexOf(v) == -1) {
-        unique.push(v);
+      if (expected.indexOf(v) == -1) {
+        expected.push(v);
       }
     });
-    unique.sort();
-    let exp = '';
-    unique.forEach((v, i) => {
-      exp += v.toString();
-      if (i < unique.length - 1) {
-        exp += ', ';
-      }
-    });
-    console.log('expected:', exp);
+    expected = expected.sort();
+    let error = Error(`Parsing failed in ${input.filename} at line ${at.line}, col ${at.col}:
+${input.highlight(at)}
+Expected one of: ${expected.join(', ')}`);
+    error.input = input;
+    error.failAt = r.at;
+    error.expected = expected;
+    throw error;
   }
-};
-
+}
 module.exports = {
   parse: parse,
-  parseFile: parseFile,
-  consoleOutput: consoleOutput,
 };
 
 if (require.main === module) {
@@ -506,5 +483,6 @@ if (require.main === module) {
   if (process.argv.length > 2) {
     filename = process.argv[2];
   }
-  consoleOutput(parseFile(filename));
+  let parsed = parse(new Input(filename));
+  console.log(JSON.stringify(parsed, null, 2));
 }

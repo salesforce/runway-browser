@@ -1,5 +1,6 @@
 "use strict";
 
+let Input = require('./input.js');
 let parser = require('./parser.js');
 let Environment = require('./environment.js');
 let process = require('process');
@@ -326,11 +327,7 @@ class Code {
 }
 
 let load = function(parsed, env) {
-  if (!parsed.status) {
-    let o = JSON.stringify(parsed, null, 2);
-    throw Error(`Parse error: ${o}`);
-  }
-  parsed.value.forEach((decl) => {
+  parsed.forEach((decl) => {
     if (decl.kind == 'typedecl') {
       env.assignType(decl.id.value, Type.make(decl.type, env, decl.id));
     } else if (decl.kind == 'paramdecl') {
@@ -369,7 +366,7 @@ let load = function(parsed, env) {
 
 let loadPrelude = function() {
   let env = new Environment();
-  load(parser.parseFile('prelude.model'), env);
+  load(parser.parse(new Input('prelude.model')), env);
   return env;
 };
 
@@ -384,7 +381,7 @@ if (require.main === module) {
   let env = new Environment(prelude);
   if (process.argv.length > 2) {
     filename = process.argv[2];
-    load(parser.parseFile(filename), env);
+    load(parser.parse(new Input(filename)), env);
     console.log(env.toString());
   } else { // run repl
 
@@ -408,14 +405,15 @@ if (require.main === module) {
           readline.write('huh?\n');
         } else if (input.slice(0, 2) == 'do') {
           try {
-            load(parser.parse(`rule interactive { ${input.slice(2)} }`), env);
+            load(parser.parse('REPL',
+              `rule interactive { ${input.slice(2)} }`), env);
             env.rules['interactive'].evaluate();
           } catch ( e ) {
             readline.write(`${e}\n`);
           }
         } else {
           try {
-            load(parser.parse(input), env);
+            load(parser.parse('REPL', input), env);
           } catch ( e ) {
             readline.write(`${e}\n`);
           }

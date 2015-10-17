@@ -2,187 +2,342 @@
   {
     "kind": "paramdecl",
     "id": {
-      "start": 6,
+      "kind": "id",
       "value": "ELEVATORS",
-      "end": 15,
-      "kind": "id"
+      "source": {
+        "input": {
+          "filename": "input.model"
+        },
+        "startchar": 6,
+        "endchar": 15
+      }
     },
     "type": {
       "kind": "range",
       "low": {
-        "start": 17,
+        "kind": "number",
         "value": 1,
-        "end": 18,
-        "kind": "number"
+        "source": {
+          "input": {
+            "filename": "input.model"
+          },
+          "startchar": 17,
+          "endchar": 18
+        }
       },
       "high": {
-        "start": 20,
+        "kind": "number",
         "value": 1024,
-        "end": 25,
-        "kind": "number"
+        "source": {
+          "input": {
+            "filename": "input.model"
+          },
+          "startchar": 20,
+          "endchar": 25
+        }
       },
-      "start": 17,
-      "end": 25
+      "source": {
+        "input": {
+          "filename": "input.model"
+        },
+        "startchar": 17,
+        "endchar": 25
+      }
     },
     "default": {
-      "start": 27,
+      "kind": "number",
       "value": 6,
-      "end": 28,
-      "kind": "number"
+      "source": {
+        "input": {
+          "filename": "input.model"
+        },
+        "startchar": 27,
+        "endchar": 28
+      }
     },
-    "start": 0,
-    "end": 30
+    "source": {
+      "input": {
+        "filename": "input.model"
+      },
+      "startchar": 0,
+      "endchar": 30
+    }
   },
   {
     "kind": "paramdecl",
     "id": {
-      "start": 36,
+      "kind": "id",
       "value": "PEOPLE",
-      "end": 42,
-      "kind": "id"
+      "source": {
+        "input": {
+          "filename": "input.model"
+        },
+        "startchar": 36,
+        "endchar": 42
+      }
     },
     "type": {
       "kind": "range",
       "low": {
-        "start": 44,
+        "kind": "number",
         "value": 1,
-        "end": 45,
-        "kind": "number"
+        "source": {
+          "input": {
+            "filename": "input.model"
+          },
+          "startchar": 44,
+          "endchar": 45
+        }
       },
       "high": {
         "kind": "apply",
         "func": "*",
         "args": [
           {
-            "start": 48,
+            "kind": "id",
             "value": "ELEVATORS",
-            "end": 57,
-            "kind": "id"
+            "source": {
+              "input": {
+                "filename": "input.model"
+              },
+              "startchar": 48,
+              "endchar": 57
+            }
           },
           {
-            "start": 58,
+            "kind": "number",
             "value": 100,
-            "end": 61,
-            "kind": "number"
+            "source": {
+              "input": {
+                "filename": "input.model"
+              },
+              "startchar": 58,
+              "endchar": 61
+            }
           }
         ]
       },
-      "start": 44,
-      "end": 63
+      "source": {
+        "input": {
+          "filename": "input.model"
+        },
+        "startchar": 44,
+        "endchar": 63
+      }
     },
     "default": {
-      "start": 65,
+      "kind": "number",
       "value": 100,
-      "end": 68,
-      "kind": "number"
+      "source": {
+        "input": {
+          "filename": "input.model"
+        },
+        "startchar": 65,
+        "endchar": 68
+      }
     },
-    "start": 30,
-    "end": 70
+    "source": {
+      "input": {
+        "filename": "input.model"
+      },
+      "startchar": 30,
+      "endchar": 70
+    }
   },
   {
     "kind": "paramdecl",
     "id": {
-      "start": 76,
+      "kind": "id",
       "value": "FLOORS",
-      "end": 82,
-      "kind": "id"
+      "source": {
+        "input": {
+          "filename": "input.model"
+        },
+        "startchar": 76,
+        "endchar": 82
+      }
     },
     "type": {
       "kind": "range",
       "low": {
-        "start": 84,
+        "kind": "number",
         "value": 2,
-        "end": 85,
-        "kind": "number"
+        "source": {
+          "input": {
+            "filename": "input.model"
+          },
+          "startchar": 84,
+          "endchar": 85
+        }
       },
       "high": {
-        "start": 87,
+        "kind": "number",
         "value": 1000,
-        "end": 92,
-        "kind": "number"
+        "source": {
+          "input": {
+            "filename": "input.model"
+          },
+          "startchar": 87,
+          "endchar": 92
+        }
       },
-      "start": 84,
-      "end": 92
+      "source": {
+        "input": {
+          "filename": "input.model"
+        },
+        "startchar": 84,
+        "endchar": 92
+      }
     },
     "default": {
-      "start": 94,
+      "kind": "number",
       "value": 10,
-      "end": 96,
-      "kind": "number"
+      "source": {
+        "input": {
+          "filename": "input.model"
+        },
+        "startchar": 94,
+        "endchar": 96
+      }
     },
-    "start": 70,
-    "end": 99
+    "source": {
+      "input": {
+        "filename": "input.model"
+      },
+      "startchar": 70,
+      "endchar": 99
+    }
   },
   {
     "kind": "typedecl",
     "id": {
-      "start": 104,
+      "kind": "id",
       "value": "ElevatorId",
-      "end": 114,
-      "kind": "id"
+      "source": {
+        "input": {
+          "filename": "input.model"
+        },
+        "startchar": 104,
+        "endchar": 114
+      }
     },
     "type": {
       "kind": "range",
       "low": {
-        "start": 116,
+        "kind": "number",
         "value": 1,
-        "end": 117,
-        "kind": "number"
+        "source": {
+          "input": {
+            "filename": "input.model"
+          },
+          "startchar": 116,
+          "endchar": 117
+        }
       },
       "high": {
-        "start": 119,
+        "kind": "id",
         "value": "ELEVATORS",
-        "end": 128,
-        "kind": "id"
+        "source": {
+          "input": {
+            "filename": "input.model"
+          },
+          "startchar": 119,
+          "endchar": 128
+        }
       },
-      "start": 116,
-      "end": 128
+      "source": {
+        "input": {
+          "filename": "input.model"
+        },
+        "startchar": 116,
+        "endchar": 128
+      }
     },
-    "start": 99,
-    "end": 130
+    "source": {
+      "input": {
+        "filename": "input.model"
+      },
+      "startchar": 99,
+      "endchar": 130
+    }
   },
   {
     "kind": "typedecl",
     "id": {
-      "start": 135,
+      "kind": "id",
       "value": "Floor",
-      "end": 140,
-      "kind": "id"
+      "source": {
+        "input": {
+          "filename": "input.model"
+        },
+        "startchar": 135,
+        "endchar": 140
+      }
     },
     "type": {
       "kind": "range",
       "low": {
-        "start": 142,
+        "kind": "number",
         "value": 1,
-        "end": 143,
-        "kind": "number"
+        "source": {
+          "input": {
+            "filename": "input.model"
+          },
+          "startchar": 142,
+          "endchar": 143
+        }
       },
       "high": {
-        "start": 145,
+        "kind": "id",
         "value": "FLOORS",
-        "end": 151,
-        "kind": "id"
+        "source": {
+          "input": {
+            "filename": "input.model"
+          },
+          "startchar": 145,
+          "endchar": 151
+        }
       },
-      "start": 142,
-      "end": 151
+      "source": {
+        "input": {
+          "filename": "input.model"
+        },
+        "startchar": 142,
+        "endchar": 151
+      }
     },
-    "start": 130,
-    "end": 186
+    "source": {
+      "input": {
+        "filename": "input.model"
+      },
+      "startchar": 130,
+      "endchar": 186
+    }
   },
   {
     "kind": "distributiondecl",
     "id": {
-      "start": 199,
+      "kind": "id",
       "value": "openTime",
-      "end": 207,
-      "kind": "id"
+      "source": {
+        "input": {
+          "filename": "input.model"
+        },
+        "startchar": 199,
+        "endchar": 207
+      }
     },
     "args": [],
     "returntype": {
-      "start": 213,
+      "kind": "alias",
       "value": "Time",
-      "end": 218,
-      "kind": "alias"
+      "source": {
+        "input": {
+          "filename": "input.model"
+        },
+        "startchar": 213,
+        "endchar": 218
+      }
     },
     "code": {
       "kind": "sequence",
@@ -190,36 +345,59 @@
         {
           "kind": "returnstmt",
           "value": {
-            "start": 231,
-            "value": {
-              "kind": "numberWithUnit",
-              "number": "3",
-              "unit": "s"
-            },
-            "end": 233
+            "kind": "numberWithUnit",
+            "number": "3",
+            "unit": "s",
+            "source": {
+              "input": {
+                "filename": "input.model"
+              },
+              "startchar": 231,
+              "endchar": 233
+            }
           },
-          "start": 224,
-          "end": 235
+          "source": {
+            "input": {
+              "filename": "input.model"
+            },
+            "startchar": 224,
+            "endchar": 235
+          }
         }
       ]
     },
-    "start": 186,
-    "end": 282
+    "source": {
+      "input": {
+        "filename": "input.model"
+      },
+      "startchar": 186,
+      "endchar": 282
+    }
   },
   {
     "kind": "distributiondecl",
     "id": {
-      "start": 295,
+      "kind": "id",
       "value": "doorTime",
-      "end": 303,
-      "kind": "id"
+      "source": {
+        "input": {
+          "filename": "input.model"
+        },
+        "startchar": 295,
+        "endchar": 303
+      }
     },
     "args": [],
     "returntype": {
-      "start": 309,
+      "kind": "alias",
       "value": "Time",
-      "end": 314,
-      "kind": "alias"
+      "source": {
+        "input": {
+          "filename": "input.model"
+        },
+        "startchar": 309,
+        "endchar": 314
+      }
     },
     "code": {
       "kind": "sequence",
@@ -227,51 +405,84 @@
         {
           "kind": "returnstmt",
           "value": {
-            "start": 327,
-            "value": {
-              "kind": "numberWithUnit",
-              "number": "1",
-              "unit": "s"
-            },
-            "end": 329
+            "kind": "numberWithUnit",
+            "number": "1",
+            "unit": "s",
+            "source": {
+              "input": {
+                "filename": "input.model"
+              },
+              "startchar": 327,
+              "endchar": 329
+            }
           },
-          "start": 320,
-          "end": 331
+          "source": {
+            "input": {
+              "filename": "input.model"
+            },
+            "startchar": 320,
+            "endchar": 331
+          }
         }
       ]
     },
-    "start": 282,
-    "end": 334
+    "source": {
+      "input": {
+        "filename": "input.model"
+      },
+      "startchar": 282,
+      "endchar": 334
+    }
   },
   {
     "kind": "distributiondecl",
     "id": {
-      "start": 347,
+      "kind": "id",
       "value": "makeDestination",
-      "end": 362,
-      "kind": "id"
+      "source": {
+        "input": {
+          "filename": "input.model"
+        },
+        "startchar": 347,
+        "endchar": 362
+      }
     },
     "args": [
       {
         "id": {
-          "start": 363,
+          "kind": "id",
           "value": "start",
-          "end": 368,
-          "kind": "id"
+          "source": {
+            "input": {
+              "filename": "input.model"
+            },
+            "startchar": 363,
+            "endchar": 368
+          }
         },
         "type": {
-          "start": 370,
+          "kind": "alias",
           "value": "Floor",
-          "end": 375,
-          "kind": "alias"
+          "source": {
+            "input": {
+              "filename": "input.model"
+            },
+            "startchar": 370,
+            "endchar": 375
+          }
         }
       }
     ],
     "returntype": {
-      "start": 380,
+      "kind": "alias",
       "value": "Floor",
-      "end": 386,
-      "kind": "alias"
+      "source": {
+        "input": {
+          "filename": "input.model"
+        },
+        "startchar": 380,
+        "endchar": 386
+      }
     },
     "code": {
       "kind": "sequence",
@@ -279,62 +490,102 @@
         {
           "kind": "returnstmt",
           "value": {
-            "start": 399,
+            "kind": "id",
             "value": "start",
-            "end": 404,
-            "kind": "id"
+            "source": {
+              "input": {
+                "filename": "input.model"
+              },
+              "startchar": 399,
+              "endchar": 404
+            }
           },
-          "start": 392,
-          "end": 406
+          "source": {
+            "input": {
+              "filename": "input.model"
+            },
+            "startchar": 392,
+            "endchar": 406
+          }
         }
       ]
     },
-    "start": 334,
-    "end": 409
+    "source": {
+      "input": {
+        "filename": "input.model"
+      },
+      "startchar": 334,
+      "endchar": 409
+    }
   },
   {
     "kind": "typedecl",
     "id": {
-      "start": 414,
+      "kind": "id",
       "value": "Person",
-      "end": 420,
-      "kind": "id"
+      "source": {
+        "input": {
+          "filename": "input.model"
+        },
+        "startchar": 414,
+        "endchar": 420
+      }
     },
     "type": {
       "kind": "record",
       "fields": [
         {
           "id": {
-            "start": 433,
+            "kind": "id",
             "value": "state",
-            "end": 438,
-            "kind": "id"
+            "source": {
+              "input": {
+                "filename": "input.model"
+              },
+              "startchar": 433,
+              "endchar": 438
+            }
           },
           "type": {
             "kind": "either",
             "fields": [
               {
                 "id": {
-                  "start": 457,
+                  "kind": "id",
                   "value": "Sleeping",
-                  "end": 466,
-                  "kind": "id"
+                  "source": {
+                    "input": {
+                      "filename": "input.model"
+                    },
+                    "startchar": 457,
+                    "endchar": 466
+                  }
                 },
                 "type": {
                   "kind": "record",
                   "fields": [
                     {
                       "id": {
-                        "start": 480,
+                        "kind": "id",
                         "value": "floor",
-                        "end": 485,
-                        "kind": "id"
+                        "source": {
+                          "input": {
+                            "filename": "input.model"
+                          },
+                          "startchar": 480,
+                          "endchar": 485
+                        }
                       },
                       "type": {
-                        "start": 487,
+                        "kind": "alias",
                         "value": "Floor",
-                        "end": 492,
-                        "kind": "alias"
+                        "source": {
+                          "input": {
+                            "filename": "input.model"
+                          },
+                          "startchar": 487,
+                          "endchar": 492
+                        }
                       }
                     }
                   ]
@@ -342,40 +593,65 @@
               },
               {
                 "id": {
-                  "start": 513,
+                  "kind": "id",
                   "value": "Waiting",
-                  "end": 521,
-                  "kind": "id"
+                  "source": {
+                    "input": {
+                      "filename": "input.model"
+                    },
+                    "startchar": 513,
+                    "endchar": 521
+                  }
                 },
                 "type": {
                   "kind": "record",
                   "fields": [
                     {
                       "id": {
-                        "start": 535,
+                        "kind": "id",
                         "value": "floor",
-                        "end": 540,
-                        "kind": "id"
+                        "source": {
+                          "input": {
+                            "filename": "input.model"
+                          },
+                          "startchar": 535,
+                          "endchar": 540
+                        }
                       },
                       "type": {
-                        "start": 542,
+                        "kind": "alias",
                         "value": "Floor",
-                        "end": 547,
-                        "kind": "alias"
+                        "source": {
+                          "input": {
+                            "filename": "input.model"
+                          },
+                          "startchar": 542,
+                          "endchar": 547
+                        }
                       }
                     },
                     {
                       "id": {
-                        "start": 561,
+                        "kind": "id",
                         "value": "destination",
-                        "end": 572,
-                        "kind": "id"
+                        "source": {
+                          "input": {
+                            "filename": "input.model"
+                          },
+                          "startchar": 561,
+                          "endchar": 572
+                        }
                       },
                       "type": {
-                        "start": 574,
+                        "kind": "alias",
                         "value": "Floor",
-                        "end": 579,
-                        "kind": "alias"
+                        "source": {
+                          "input": {
+                            "filename": "input.model"
+                          },
+                          "startchar": 574,
+                          "endchar": 579
+                        }
                       }
                     }
                   ]
@@ -383,40 +659,65 @@
               },
               {
                 "id": {
-                  "start": 600,
+                  "kind": "id",
                   "value": "Riding",
-                  "end": 607,
-                  "kind": "id"
+                  "source": {
+                    "input": {
+                      "filename": "input.model"
+                    },
+                    "startchar": 600,
+                    "endchar": 607
+                  }
                 },
                 "type": {
                   "kind": "record",
                   "fields": [
                     {
                       "id": {
-                        "start": 621,
+                        "kind": "id",
                         "value": "elevator",
-                        "end": 629,
-                        "kind": "id"
+                        "source": {
+                          "input": {
+                            "filename": "input.model"
+                          },
+                          "startchar": 621,
+                          "endchar": 629
+                        }
                       },
                       "type": {
-                        "start": 631,
+                        "kind": "alias",
                         "value": "ElevatorId",
-                        "end": 641,
-                        "kind": "alias"
+                        "source": {
+                          "input": {
+                            "filename": "input.model"
+                          },
+                          "startchar": 631,
+                          "endchar": 641
+                        }
                       }
                     },
                     {
                       "id": {
-                        "start": 655,
+                        "kind": "id",
                         "value": "destination",
-                        "end": 666,
-                        "kind": "id"
+                        "source": {
+                          "input": {
+                            "filename": "input.model"
+                          },
+                          "startchar": 655,
+                          "endchar": 666
+                        }
                       },
                       "type": {
-                        "start": 668,
+                        "kind": "alias",
                         "value": "Floor",
-                        "end": 673,
-                        "kind": "alias"
+                        "source": {
+                          "input": {
+                            "filename": "input.model"
+                          },
+                          "startchar": 668,
+                          "endchar": 673
+                        }
                       }
                     }
                   ]
@@ -427,216 +728,356 @@
         }
       ]
     },
-    "start": 409,
-    "end": 695
+    "source": {
+      "input": {
+        "filename": "input.model"
+      },
+      "startchar": 409,
+      "endchar": 695
+    }
   },
   {
     "kind": "vardecl",
     "id": {
-      "start": 699,
+      "kind": "id",
       "value": "people",
-      "end": 705,
-      "kind": "id"
+      "source": {
+        "input": {
+          "filename": "input.model"
+        },
+        "startchar": 699,
+        "endchar": 705
+      }
     },
     "type": {
       "kind": "generic",
       "base": {
-        "start": 707,
+        "kind": "id",
         "value": "Array",
-        "end": 712,
-        "kind": "id"
+        "source": {
+          "input": {
+            "filename": "input.model"
+          },
+          "startchar": 707,
+          "endchar": 712
+        }
       },
       "args": [
         {
-          "start": 713,
+          "kind": "alias",
           "value": "Person",
-          "end": 719,
-          "kind": "alias"
+          "source": {
+            "input": {
+              "filename": "input.model"
+            },
+            "startchar": 713,
+            "endchar": 719
+          }
         }
       ],
       "indexBy": {
-        "start": 721,
+        "kind": "alias",
         "value": "PersonId",
-        "end": 729,
-        "kind": "alias"
+        "source": {
+          "input": {
+            "filename": "input.model"
+          },
+          "startchar": 721,
+          "endchar": 729
+        }
       }
     },
-    "start": 695,
-    "end": 733
+    "source": {
+      "input": {
+        "filename": "input.model"
+      },
+      "startchar": 695,
+      "endchar": 733
+    }
   },
   {
     "kind": "typedecl",
     "id": {
-      "start": 738,
+      "kind": "id",
       "value": "FloorControl",
-      "end": 750,
-      "kind": "id"
+      "source": {
+        "input": {
+          "filename": "input.model"
+        },
+        "startchar": 738,
+        "endchar": 750
+      }
     },
     "type": {
       "kind": "record",
       "fields": [
         {
           "id": {
-            "start": 763,
+            "kind": "id",
             "value": "downActive",
-            "end": 773,
-            "kind": "id"
+            "source": {
+              "input": {
+                "filename": "input.model"
+              },
+              "startchar": 763,
+              "endchar": 773
+            }
           },
           "type": {
-            "start": 775,
+            "kind": "alias",
             "value": "Boolean",
-            "end": 782,
-            "kind": "alias"
+            "source": {
+              "input": {
+                "filename": "input.model"
+              },
+              "startchar": 775,
+              "endchar": 782
+            }
           }
         },
         {
           "id": {
-            "start": 788,
+            "kind": "id",
             "value": "upActive",
-            "end": 796,
-            "kind": "id"
+            "source": {
+              "input": {
+                "filename": "input.model"
+              },
+              "startchar": 788,
+              "endchar": 796
+            }
           },
           "type": {
-            "start": 798,
+            "kind": "alias",
             "value": "Boolean",
-            "end": 806,
-            "kind": "alias"
+            "source": {
+              "input": {
+                "filename": "input.model"
+              },
+              "startchar": 798,
+              "endchar": 806
+            }
           }
         }
       ]
     },
-    "start": 733,
-    "end": 808
+    "source": {
+      "input": {
+        "filename": "input.model"
+      },
+      "startchar": 733,
+      "endchar": 808
+    }
   },
   {
     "kind": "vardecl",
     "id": {
-      "start": 812,
+      "kind": "id",
       "value": "floorControls",
-      "end": 825,
-      "kind": "id"
+      "source": {
+        "input": {
+          "filename": "input.model"
+        },
+        "startchar": 812,
+        "endchar": 825
+      }
     },
     "type": {
       "kind": "generic",
       "base": {
-        "start": 827,
+        "kind": "id",
         "value": "Array",
-        "end": 832,
-        "kind": "id"
+        "source": {
+          "input": {
+            "filename": "input.model"
+          },
+          "startchar": 827,
+          "endchar": 832
+        }
       },
       "args": [
         {
-          "start": 833,
+          "kind": "alias",
           "value": "FloorControl",
-          "end": 845,
-          "kind": "alias"
+          "source": {
+            "input": {
+              "filename": "input.model"
+            },
+            "startchar": 833,
+            "endchar": 845
+          }
         }
       ],
       "indexBy": {
-        "start": 847,
+        "kind": "alias",
         "value": "Floor",
-        "end": 852,
-        "kind": "alias"
+        "source": {
+          "input": {
+            "filename": "input.model"
+          },
+          "startchar": 847,
+          "endchar": 852
+        }
       }
     },
-    "start": 808,
-    "end": 856
+    "source": {
+      "input": {
+        "filename": "input.model"
+      },
+      "startchar": 808,
+      "endchar": 856
+    }
   },
   {
     "kind": "typedecl",
     "id": {
-      "start": 861,
+      "kind": "id",
       "value": "Elevator",
-      "end": 869,
-      "kind": "id"
+      "source": {
+        "input": {
+          "filename": "input.model"
+        },
+        "startchar": 861,
+        "endchar": 869
+      }
     },
     "type": {
       "kind": "record",
       "fields": [
         {
           "id": {
-            "start": 882,
+            "kind": "id",
             "value": "destinations",
-            "end": 894,
-            "kind": "id"
+            "source": {
+              "input": {
+                "filename": "input.model"
+              },
+              "startchar": 882,
+              "endchar": 894
+            }
           },
           "type": {
             "kind": "generic",
             "base": {
-              "start": 896,
+              "kind": "id",
               "value": "Set",
-              "end": 899,
-              "kind": "id"
+              "source": {
+                "input": {
+                  "filename": "input.model"
+                },
+                "startchar": 896,
+                "endchar": 899
+              }
             },
             "args": [
               {
-                "start": 900,
+                "kind": "alias",
                 "value": "Floor",
-                "end": 905,
-                "kind": "alias"
+                "source": {
+                  "input": {
+                    "filename": "input.model"
+                  },
+                  "startchar": 900,
+                  "endchar": 905
+                }
               }
             ]
           }
         },
         {
           "id": {
-            "start": 912,
+            "kind": "id",
             "value": "riders",
-            "end": 918,
-            "kind": "id"
+            "source": {
+              "input": {
+                "filename": "input.model"
+              },
+              "startchar": 912,
+              "endchar": 918
+            }
           },
           "type": {
             "kind": "generic",
             "base": {
-              "start": 920,
+              "kind": "id",
               "value": "Set",
-              "end": 923,
-              "kind": "id"
+              "source": {
+                "input": {
+                  "filename": "input.model"
+                },
+                "startchar": 920,
+                "endchar": 923
+              }
             },
             "args": [
               {
-                "start": 924,
+                "kind": "alias",
                 "value": "PersonId",
-                "end": 932,
-                "kind": "alias"
+                "source": {
+                  "input": {
+                    "filename": "input.model"
+                  },
+                  "startchar": 924,
+                  "endchar": 932
+                }
               }
             ]
           }
         },
         {
           "id": {
-            "start": 939,
+            "kind": "id",
             "value": "direction",
-            "end": 948,
-            "kind": "id"
+            "source": {
+              "input": {
+                "filename": "input.model"
+              },
+              "startchar": 939,
+              "endchar": 948
+            }
           },
           "type": {
             "kind": "either",
             "fields": [
               {
                 "id": {
-                  "start": 967,
+                  "kind": "id",
                   "value": "Neutral",
-                  "end": 974,
-                  "kind": "id"
+                  "source": {
+                    "input": {
+                      "filename": "input.model"
+                    },
+                    "startchar": 967,
+                    "endchar": 974
+                  }
                 },
                 "kind": "enumvariant"
               },
               {
                 "id": {
-                  "start": 984,
+                  "kind": "id",
                   "value": "Up",
-                  "end": 986,
-                  "kind": "id"
+                  "source": {
+                    "input": {
+                      "filename": "input.model"
+                    },
+                    "startchar": 984,
+                    "endchar": 986
+                  }
                 },
                 "kind": "enumvariant"
               },
               {
                 "id": {
-                  "start": 996,
+                  "kind": "id",
                   "value": "Down",
-                  "end": 1000,
-                  "kind": "id"
+                  "source": {
+                    "input": {
+                      "filename": "input.model"
+                    },
+                    "startchar": 996,
+                    "endchar": 1000
+                  }
                 },
                 "kind": "enumvariant"
               }
@@ -645,79 +1086,124 @@
         },
         {
           "id": {
-            "start": 1013,
+            "kind": "id",
             "value": "location",
-            "end": 1021,
-            "kind": "id"
+            "source": {
+              "input": {
+                "filename": "input.model"
+              },
+              "startchar": 1013,
+              "endchar": 1021
+            }
           },
           "type": {
             "kind": "either",
             "fields": [
               {
                 "id": {
-                  "start": 1040,
+                  "kind": "id",
                   "value": "AtFloor",
-                  "end": 1048,
-                  "kind": "id"
+                  "source": {
+                    "input": {
+                      "filename": "input.model"
+                    },
+                    "startchar": 1040,
+                    "endchar": 1048
+                  }
                 },
                 "type": {
                   "kind": "record",
                   "fields": [
                     {
                       "id": {
-                        "start": 1062,
+                        "kind": "id",
                         "value": "at",
-                        "end": 1064,
-                        "kind": "id"
+                        "source": {
+                          "input": {
+                            "filename": "input.model"
+                          },
+                          "startchar": 1062,
+                          "endchar": 1064
+                        }
                       },
                       "type": {
-                        "start": 1066,
+                        "kind": "alias",
                         "value": "Floor",
-                        "end": 1071,
-                        "kind": "alias"
+                        "source": {
+                          "input": {
+                            "filename": "input.model"
+                          },
+                          "startchar": 1066,
+                          "endchar": 1071
+                        }
                       }
                     },
                     {
                       "id": {
-                        "start": 1085,
+                        "kind": "id",
                         "value": "doors",
-                        "end": 1090,
-                        "kind": "id"
+                        "source": {
+                          "input": {
+                            "filename": "input.model"
+                          },
+                          "startchar": 1085,
+                          "endchar": 1090
+                        }
                       },
                       "type": {
                         "kind": "either",
                         "fields": [
                           {
                             "id": {
-                              "start": 1117,
+                              "kind": "id",
                               "value": "Closed",
-                              "end": 1123,
-                              "kind": "id"
+                              "source": {
+                                "input": {
+                                  "filename": "input.model"
+                                },
+                                "startchar": 1117,
+                                "endchar": 1123
+                              }
                             },
                             "kind": "enumvariant"
                           },
                           {
                             "id": {
-                              "start": 1141,
+                              "kind": "id",
                               "value": "Opening",
-                              "end": 1149,
-                              "kind": "id"
+                              "source": {
+                                "input": {
+                                  "filename": "input.model"
+                                },
+                                "startchar": 1141,
+                                "endchar": 1149
+                              }
                             },
                             "type": {
                               "kind": "record",
                               "fields": [
                                 {
                                   "id": {
-                                    "start": 1171,
+                                    "kind": "id",
                                     "value": "openAt",
-                                    "end": 1177,
-                                    "kind": "id"
+                                    "source": {
+                                      "input": {
+                                        "filename": "input.model"
+                                      },
+                                      "startchar": 1171,
+                                      "endchar": 1177
+                                    }
                                   },
                                   "type": {
-                                    "start": 1179,
+                                    "kind": "alias",
                                     "value": "Time",
-                                    "end": 1183,
-                                    "kind": "alias"
+                                    "source": {
+                                      "input": {
+                                        "filename": "input.model"
+                                      },
+                                      "startchar": 1179,
+                                      "endchar": 1183
+                                    }
                                   }
                                 }
                               ]
@@ -725,26 +1211,41 @@
                           },
                           {
                             "id": {
-                              "start": 1220,
+                              "kind": "id",
                               "value": "Open",
-                              "end": 1225,
-                              "kind": "id"
+                              "source": {
+                                "input": {
+                                  "filename": "input.model"
+                                },
+                                "startchar": 1220,
+                                "endchar": 1225
+                              }
                             },
                             "type": {
                               "kind": "record",
                               "fields": [
                                 {
                                   "id": {
-                                    "start": 1247,
+                                    "kind": "id",
                                     "value": "closeAt",
-                                    "end": 1254,
-                                    "kind": "id"
+                                    "source": {
+                                      "input": {
+                                        "filename": "input.model"
+                                      },
+                                      "startchar": 1247,
+                                      "endchar": 1254
+                                    }
                                   },
                                   "type": {
-                                    "start": 1256,
+                                    "kind": "alias",
                                     "value": "Time",
-                                    "end": 1260,
-                                    "kind": "alias"
+                                    "source": {
+                                      "input": {
+                                        "filename": "input.model"
+                                      },
+                                      "startchar": 1256,
+                                      "endchar": 1260
+                                    }
                                   }
                                 }
                               ]
@@ -752,26 +1253,41 @@
                           },
                           {
                             "id": {
-                              "start": 1297,
+                              "kind": "id",
                               "value": "Closing",
-                              "end": 1305,
-                              "kind": "id"
+                              "source": {
+                                "input": {
+                                  "filename": "input.model"
+                                },
+                                "startchar": 1297,
+                                "endchar": 1305
+                              }
                             },
                             "type": {
                               "kind": "record",
                               "fields": [
                                 {
                                   "id": {
-                                    "start": 1327,
+                                    "kind": "id",
                                     "value": "closedAt",
-                                    "end": 1335,
-                                    "kind": "id"
+                                    "source": {
+                                      "input": {
+                                        "filename": "input.model"
+                                      },
+                                      "startchar": 1327,
+                                      "endchar": 1335
+                                    }
                                   },
                                   "type": {
-                                    "start": 1337,
+                                    "kind": "alias",
                                     "value": "Time",
-                                    "end": 1341,
-                                    "kind": "alias"
+                                    "source": {
+                                      "input": {
+                                        "filename": "input.model"
+                                      },
+                                      "startchar": 1337,
+                                      "endchar": 1341
+                                    }
                                   }
                                 }
                               ]
@@ -785,26 +1301,41 @@
               },
               {
                 "id": {
-                  "start": 1396,
+                  "kind": "id",
                   "value": "Between",
-                  "end": 1404,
-                  "kind": "id"
+                  "source": {
+                    "input": {
+                      "filename": "input.model"
+                    },
+                    "startchar": 1396,
+                    "endchar": 1404
+                  }
                 },
                 "type": {
                   "kind": "record",
                   "fields": [
                     {
                       "id": {
-                        "start": 1418,
+                        "kind": "id",
                         "value": "next",
-                        "end": 1422,
-                        "kind": "id"
+                        "source": {
+                          "input": {
+                            "filename": "input.model"
+                          },
+                          "startchar": 1418,
+                          "endchar": 1422
+                        }
                       },
                       "type": {
-                        "start": 1424,
+                        "kind": "alias",
                         "value": "Floor",
-                        "end": 1429,
-                        "kind": "alias"
+                        "source": {
+                          "input": {
+                            "filename": "input.model"
+                          },
+                          "startchar": 1424,
+                          "endchar": 1429
+                        }
                       }
                     }
                   ]
@@ -815,41 +1346,71 @@
         }
       ]
     },
-    "start": 856,
-    "end": 1503
+    "source": {
+      "input": {
+        "filename": "input.model"
+      },
+      "startchar": 856,
+      "endchar": 1503
+    }
   },
   {
     "kind": "vardecl",
     "id": {
-      "start": 1507,
+      "kind": "id",
       "value": "elevators",
-      "end": 1516,
-      "kind": "id"
+      "source": {
+        "input": {
+          "filename": "input.model"
+        },
+        "startchar": 1507,
+        "endchar": 1516
+      }
     },
     "type": {
       "kind": "generic",
       "base": {
-        "start": 1518,
+        "kind": "id",
         "value": "Array",
-        "end": 1523,
-        "kind": "id"
+        "source": {
+          "input": {
+            "filename": "input.model"
+          },
+          "startchar": 1518,
+          "endchar": 1523
+        }
       },
       "args": [
         {
-          "start": 1524,
+          "kind": "alias",
           "value": "Elevator",
-          "end": 1532,
-          "kind": "alias"
+          "source": {
+            "input": {
+              "filename": "input.model"
+            },
+            "startchar": 1524,
+            "endchar": 1532
+          }
         }
       ],
       "indexBy": {
-        "start": 1534,
+        "kind": "alias",
         "value": "ElevatorId",
-        "end": 1544,
-        "kind": "alias"
+        "source": {
+          "input": {
+            "filename": "input.model"
+          },
+          "startchar": 1534,
+          "endchar": 1544
+        }
       }
     },
-    "start": 1503,
-    "end": 1547
+    "source": {
+      "input": {
+        "filename": "input.model"
+      },
+      "startchar": 1503,
+      "endchar": 1547
+    }
   }
 ]

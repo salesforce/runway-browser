@@ -2,17 +2,19 @@
 
 let assert = require('assert');
 let Environment = require('./environment.js');
+let Input = require('./input.js');
 let Parser = require('./parser.js');
 let main = require('./main.js');
 let Type = main.Type;
+
+let parseInline = (text) => Parser.parse(new Input('unit test', text));
 
 describe('main.js', function() {
 
   describe('range', function() {
     it('range', function() {
-      let parsed = Parser.parse('type DoubleDigits: 10..99;');
-      assert.ok(parsed.status);
-      let typedecl = parsed.value[0];
+      let parsed = parseInline('type DoubleDigits: 10..99;');
+      let typedecl = parsed[0];
       assert.equal('typedecl', typedecl.kind);
       let env = new Environment();
       let type = Type.make(typedecl.type, env, typedecl.id);
@@ -30,13 +32,12 @@ describe('main.js', function() {
 
   describe('record', function() {
     it('record', function() {
-      let parsed = Parser.parse(`
+      let parsed = parseInline(`
         type Pair: record {
           first: 10..15,
           second: 12..17,
         };`);
-      assert.ok(parsed.status);
-      let typedecl = parsed.value[0];
+      let typedecl = parsed[0];
       assert.equal('typedecl', typedecl.kind);
       let env = new Environment();
       let type = Type.make(typedecl.type, env, typedecl.id);
@@ -51,9 +52,8 @@ describe('main.js', function() {
 
   describe('either', function() {
     it('enum', function() {
-      let parsed = Parser.parse('type Boolean: either { False, True };');
-      assert.ok(parsed.status);
-      let typedecl = parsed.value[0];
+      let parsed = parseInline('type Boolean: either { False, True };');
+      let typedecl = parsed[0];
       assert.equal('typedecl', typedecl.kind);
       let env = new Environment();
       let type = Type.make(typedecl.type, env, typedecl.id);
@@ -69,7 +69,7 @@ describe('main.js', function() {
     });
 
     it('sum type', function() {
-      let parsed = Parser.parse(`
+      let parsed = parseInline(`
         type Maybe: either {
           Something {
             thing: 10..31,
@@ -77,8 +77,7 @@ describe('main.js', function() {
           Nothing,
         };
       `);
-      assert.ok(parsed.status);
-      let typedecl = parsed.value[0];
+      let typedecl = parsed[0];
       assert.equal('typedecl', typedecl.kind);
       let env = new Environment();
       let type = Type.make(typedecl.type, env, typedecl.id);
@@ -96,7 +95,7 @@ describe('main.js', function() {
 
   describe('alias', function() {
     it('missing', function() {
-      let parsed = Parser.parse(`
+      let parsed = parseInline(`
         type FailBoat: WhatIsThis;
       `);
       let env = new Environment();
@@ -106,7 +105,7 @@ describe('main.js', function() {
     });
 
     it('basic', function() {
-      let parsed = Parser.parse(`
+      let parsed = parseInline(`
         type Boolean: either { False, True };
         type Truthful: Boolean;
       `);
@@ -129,7 +128,7 @@ describe('main.js', function() {
 
   describe('params', function() {
     it('basic', function() {
-      let parsed = Parser.parse('param ELEVATORS: 1..1024 = 6;');
+      let parsed = parseInline('param ELEVATORS: 1..1024 = 6;');
       let env = new Environment();
       main.load(parsed, env);
       assert.equal(6, env.getVar('ELEVATORS').toString());
@@ -138,7 +137,7 @@ describe('main.js', function() {
 
   describe('variable declarations', function() {
     it('basic', function() {
-      let parsed = Parser.parse(`
+      let parsed = parseInline(`
         var foo: 0..10 = 8;
         var bar: 11..20;
       `);
@@ -149,7 +148,7 @@ describe('main.js', function() {
     });
 
     it('array', function() {
-      let parsed = Parser.parse(`
+      let parsed = parseInline(`
         var bitvector: Array<Boolean>[11..13];
       `);
       let env = new Environment(main.loadPrelude());
@@ -164,7 +163,7 @@ describe('main.js', function() {
     it('basic', function() {
       let prelude = main.loadPrelude();
       let env = new Environment(prelude);
-      let parsed = Parser.parse(`
+      let parsed = parseInline(`
         var x : Boolean;
         rule foo {
           x = True;
