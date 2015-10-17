@@ -38,6 +38,7 @@ let colon = lexeme(string(':'));
 let comma = lexeme(string(','));
 let dot = lexeme(string('.'));
 let dots = lexeme(string('..'));
+let doubleEquals = lexeme(string('=='));
 let equals = lexeme(string('='));
 let langle = lexeme(string('<'));
 let lbrace = lexeme(string('{'));
@@ -96,7 +97,15 @@ let id = lexeme(regex(/[a-z_]\w*/i)).desc('identifier').map((v) => ({
     value: v,
 })).source();
 
-let binop = alt(times, plus, minus, langle, rangle, leq, req);
+let binop = alt(
+  times,
+  plus,
+  minus,
+  doubleEquals,
+  leq,
+  req,
+  langle,
+  rangle);
 
 let group = lazy(() => {
   return lparen.then(expr).skip(rparen)
