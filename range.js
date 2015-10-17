@@ -11,10 +11,14 @@ class RangeValue extends Value {
   }
 
   assign(newValue) {
-    if (newValue < this.type.low || newValue > this.type.high) {
-      throw Error(`Cannot assign value of ${newValue} to range ${this.type.getName()}: ${this.type.low}..${this.type.high};`);
+    if (typeof newValue == 'number') {
+      if (newValue < this.type.low || newValue > this.type.high) {
+        throw Error(`Cannot assign value of ${newValue} to range ${this.type.getName()}: ${this.type.low}..${this.type.high};`);
+      }
+      this.value = newValue;
+    } else {
+      throw Error(`Trying to assign ${typeof newValue} to range ${this.type.getName()}: ${this.type.low}..${this.type.high};`);
     }
-    this.value = newValue;
   }
 
   innerToString() {
@@ -22,12 +26,7 @@ class RangeValue extends Value {
   }
 
   toString() {
-    let name = this.type.getName();
-    if (name === undefined) {
-      return `${this.value}`;
-    } else {
-      return `${name}(${this.value})`;
-    }
+    return `${this.value}`;
   }
 }
 

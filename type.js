@@ -9,6 +9,8 @@ class Type {
   getName() {
     if (this.name === undefined) {
       return undefined;
+    } else if (typeof this.name == 'string') {
+      return this.name;
     } else {
       return this.name.value;
     }

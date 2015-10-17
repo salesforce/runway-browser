@@ -75,7 +75,7 @@ class Code {
         }
         return r;
       } else if (ast.kind == 'number') {
-        return this.value;
+        return ast.value;
       } else if (ast.kind == 'assign') {
         this.env.getVar(ast.id.value).assign(evaluate(ast.expr));
       } else {

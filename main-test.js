@@ -20,10 +20,10 @@ describe('main.js', function() {
       let env = new Environment();
       let type = makeType(typedecl.type, env, typedecl.id);
       let value = type.makeDefaultValue();
-      assert.equal('DoubleDigits(10)',
+      assert.equal('10',
         value.toString());
       value.assign(11);
-      assert.equal('DoubleDigits(11)',
+      assert.equal('11',
         value.toString());
       assert.throws(() => {
         value.assign(9);
@@ -166,13 +166,16 @@ describe('main.js', function() {
       let env = new Environment(prelude);
       let parsed = parseInline(`
         var x : Boolean;
+        var y : 1..3;
         rule foo {
           x = True;
+          y = 2;
         }
       `);
       main.load(parsed, env);
       env.rules['foo'].evaluate();
       assert.equal('True', env.getVar('x'));
+      assert.equal('2', env.getVar('y'));
     });
   });
 });
