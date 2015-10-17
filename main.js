@@ -170,15 +170,15 @@ if (require.main === module) {
           readline.write('huh?\n');
         } else if (input.slice(0, 2) == 'do') {
           try {
-            load(parser.parse('REPL',
-              `rule interactive { ${input.slice(2)} }`), env);
+            load(parser.parse(new Input('REPL',
+              `rule interactive { ${input.slice(2)} }`)), env);
             env.rules['interactive'].evaluate();
           } catch ( e ) {
             readline.write(`${e}\n`);
           }
         } else {
           try {
-            load(parser.parse('REPL', input), env);
+            load(parser.parse(new Input('REPL', input)), env);
           } catch ( e ) {
             readline.write(`${e}\n`);
           }
