@@ -21,6 +21,7 @@ describe('input.js', function() {
         charOffset: 0,
       }, input.lookup(0));
 
+
       assert.deepEqual({
         line: 1,
         col: 3,
@@ -30,12 +31,28 @@ describe('input.js', function() {
       }, input.lookup(2));
 
       assert.deepEqual({
+        line: 1,
+        col: 4,
+        lineStartOffset: 0,
+        lineEndOffset: 3,
+        charOffset: 3,
+      }, input.lookup(3));
+
+      assert.deepEqual({
         line: 2,
         col: 1,
         lineStartOffset: 4,
         lineEndOffset: 7,
         charOffset: 4,
       }, input.lookup(4));
+
+      assert.deepEqual({
+        line: 2,
+        col: 4,
+        lineStartOffset: 4,
+        lineEndOffset: 7,
+        charOffset: 7,
+      }, input.lookup(7));
     });
 
     it('highlight', function() {
@@ -43,7 +60,21 @@ describe('input.js', function() {
       let h = (o) => input.highlight(input.lookup(o));
       assert.equal('abc\n^', h(0));
       assert.equal('abc\n  ^', h(2));
+      assert.equal('abc\n   ^', h(3));
       assert.equal('def\n^', h(4));
+      assert.equal('def\n   ^', h(7));
+    });
+
+    it('nonewline', function() {
+      let input = new Input('test', 'abc');
+      assert.deepEqual({
+        line: 1,
+        col: 4,
+        lineStartOffset: 0,
+        lineEndOffset: 3,
+        charOffset: 3,
+      }, input.lookup(3));
+      assert.equal('abc\n   ^', input.highlight(input.lookup(3)));
     });
   });
 });

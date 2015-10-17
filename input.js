@@ -16,14 +16,17 @@ class Input {
 
   // Given a character offset into the entire file, determine the line number,
   // column, etc.
-  // TODO: test when offset points to a newline character.
   lookup(charOffset) {
     let lineno = 1; // line number
     let lineStartOffset = 0;
     let lineEndOffset = -1;
     while (true) {
       lineEndOffset = this.getText().indexOf("\n", lineStartOffset);
-      if (lineEndOffset == -1 || lineEndOffset > charOffset) {
+      if (lineEndOffset >= charOffset) {
+        break;
+      }
+      if (lineEndOffset == -1) {
+        lineEndOffset = this.getText().length;
         break;
       }
       lineStartOffset = lineEndOffset + 1;
