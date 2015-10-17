@@ -5,7 +5,8 @@ let Environment = require('./environment.js');
 let Input = require('./input.js');
 let Parser = require('./parser.js');
 let main = require('./main.js');
-let Type = main.Type;
+let Type = require('./type.js');
+let makeType = require('./typefactory.js');
 
 let parseInline = (text) => Parser.parse(new Input('unit test', text));
 
@@ -17,7 +18,7 @@ describe('main.js', function() {
       let typedecl = parsed[0];
       assert.equal('typedecl', typedecl.kind);
       let env = new Environment();
-      let type = Type.make(typedecl.type, env, typedecl.id);
+      let type = makeType(typedecl.type, env, typedecl.id);
       let value = type.makeDefaultValue();
       assert.equal('DoubleDigits(10)',
         value.toString());
@@ -40,7 +41,7 @@ describe('main.js', function() {
       let typedecl = parsed[0];
       assert.equal('typedecl', typedecl.kind);
       let env = new Environment();
-      let type = Type.make(typedecl.type, env, typedecl.id);
+      let type = makeType(typedecl.type, env, typedecl.id);
       let value = type.makeDefaultValue();
       assert.equal('Pair { first: 10, second: 12 }',
         value.toString());
@@ -56,7 +57,7 @@ describe('main.js', function() {
       let typedecl = parsed[0];
       assert.equal('typedecl', typedecl.kind);
       let env = new Environment();
-      let type = Type.make(typedecl.type, env, typedecl.id);
+      let type = makeType(typedecl.type, env, typedecl.id);
       let value = type.makeDefaultValue();
       assert.equal('False',
         value.toString());
@@ -80,7 +81,7 @@ describe('main.js', function() {
       let typedecl = parsed[0];
       assert.equal('typedecl', typedecl.kind);
       let env = new Environment();
-      let type = Type.make(typedecl.type, env, typedecl.id);
+      let type = makeType(typedecl.type, env, typedecl.id);
       let value = type.makeDefaultValue();
       assert.equal('Something { thing: 10 }',
         value.toString());
