@@ -16,8 +16,10 @@ class RangeValue extends Value {
         throw Error(`Cannot assign value of ${newValue} to range ${this.type.getName()}: ${this.type.low}..${this.type.high};`);
       }
       this.value = newValue;
+    } else if (newValue instanceof RangeValue) {
+      return this.assign(newValue.value);
     } else {
-      throw Error(`Trying to assign ${typeof newValue} to range ${this.type.getName()}: ${this.type.low}..${this.type.high};`);
+      throw Error(`Trying to assign ${newValue.type.toString()} to range ${this.type.getName()}: ${this.type.low}..${this.type.high};`);
     }
   }
 
