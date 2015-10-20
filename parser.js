@@ -445,7 +445,10 @@ let statement = Parsimmon.alt(
 
 // main parser
 let file = lazy(() => {
-  return lexeme(string('')).then(statement.many());
+  return lexeme(string('')).then(statement.many()).map((statements) => ({
+    kind: 'sequence',
+    statements: statements,
+  }));
 });
 
 // Given an instance of Input, attempt to parse it.

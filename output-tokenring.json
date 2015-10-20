@@ -1,38 +1,48 @@
-[
-  {
-    "kind": "typedecl",
-    "id": {
-      "kind": "id",
-      "value": "ServerId",
-      "source": {
-        "input": {
-          "filename": "tokenring.model"
+{
+  "kind": "sequence",
+  "statements": [
+    {
+      "kind": "typedecl",
+      "id": {
+        "kind": "id",
+        "value": "ServerId",
+        "source": {
+          "input": {
+            "filename": "tokenring.model"
+          },
+          "startchar": 6,
+          "endchar": 14
+        }
+      },
+      "type": {
+        "kind": "range",
+        "low": {
+          "kind": "number",
+          "value": 1,
+          "source": {
+            "input": {
+              "filename": "tokenring.model"
+            },
+            "startchar": 16,
+            "endchar": 17
+          }
         },
-        "startchar": 6,
-        "endchar": 14
-      }
-    },
-    "type": {
-      "kind": "range",
-      "low": {
-        "kind": "number",
-        "value": 1,
+        "high": {
+          "kind": "number",
+          "value": 5,
+          "source": {
+            "input": {
+              "filename": "tokenring.model"
+            },
+            "startchar": 19,
+            "endchar": 20
+          }
+        },
         "source": {
           "input": {
             "filename": "tokenring.model"
           },
           "startchar": 16,
-          "endchar": 17
-        }
-      },
-      "high": {
-        "kind": "number",
-        "value": 5,
-        "source": {
-          "input": {
-            "filename": "tokenring.model"
-          },
-          "startchar": 19,
           "endchar": 20
         }
       },
@@ -40,429 +50,325 @@
         "input": {
           "filename": "tokenring.model"
         },
-        "startchar": 16,
-        "endchar": 20
+        "startchar": 1,
+        "endchar": 23
       }
     },
-    "source": {
-      "input": {
-        "filename": "tokenring.model"
-      },
-      "startchar": 1,
-      "endchar": 23
-    }
-  },
-  {
-    "kind": "typedecl",
-    "id": {
-      "kind": "id",
-      "value": "Token",
-      "source": {
-        "input": {
-          "filename": "tokenring.model"
-        },
-        "startchar": 28,
-        "endchar": 33
-      }
-    },
-    "type": {
-      "kind": "either",
-      "fields": [
-        {
-          "id": {
-            "kind": "id",
-            "value": "AtServer",
-            "source": {
-              "input": {
-                "filename": "tokenring.model"
-              },
-              "startchar": 46,
-              "endchar": 55
-            }
-          },
-          "type": {
-            "kind": "record",
-            "fields": [
-              {
-                "id": {
-                  "kind": "id",
-                  "value": "at",
-                  "source": {
-                    "input": {
-                      "filename": "tokenring.model"
-                    },
-                    "startchar": 57,
-                    "endchar": 59
-                  }
-                },
-                "type": {
-                  "kind": "alias",
-                  "value": "ServerId",
-                  "source": {
-                    "input": {
-                      "filename": "tokenring.model"
-                    },
-                    "startchar": 61,
-                    "endchar": 70
-                  }
-                }
-              }
-            ]
-          }
-        },
-        {
-          "id": {
-            "kind": "id",
-            "value": "InTransit",
-            "source": {
-              "input": {
-                "filename": "tokenring.model"
-              },
-              "startchar": 75,
-              "endchar": 85
-            }
-          },
-          "type": {
-            "kind": "record",
-            "fields": [
-              {
-                "id": {
-                  "kind": "id",
-                  "value": "to",
-                  "source": {
-                    "input": {
-                      "filename": "tokenring.model"
-                    },
-                    "startchar": 87,
-                    "endchar": 89
-                  }
-                },
-                "type": {
-                  "kind": "alias",
-                  "value": "ServerId",
-                  "source": {
-                    "input": {
-                      "filename": "tokenring.model"
-                    },
-                    "startchar": 91,
-                    "endchar": 100
-                  }
-                }
-              }
-            ]
-          }
-        }
-      ]
-    },
-    "source": {
-      "input": {
-        "filename": "tokenring.model"
-      },
-      "startchar": 23,
-      "endchar": 105
-    }
-  },
-  {
-    "kind": "vardecl",
-    "id": {
-      "kind": "id",
-      "value": "token",
-      "source": {
-        "input": {
-          "filename": "tokenring.model"
-        },
-        "startchar": 109,
-        "endchar": 114
-      }
-    },
-    "type": {
-      "kind": "alias",
-      "value": "Token",
-      "source": {
-        "input": {
-          "filename": "tokenring.model"
-        },
-        "startchar": 116,
-        "endchar": 121
-      }
-    },
-    "source": {
-      "input": {
-        "filename": "tokenring.model"
-      },
-      "startchar": 105,
-      "endchar": 124
-    }
-  },
-  {
-    "kind": "typedecl",
-    "id": {
-      "kind": "id",
-      "value": "Server",
-      "source": {
-        "input": {
-          "filename": "tokenring.model"
-        },
-        "startchar": 129,
-        "endchar": 135
-      }
-    },
-    "type": {
-      "kind": "record",
-      "fields": [
-        {
-          "id": {
-            "kind": "id",
-            "value": "hasToken",
-            "source": {
-              "input": {
-                "filename": "tokenring.model"
-              },
-              "startchar": 148,
-              "endchar": 156
-            }
-          },
-          "type": {
-            "kind": "alias",
-            "value": "Boolean",
-            "source": {
-              "input": {
-                "filename": "tokenring.model"
-              },
-              "startchar": 158,
-              "endchar": 165
-            }
-          }
-        }
-      ]
-    },
-    "source": {
-      "input": {
-        "filename": "tokenring.model"
-      },
-      "startchar": 124,
-      "endchar": 170
-    }
-  },
-  {
-    "kind": "vardecl",
-    "id": {
-      "kind": "id",
-      "value": "servers",
-      "source": {
-        "input": {
-          "filename": "tokenring.model"
-        },
-        "startchar": 174,
-        "endchar": 181
-      }
-    },
-    "type": {
-      "kind": "generic",
-      "base": {
+    {
+      "kind": "typedecl",
+      "id": {
         "kind": "id",
-        "value": "Array",
+        "value": "Token",
         "source": {
           "input": {
             "filename": "tokenring.model"
           },
-          "startchar": 183,
-          "endchar": 188
+          "startchar": 28,
+          "endchar": 33
         }
       },
-      "args": [
-        {
-          "kind": "alias",
-          "value": "Server",
+      "type": {
+        "kind": "either",
+        "fields": [
+          {
+            "id": {
+              "kind": "id",
+              "value": "AtServer",
+              "source": {
+                "input": {
+                  "filename": "tokenring.model"
+                },
+                "startchar": 46,
+                "endchar": 55
+              }
+            },
+            "type": {
+              "kind": "record",
+              "fields": [
+                {
+                  "id": {
+                    "kind": "id",
+                    "value": "at",
+                    "source": {
+                      "input": {
+                        "filename": "tokenring.model"
+                      },
+                      "startchar": 57,
+                      "endchar": 59
+                    }
+                  },
+                  "type": {
+                    "kind": "alias",
+                    "value": "ServerId",
+                    "source": {
+                      "input": {
+                        "filename": "tokenring.model"
+                      },
+                      "startchar": 61,
+                      "endchar": 70
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": {
+              "kind": "id",
+              "value": "InTransit",
+              "source": {
+                "input": {
+                  "filename": "tokenring.model"
+                },
+                "startchar": 75,
+                "endchar": 85
+              }
+            },
+            "type": {
+              "kind": "record",
+              "fields": [
+                {
+                  "id": {
+                    "kind": "id",
+                    "value": "to",
+                    "source": {
+                      "input": {
+                        "filename": "tokenring.model"
+                      },
+                      "startchar": 87,
+                      "endchar": 89
+                    }
+                  },
+                  "type": {
+                    "kind": "alias",
+                    "value": "ServerId",
+                    "source": {
+                      "input": {
+                        "filename": "tokenring.model"
+                      },
+                      "startchar": 91,
+                      "endchar": 100
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "source": {
+        "input": {
+          "filename": "tokenring.model"
+        },
+        "startchar": 23,
+        "endchar": 105
+      }
+    },
+    {
+      "kind": "vardecl",
+      "id": {
+        "kind": "id",
+        "value": "token",
+        "source": {
+          "input": {
+            "filename": "tokenring.model"
+          },
+          "startchar": 109,
+          "endchar": 114
+        }
+      },
+      "type": {
+        "kind": "alias",
+        "value": "Token",
+        "source": {
+          "input": {
+            "filename": "tokenring.model"
+          },
+          "startchar": 116,
+          "endchar": 121
+        }
+      },
+      "source": {
+        "input": {
+          "filename": "tokenring.model"
+        },
+        "startchar": 105,
+        "endchar": 124
+      }
+    },
+    {
+      "kind": "typedecl",
+      "id": {
+        "kind": "id",
+        "value": "Server",
+        "source": {
+          "input": {
+            "filename": "tokenring.model"
+          },
+          "startchar": 129,
+          "endchar": 135
+        }
+      },
+      "type": {
+        "kind": "record",
+        "fields": [
+          {
+            "id": {
+              "kind": "id",
+              "value": "hasToken",
+              "source": {
+                "input": {
+                  "filename": "tokenring.model"
+                },
+                "startchar": 148,
+                "endchar": 156
+              }
+            },
+            "type": {
+              "kind": "alias",
+              "value": "Boolean",
+              "source": {
+                "input": {
+                  "filename": "tokenring.model"
+                },
+                "startchar": 158,
+                "endchar": 165
+              }
+            }
+          }
+        ]
+      },
+      "source": {
+        "input": {
+          "filename": "tokenring.model"
+        },
+        "startchar": 124,
+        "endchar": 170
+      }
+    },
+    {
+      "kind": "vardecl",
+      "id": {
+        "kind": "id",
+        "value": "servers",
+        "source": {
+          "input": {
+            "filename": "tokenring.model"
+          },
+          "startchar": 174,
+          "endchar": 181
+        }
+      },
+      "type": {
+        "kind": "generic",
+        "base": {
+          "kind": "id",
+          "value": "Array",
           "source": {
             "input": {
               "filename": "tokenring.model"
             },
-            "startchar": 189,
-            "endchar": 195
+            "startchar": 183,
+            "endchar": 188
+          }
+        },
+        "args": [
+          {
+            "kind": "alias",
+            "value": "Server",
+            "source": {
+              "input": {
+                "filename": "tokenring.model"
+              },
+              "startchar": 189,
+              "endchar": 195
+            }
+          }
+        ],
+        "indexBy": {
+          "kind": "alias",
+          "value": "ServerId",
+          "source": {
+            "input": {
+              "filename": "tokenring.model"
+            },
+            "startchar": 197,
+            "endchar": 205
           }
         }
-      ],
-      "indexBy": {
-        "kind": "alias",
-        "value": "ServerId",
-        "source": {
-          "input": {
-            "filename": "tokenring.model"
-          },
-          "startchar": 197,
-          "endchar": 205
-        }
-      }
-    },
-    "source": {
-      "input": {
-        "filename": "tokenring.model"
       },
-      "startchar": 170,
-      "endchar": 209
-    }
-  },
-  {
-    "kind": "rule",
-    "id": {
-      "kind": "id",
-      "value": "deliverToken",
       "source": {
         "input": {
           "filename": "tokenring.model"
         },
-        "startchar": 214,
-        "endchar": 227
+        "startchar": 170,
+        "endchar": 209
       }
     },
-    "code": {
-      "kind": "sequence",
-      "statements": [
-        {
-          "kind": "ifelse",
-          "condition": {
-            "kind": "matches",
-            "expr": {
-              "kind": "id",
-              "value": "token",
-              "source": {
-                "input": {
-                  "filename": "tokenring.model"
-                },
-                "startchar": 236,
-                "endchar": 242
-              }
-            },
-            "variant": {
-              "kind": "id",
-              "value": "Intransit",
-              "source": {
-                "input": {
-                  "filename": "tokenring.model"
-                },
-                "startchar": 250,
-                "endchar": 260
-              }
-            }
+    {
+      "kind": "rule",
+      "id": {
+        "kind": "id",
+        "value": "deliverToken",
+        "source": {
+          "input": {
+            "filename": "tokenring.model"
           },
-          "thenblock": {
-            "kind": "sequence",
-            "statements": [
-              {
-                "kind": "assign",
-                "id": {
-                  "kind": "lookup",
-                  "child": {
-                    "kind": "id",
-                    "value": "hasToken",
-                    "source": {
-                      "input": {
-                        "filename": "tokenring.model"
-                      },
-                      "startchar": 288,
-                      "endchar": 297
-                    }
-                  },
-                  "parent": {
-                    "kind": "index",
-                    "by": {
-                      "kind": "lookup",
-                      "child": {
-                        "kind": "id",
-                        "value": "to",
-                        "source": {
-                          "input": {
-                            "filename": "tokenring.model"
-                          },
-                          "startchar": 284,
-                          "endchar": 286
-                        }
-                      },
-                      "parent": {
-                        "kind": "id",
-                        "value": "token",
-                        "source": {
-                          "input": {
-                            "filename": "tokenring.model"
-                          },
-                          "startchar": 278,
-                          "endchar": 283
-                        }
-                      }
-                    },
-                    "parent": {
-                      "kind": "id",
-                      "value": "servers",
-                      "source": {
-                        "input": {
-                          "filename": "tokenring.model"
-                        },
-                        "startchar": 270,
-                        "endchar": 277
-                      }
-                    }
-                  }
-                },
-                "expr": {
-                  "kind": "id",
-                  "value": "True",
-                  "source": {
-                    "input": {
-                      "filename": "tokenring.model"
-                    },
-                    "startchar": 299,
-                    "endchar": 303
-                  }
-                },
+          "startchar": 214,
+          "endchar": 227
+        }
+      },
+      "code": {
+        "kind": "sequence",
+        "statements": [
+          {
+            "kind": "ifelse",
+            "condition": {
+              "kind": "matches",
+              "expr": {
+                "kind": "id",
+                "value": "token",
                 "source": {
                   "input": {
                     "filename": "tokenring.model"
                   },
-                  "startchar": 270,
-                  "endchar": 313
+                  "startchar": 236,
+                  "endchar": 242
                 }
               },
-              {
-                "kind": "assign",
-                "id": {
-                  "kind": "id",
-                  "value": "token",
-                  "source": {
-                    "input": {
-                      "filename": "tokenring.model"
-                    },
-                    "startchar": 313,
-                    "endchar": 319
-                  }
-                },
-                "expr": {
-                  "kind": "recordvalue",
-                  "type": {
-                    "kind": "id",
-                    "value": "AtServer",
-                    "source": {
-                      "input": {
-                        "filename": "tokenring.model"
-                      },
-                      "startchar": 321,
-                      "endchar": 330
-                    }
+              "variant": {
+                "kind": "id",
+                "value": "Intransit",
+                "source": {
+                  "input": {
+                    "filename": "tokenring.model"
                   },
-                  "fields": [
-                    {
-                      "id": {
-                        "kind": "id",
-                        "value": "at",
-                        "source": {
-                          "input": {
-                            "filename": "tokenring.model"
-                          },
-                          "startchar": 332,
-                          "endchar": 334
-                        }
-                      },
-                      "expr": {
+                  "startchar": 250,
+                  "endchar": 260
+                }
+              }
+            },
+            "thenblock": {
+              "kind": "sequence",
+              "statements": [
+                {
+                  "kind": "assign",
+                  "id": {
+                    "kind": "lookup",
+                    "child": {
+                      "kind": "id",
+                      "value": "hasToken",
+                      "source": {
+                        "input": {
+                          "filename": "tokenring.model"
+                        },
+                        "startchar": 288,
+                        "endchar": 297
+                      }
+                    },
+                    "parent": {
+                      "kind": "index",
+                      "by": {
                         "kind": "lookup",
                         "child": {
                           "kind": "id",
@@ -471,8 +377,8 @@
                             "input": {
                               "filename": "tokenring.model"
                             },
-                            "startchar": 342,
-                            "endchar": 345
+                            "startchar": 284,
+                            "endchar": 286
                           }
                         },
                         "parent": {
@@ -482,410 +388,507 @@
                             "input": {
                               "filename": "tokenring.model"
                             },
-                            "startchar": 336,
-                            "endchar": 341
+                            "startchar": 278,
+                            "endchar": 283
                           }
-                        }
-                      }
-                    }
-                  ]
-                },
-                "source": {
-                  "input": {
-                    "filename": "tokenring.model"
-                  },
-                  "startchar": 313,
-                  "endchar": 352
-                }
-              }
-            ]
-          },
-          "elseblock": {
-            "kind": "sequence",
-            "statements": []
-          },
-          "source": {
-            "input": {
-              "filename": "tokenring.model"
-            },
-            "startchar": 233,
-            "endchar": 354
-          }
-        }
-      ]
-    },
-    "source": {
-      "input": {
-        "filename": "tokenring.model"
-      },
-      "startchar": 209,
-      "endchar": 357
-    }
-  },
-  {
-    "kind": "rulefor",
-    "id": {
-      "kind": "id",
-      "value": "passToken",
-      "source": {
-        "input": {
-          "filename": "tokenring.model"
-        },
-        "startchar": 362,
-        "endchar": 372
-      }
-    },
-    "variable": {
-      "kind": "id",
-      "value": "server",
-      "source": {
-        "input": {
-          "filename": "tokenring.model"
-        },
-        "startchar": 376,
-        "endchar": 383
-      }
-    },
-    "expr": {
-      "kind": "id",
-      "value": "servers",
-      "source": {
-        "input": {
-          "filename": "tokenring.model"
-        },
-        "startchar": 386,
-        "endchar": 394
-      }
-    },
-    "code": {
-      "kind": "sequence",
-      "statements": [
-        {
-          "kind": "ifelse",
-          "condition": {
-            "kind": "lookup",
-            "child": {
-              "kind": "id",
-              "value": "hasToken",
-              "source": {
-                "input": {
-                  "filename": "tokenring.model"
-                },
-                "startchar": 410,
-                "endchar": 419
-              }
-            },
-            "parent": {
-              "kind": "id",
-              "value": "server",
-              "source": {
-                "input": {
-                  "filename": "tokenring.model"
-                },
-                "startchar": 403,
-                "endchar": 409
-              }
-            }
-          },
-          "thenblock": {
-            "kind": "sequence",
-            "statements": [
-              {
-                "kind": "vardecl",
-                "id": {
-                  "kind": "id",
-                  "value": "next",
-                  "source": {
-                    "input": {
-                      "filename": "tokenring.model"
-                    },
-                    "startchar": 433,
-                    "endchar": 438
-                  }
-                },
-                "type": {
-                  "kind": "alias",
-                  "value": "ServerId",
-                  "source": {
-                    "input": {
-                      "filename": "tokenring.model"
-                    },
-                    "startchar": 440,
-                    "endchar": 449
-                  }
-                },
-                "default": {
-                  "kind": "number",
-                  "value": 1,
-                  "source": {
-                    "input": {
-                      "filename": "tokenring.model"
-                    },
-                    "startchar": 451,
-                    "endchar": 452
-                  }
-                },
-                "source": {
-                  "input": {
-                    "filename": "tokenring.model"
-                  },
-                  "startchar": 429,
-                  "endchar": 462
-                }
-              },
-              {
-                "kind": "ifelse",
-                "condition": {
-                  "kind": "apply",
-                  "func": "<",
-                  "args": [
-                    {
-                      "kind": "lookup",
-                      "child": {
-                        "kind": "id",
-                        "value": "id",
-                        "source": {
-                          "input": {
-                            "filename": "tokenring.model"
-                          },
-                          "startchar": 472,
-                          "endchar": 475
                         }
                       },
                       "parent": {
                         "kind": "id",
-                        "value": "server",
+                        "value": "servers",
                         "source": {
                           "input": {
                             "filename": "tokenring.model"
                           },
-                          "startchar": 465,
-                          "endchar": 471
+                          "startchar": 270,
+                          "endchar": 277
                         }
                       }
+                    }
+                  },
+                  "expr": {
+                    "kind": "id",
+                    "value": "True",
+                    "source": {
+                      "input": {
+                        "filename": "tokenring.model"
+                      },
+                      "startchar": 299,
+                      "endchar": 303
+                    }
+                  },
+                  "source": {
+                    "input": {
+                      "filename": "tokenring.model"
                     },
-                    {
-                      "kind": "number",
-                      "value": 5,
+                    "startchar": 270,
+                    "endchar": 313
+                  }
+                },
+                {
+                  "kind": "assign",
+                  "id": {
+                    "kind": "id",
+                    "value": "token",
+                    "source": {
+                      "input": {
+                        "filename": "tokenring.model"
+                      },
+                      "startchar": 313,
+                      "endchar": 319
+                    }
+                  },
+                  "expr": {
+                    "kind": "recordvalue",
+                    "type": {
+                      "kind": "id",
+                      "value": "AtServer",
                       "source": {
                         "input": {
                           "filename": "tokenring.model"
                         },
-                        "startchar": 477,
-                        "endchar": 479
+                        "startchar": 321,
+                        "endchar": 330
                       }
+                    },
+                    "fields": [
+                      {
+                        "id": {
+                          "kind": "id",
+                          "value": "at",
+                          "source": {
+                            "input": {
+                              "filename": "tokenring.model"
+                            },
+                            "startchar": 332,
+                            "endchar": 334
+                          }
+                        },
+                        "expr": {
+                          "kind": "lookup",
+                          "child": {
+                            "kind": "id",
+                            "value": "to",
+                            "source": {
+                              "input": {
+                                "filename": "tokenring.model"
+                              },
+                              "startchar": 342,
+                              "endchar": 345
+                            }
+                          },
+                          "parent": {
+                            "kind": "id",
+                            "value": "token",
+                            "source": {
+                              "input": {
+                                "filename": "tokenring.model"
+                              },
+                              "startchar": 336,
+                              "endchar": 341
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "source": {
+                    "input": {
+                      "filename": "tokenring.model"
+                    },
+                    "startchar": 313,
+                    "endchar": 352
+                  }
+                }
+              ]
+            },
+            "elseblock": {
+              "kind": "sequence",
+              "statements": []
+            },
+            "source": {
+              "input": {
+                "filename": "tokenring.model"
+              },
+              "startchar": 233,
+              "endchar": 354
+            }
+          }
+        ]
+      },
+      "source": {
+        "input": {
+          "filename": "tokenring.model"
+        },
+        "startchar": 209,
+        "endchar": 357
+      }
+    },
+    {
+      "kind": "rulefor",
+      "id": {
+        "kind": "id",
+        "value": "passToken",
+        "source": {
+          "input": {
+            "filename": "tokenring.model"
+          },
+          "startchar": 362,
+          "endchar": 372
+        }
+      },
+      "variable": {
+        "kind": "id",
+        "value": "server",
+        "source": {
+          "input": {
+            "filename": "tokenring.model"
+          },
+          "startchar": 376,
+          "endchar": 383
+        }
+      },
+      "expr": {
+        "kind": "id",
+        "value": "servers",
+        "source": {
+          "input": {
+            "filename": "tokenring.model"
+          },
+          "startchar": 386,
+          "endchar": 394
+        }
+      },
+      "code": {
+        "kind": "sequence",
+        "statements": [
+          {
+            "kind": "ifelse",
+            "condition": {
+              "kind": "lookup",
+              "child": {
+                "kind": "id",
+                "value": "hasToken",
+                "source": {
+                  "input": {
+                    "filename": "tokenring.model"
+                  },
+                  "startchar": 410,
+                  "endchar": 419
+                }
+              },
+              "parent": {
+                "kind": "id",
+                "value": "server",
+                "source": {
+                  "input": {
+                    "filename": "tokenring.model"
+                  },
+                  "startchar": 403,
+                  "endchar": 409
+                }
+              }
+            },
+            "thenblock": {
+              "kind": "sequence",
+              "statements": [
+                {
+                  "kind": "vardecl",
+                  "id": {
+                    "kind": "id",
+                    "value": "next",
+                    "source": {
+                      "input": {
+                        "filename": "tokenring.model"
+                      },
+                      "startchar": 433,
+                      "endchar": 438
                     }
-                  ]
+                  },
+                  "type": {
+                    "kind": "alias",
+                    "value": "ServerId",
+                    "source": {
+                      "input": {
+                        "filename": "tokenring.model"
+                      },
+                      "startchar": 440,
+                      "endchar": 449
+                    }
+                  },
+                  "default": {
+                    "kind": "number",
+                    "value": 1,
+                    "source": {
+                      "input": {
+                        "filename": "tokenring.model"
+                      },
+                      "startchar": 451,
+                      "endchar": 452
+                    }
+                  },
+                  "source": {
+                    "input": {
+                      "filename": "tokenring.model"
+                    },
+                    "startchar": 429,
+                    "endchar": 462
+                  }
                 },
-                "thenblock": {
-                  "kind": "sequence",
-                  "statements": [
-                    {
-                      "kind": "assign",
-                      "id": {
-                        "kind": "id",
-                        "value": "next",
+                {
+                  "kind": "ifelse",
+                  "condition": {
+                    "kind": "apply",
+                    "func": "<",
+                    "args": [
+                      {
+                        "kind": "lookup",
+                        "child": {
+                          "kind": "id",
+                          "value": "id",
+                          "source": {
+                            "input": {
+                              "filename": "tokenring.model"
+                            },
+                            "startchar": 472,
+                            "endchar": 475
+                          }
+                        },
+                        "parent": {
+                          "kind": "id",
+                          "value": "server",
+                          "source": {
+                            "input": {
+                              "filename": "tokenring.model"
+                            },
+                            "startchar": 465,
+                            "endchar": 471
+                          }
+                        }
+                      },
+                      {
+                        "kind": "number",
+                        "value": 5,
+                        "source": {
+                          "input": {
+                            "filename": "tokenring.model"
+                          },
+                          "startchar": 477,
+                          "endchar": 479
+                        }
+                      }
+                    ]
+                  },
+                  "thenblock": {
+                    "kind": "sequence",
+                    "statements": [
+                      {
+                        "kind": "assign",
+                        "id": {
+                          "kind": "id",
+                          "value": "next",
+                          "source": {
+                            "input": {
+                              "filename": "tokenring.model"
+                            },
+                            "startchar": 493,
+                            "endchar": 498
+                          }
+                        },
+                        "expr": {
+                          "kind": "apply",
+                          "func": "+",
+                          "args": [
+                            {
+                              "kind": "lookup",
+                              "child": {
+                                "kind": "id",
+                                "value": "id",
+                                "source": {
+                                  "input": {
+                                    "filename": "tokenring.model"
+                                  },
+                                  "startchar": 507,
+                                  "endchar": 510
+                                }
+                              },
+                              "parent": {
+                                "kind": "id",
+                                "value": "server",
+                                "source": {
+                                  "input": {
+                                    "filename": "tokenring.model"
+                                  },
+                                  "startchar": 500,
+                                  "endchar": 506
+                                }
+                              }
+                            },
+                            {
+                              "kind": "number",
+                              "value": 1,
+                              "source": {
+                                "input": {
+                                  "filename": "tokenring.model"
+                                },
+                                "startchar": 512,
+                                "endchar": 513
+                              }
+                            }
+                          ]
+                        },
                         "source": {
                           "input": {
                             "filename": "tokenring.model"
                           },
                           "startchar": 493,
-                          "endchar": 498
+                          "endchar": 523
                         }
+                      }
+                    ]
+                  },
+                  "elseblock": {
+                    "kind": "sequence",
+                    "statements": []
+                  },
+                  "source": {
+                    "input": {
+                      "filename": "tokenring.model"
+                    },
+                    "startchar": 462,
+                    "endchar": 533
+                  }
+                },
+                {
+                  "kind": "assign",
+                  "id": {
+                    "kind": "id",
+                    "value": "token",
+                    "source": {
+                      "input": {
+                        "filename": "tokenring.model"
                       },
-                      "expr": {
-                        "kind": "apply",
-                        "func": "+",
-                        "args": [
-                          {
-                            "kind": "lookup",
-                            "child": {
-                              "kind": "id",
-                              "value": "id",
-                              "source": {
-                                "input": {
-                                  "filename": "tokenring.model"
-                                },
-                                "startchar": 507,
-                                "endchar": 510
-                              }
-                            },
-                            "parent": {
-                              "kind": "id",
-                              "value": "server",
-                              "source": {
-                                "input": {
-                                  "filename": "tokenring.model"
-                                },
-                                "startchar": 500,
-                                "endchar": 506
-                              }
-                            }
-                          },
-                          {
-                            "kind": "number",
-                            "value": 1,
-                            "source": {
-                              "input": {
-                                "filename": "tokenring.model"
-                              },
-                              "startchar": 512,
-                              "endchar": 513
-                            }
-                          }
-                        ]
-                      },
+                      "startchar": 533,
+                      "endchar": 539
+                    }
+                  },
+                  "expr": {
+                    "kind": "recordvalue",
+                    "type": {
+                      "kind": "id",
+                      "value": "InTransit",
                       "source": {
                         "input": {
                           "filename": "tokenring.model"
                         },
-                        "startchar": 493,
-                        "endchar": 523
+                        "startchar": 541,
+                        "endchar": 551
                       }
-                    }
-                  ]
-                },
-                "elseblock": {
-                  "kind": "sequence",
-                  "statements": []
-                },
-                "source": {
-                  "input": {
-                    "filename": "tokenring.model"
+                    },
+                    "fields": [
+                      {
+                        "id": {
+                          "kind": "id",
+                          "value": "to",
+                          "source": {
+                            "input": {
+                              "filename": "tokenring.model"
+                            },
+                            "startchar": 553,
+                            "endchar": 555
+                          }
+                        },
+                        "expr": {
+                          "kind": "id",
+                          "value": "next",
+                          "source": {
+                            "input": {
+                              "filename": "tokenring.model"
+                            },
+                            "startchar": 557,
+                            "endchar": 562
+                          }
+                        }
+                      }
+                    ]
                   },
-                  "startchar": 462,
-                  "endchar": 533
-                }
-              },
-              {
-                "kind": "assign",
-                "id": {
-                  "kind": "id",
-                  "value": "token",
                   "source": {
                     "input": {
                       "filename": "tokenring.model"
                     },
                     "startchar": 533,
-                    "endchar": 539
+                    "endchar": 573
                   }
                 },
-                "expr": {
-                  "kind": "recordvalue",
-                  "type": {
-                    "kind": "id",
-                    "value": "InTransit",
-                    "source": {
-                      "input": {
-                        "filename": "tokenring.model"
-                      },
-                      "startchar": 541,
-                      "endchar": 551
-                    }
-                  },
-                  "fields": [
-                    {
-                      "id": {
-                        "kind": "id",
-                        "value": "to",
-                        "source": {
-                          "input": {
-                            "filename": "tokenring.model"
-                          },
-                          "startchar": 553,
-                          "endchar": 555
-                        }
-                      },
-                      "expr": {
-                        "kind": "id",
-                        "value": "next",
-                        "source": {
-                          "input": {
-                            "filename": "tokenring.model"
-                          },
-                          "startchar": 557,
-                          "endchar": 562
-                        }
+                {
+                  "kind": "assign",
+                  "id": {
+                    "kind": "lookup",
+                    "child": {
+                      "kind": "id",
+                      "value": "hasToken",
+                      "source": {
+                        "input": {
+                          "filename": "tokenring.model"
+                        },
+                        "startchar": 580,
+                        "endchar": 589
+                      }
+                    },
+                    "parent": {
+                      "kind": "id",
+                      "value": "server",
+                      "source": {
+                        "input": {
+                          "filename": "tokenring.model"
+                        },
+                        "startchar": 573,
+                        "endchar": 579
                       }
                     }
-                  ]
-                },
-                "source": {
-                  "input": {
-                    "filename": "tokenring.model"
                   },
-                  "startchar": 533,
-                  "endchar": 573
-                }
-              },
-              {
-                "kind": "assign",
-                "id": {
-                  "kind": "lookup",
-                  "child": {
+                  "expr": {
                     "kind": "id",
-                    "value": "hasToken",
+                    "value": "False",
                     "source": {
                       "input": {
                         "filename": "tokenring.model"
                       },
-                      "startchar": 580,
-                      "endchar": 589
+                      "startchar": 591,
+                      "endchar": 596
                     }
                   },
-                  "parent": {
-                    "kind": "id",
-                    "value": "server",
-                    "source": {
-                      "input": {
-                        "filename": "tokenring.model"
-                      },
-                      "startchar": 573,
-                      "endchar": 579
-                    }
-                  }
-                },
-                "expr": {
-                  "kind": "id",
-                  "value": "False",
                   "source": {
                     "input": {
                       "filename": "tokenring.model"
                     },
-                    "startchar": 591,
-                    "endchar": 596
+                    "startchar": 573,
+                    "endchar": 602
                   }
-                },
-                "source": {
-                  "input": {
-                    "filename": "tokenring.model"
-                  },
-                  "startchar": 573,
-                  "endchar": 602
                 }
-              }
-            ]
-          },
-          "elseblock": {
-            "kind": "sequence",
-            "statements": []
-          },
-          "source": {
-            "input": {
-              "filename": "tokenring.model"
+              ]
             },
-            "startchar": 400,
-            "endchar": 604
+            "elseblock": {
+              "kind": "sequence",
+              "statements": []
+            },
+            "source": {
+              "input": {
+                "filename": "tokenring.model"
+              },
+              "startchar": 400,
+              "endchar": 604
+            }
           }
-        }
-      ]
-    },
-    "source": {
-      "input": {
-        "filename": "tokenring.model"
+        ]
       },
-      "startchar": 357,
-      "endchar": 606
+      "source": {
+        "input": {
+          "filename": "tokenring.model"
+        },
+        "startchar": 357,
+        "endchar": 606
+      }
     }
-  }
-]
+  ]
+}

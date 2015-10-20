@@ -15,7 +15,7 @@ describe('main.js', function() {
   describe('range', function() {
     it('range', function() {
       let parsed = parseInline('type DoubleDigits: 10..99;');
-      let typedecl = parsed[0];
+      let typedecl = parsed.statements[0];
       assert.equal('typedecl', typedecl.kind);
       let env = new Environment();
       let type = makeType(typedecl.type, env, typedecl.id);
@@ -38,7 +38,7 @@ describe('main.js', function() {
           first: 10..15,
           second: 12..17,
         };`);
-      let typedecl = parsed[0];
+      let typedecl = parsed.statements[0];
       assert.equal('typedecl', typedecl.kind);
       let env = new Environment();
       let type = makeType(typedecl.type, env, typedecl.id);
@@ -54,7 +54,7 @@ describe('main.js', function() {
   describe('either', function() {
     it('enum', function() {
       let parsed = parseInline('type Boolean: either { False, True };');
-      let typedecl = parsed[0];
+      let typedecl = parsed.statements[0];
       assert.equal('typedecl', typedecl.kind);
       let env = new Environment();
       let type = makeType(typedecl.type, env, typedecl.id);
@@ -78,7 +78,7 @@ describe('main.js', function() {
           Nothing,
         };
       `);
-      let typedecl = parsed[0];
+      let typedecl = parsed.statements[0];
       assert.equal('typedecl', typedecl.kind);
       let env = new Environment();
       let type = makeType(typedecl.type, env, typedecl.id);

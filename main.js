@@ -92,7 +92,7 @@ class Code {
 }
 
 let load = function(parsed, env) {
-  parsed.forEach((decl) => {
+  parsed.statements.forEach((decl) => {
     if (decl.kind == 'typedecl') {
       env.assignType(decl.id.value, makeType(decl.type, env, decl.id));
     } else if (decl.kind == 'paramdecl') {
