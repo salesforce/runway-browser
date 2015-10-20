@@ -145,7 +145,7 @@ if (require.main === module) {
   let prelude = loadPrelude();
   let env = new Environment(prelude);
   if (process.argv.length > 2) {
-    filename = process.argv[2];
+    let filename = process.argv[2];
     load(parser.parse(new Input(filename)), env);
     console.log(env.toString());
   } else { // run repl
