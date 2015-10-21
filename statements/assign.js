@@ -11,7 +11,7 @@ class Assign extends Statement {
   }
 
   execute() {
-    this.env.getVar(this.parsed.id.value).assign(this.rhs.evaluate());
+    this.lhs.evaluate().assign(this.rhs.evaluate());
   }
 
   toString(indent) {

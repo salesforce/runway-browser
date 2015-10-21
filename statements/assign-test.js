@@ -23,7 +23,6 @@ describe('statements/assign.js', function() {
     });
 
     it('LHS has lookups', function() {
-      return; // TODO: not implemented
       let module = testing.run(`
         type T : record {
           first: 0..2,
@@ -33,7 +32,7 @@ describe('statements/assign.js', function() {
         x.first = 1;
         x.second = 2;
       `);
-      assert.equal(module.env.getVar('x').toString(), 'T { first: 1, second: 2, }');
+      assert.equal(module.env.getVar('x').toString(), 'T { first: 1, second: 2 }');
     });
   });
 });

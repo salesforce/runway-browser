@@ -8,7 +8,10 @@ class Lookup extends Expression {
     let makeExpression = require('./factory.js');
     this.parent = makeExpression(parsed.parent, this.env);
   }
-  // TODO: evaluate() looks up parsed.child
+
+  evaluate() {
+    return this.parent.evaluate().lookup(this.parsed.child.value);
+  }
 
   toString(indent) {
     return `${this.parent.toString(indent)}.${this.parsed.child.value}`;

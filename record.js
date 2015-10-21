@@ -13,6 +13,10 @@ class RecordValue extends Value {
     });
   }
 
+  lookup(fieldname) {
+    return this[fieldname];
+  }
+
   innerToString() {
     let fields = this.type.decl.fields.map((v) => {
       let rhs = this[v.id.value].toString();

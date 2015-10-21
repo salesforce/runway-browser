@@ -17,6 +17,16 @@ class EitherValue extends Value {
 
   assign(newValue) {
     let fieldtype = null;
+
+    if (this.type == newValue.type) { // newValue is an EitherValue
+      let _ = delete this[this.tag.name];
+      this.tag = newValue.tag;
+      if (this.tag.name in newValue) {
+        this[this.tag.name] = newValue[this.tag.name];
+      }
+      return;
+    }
+
     this.type.fieldtypes.forEach((ft) => {
       if (ft.tag === newValue || ft.tag.name === newValue) {
         fieldtype = ft;
