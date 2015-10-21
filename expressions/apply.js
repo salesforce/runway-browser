@@ -2,11 +2,11 @@
 
 let Expression = require('./expression.js');
 
-class Matches extends Expression {
+class Apply extends Expression {
   constructor(parsed, env) {
     super(parsed, env);
     let makeExpression = require('./factory.js');
-    this.lhs = makeExpression(this.parsed.expr, this.env);
+    this.args = this.parsed.args.map((a) => makeExpression(a, this.env));
   }
 
   evaluate() {
@@ -14,8 +14,9 @@ class Matches extends Expression {
   }
 
   toString(indent) {
-    return `${this.lhs.toString(indent)} matches ${this.parsed.variant.value}`
+    let inner = this.args.map((arg) => arg.toString()).join(', ');
+    return `${this.parsed.func}(${inner})`
   }
 }
 
-module.exports = Matches;
+module.exports = Apply;

@@ -16,6 +16,13 @@ class Sequence extends Statement {
   execute() {
     this.statements.forEach((s) => s.execute());
   }
+
+  toString(indent) {
+    if (indent === undefined) {
+      indent = '';
+    }
+    return this.statements.map((s) => s.toString(indent)).join('\n');
+  }
 }
 
 module.exports = Sequence;

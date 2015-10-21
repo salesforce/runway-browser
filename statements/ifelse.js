@@ -19,6 +19,15 @@ class IfElse extends Statement {
       this.falseStatements.execute();
     }
   }
+
+  toString(indent) {
+    let next = indent + '  ';
+    return `${indent}if ${this.condition.toString(indent)} {
+${this.trueStatements.toString(next)}
+${indent}} else {
+${this.falseStatements.toString(next)}
+${indent}}`;
+  }
 }
 
 module.exports = IfElse;

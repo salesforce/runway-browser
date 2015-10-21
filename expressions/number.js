@@ -6,6 +6,10 @@ class NumberExpr extends Expression {
   evaluate() {
     return this.parsed.value;
   }
+
+  toString(indent) {
+    return `${this.parsed.value}`;
+  }
 }
 
 module.exports = NumberExpr;

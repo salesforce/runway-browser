@@ -12,6 +12,10 @@ class TypeDecl extends Statement {
   execute() {
     // no-op
   }
+
+  toString(indent) {
+    return `${indent}type ${this.parsed.id.value} : ...;`;
+  }
 }
 
 module.exports = TypeDecl;

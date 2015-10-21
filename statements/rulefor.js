@@ -3,6 +3,25 @@
 let Statement = require('./statement.js');
 
 class RuleFor extends Statement {
+  constructor(parsed, env) {
+    super(parsed, env);
+    let makeStatement = require('./factory.js');
+    this.inner = makeStatement(this.parsed.code, this.env);
+    if (this.env.rules === undefined) { // XXX- hack
+      this.env.rules = {};
+    }
+    this.env.rules[this.parsed.id.value] = this;
+  }
+
+  execute() {
+    this.inner.execute();
+  }
+
+  toString(indent) {
+    return `${indent}rule ${this.parsed.id.value} for ... in ... {
+${this.inner.toString(indent + '  ')}
+}`;
+  }
 }
 
 module.exports = RuleFor;

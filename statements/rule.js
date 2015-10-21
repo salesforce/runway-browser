@@ -16,6 +16,12 @@ class Rule extends Statement {
   execute() {
     this.inner.execute();
   }
+
+  toString(indent) {
+    return `${indent}rule ${this.parsed.id.value} {
+${this.inner.toString(indent + '  ')}
+}`;
+  }
 }
 
 module.exports = Rule;

@@ -10,6 +10,10 @@ class Identifier extends Expression {
     }
     return r;
   }
+
+  toString(indent) {
+    return `${this.parsed.value}`
+  }
 }
 
 module.exports = Identifier;

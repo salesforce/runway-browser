@@ -9,6 +9,10 @@ class Expression {
   evaluate() {
     throw Error(`evaluate() not implemented for ${this.parsed.kind} expression`);
   }
+
+  toString(indent) {
+    return `[${this.parsed.kind} is missing toString()]`
+  }
 }
 
 module.exports = Expression;

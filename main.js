@@ -14,6 +14,7 @@ let out = function(o) {
 
 let load = function(parsed, env) {
   let ast = makeStatement(parsed, env);
+  console.log(ast.toString());
   return env;
 };
 

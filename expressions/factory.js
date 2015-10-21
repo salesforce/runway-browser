@@ -1,7 +1,9 @@
 "use strict";
 
 let kinds = [
+  'apply',
   'id',
+  'index',
   'lookup',
   'matches',
   'number',

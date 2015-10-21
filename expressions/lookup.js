@@ -9,6 +9,10 @@ class Lookup extends Expression {
     this.parent = makeExpression(parsed.parent, this.env);
   }
   // TODO: evaluate() looks up parsed.child
+
+  toString(indent) {
+    return `${this.parent.toString(indent)}.${this.parsed.child.value}`;
+  }
 }
 
 module.exports = Lookup;
