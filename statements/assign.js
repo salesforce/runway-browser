@@ -11,7 +11,6 @@ class Assign extends Statement {
   }
 
   execute() {
-    // TODO: broken for a.b on LHS
     this.env.getVar(this.parsed.id.value).assign(this.rhs.evaluate());
   }
 

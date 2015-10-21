@@ -10,7 +10,16 @@ class Apply extends Expression {
   }
 
   evaluate() {
-    return this.env.getVar('False'); // TODO
+    if (this.parsed.func == '==') {
+      let lhs = this.args[0].evaluate();
+      let rhs = this.args[1].evaluate();
+      if (lhs.equals(rhs)) {
+        return this.env.getVar('True');
+      } else {
+        return this.env.getVar('False');
+      }
+    }
+    throw new Error(`The function ${this.parsed.func} is not implemented`);
   }
 
   toString(indent) {

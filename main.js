@@ -14,8 +14,10 @@ let out = function(o) {
 
 let load = function(parsed, env) {
   let ast = makeStatement(parsed, env);
-  console.log(ast.toString());
-  return env;
+  return {
+    ast: ast,
+    env: env,
+  };
 };
 
 let loadPrelude = function() {

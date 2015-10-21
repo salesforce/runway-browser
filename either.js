@@ -33,6 +33,20 @@ class EitherValue extends Value {
     throw Error(`Cannot assign value of ${newValue} to either-type ${this.type.getName()}`);
   }
 
+  equals(other) {
+    if (this.type != other.type) {
+      return false;
+    }
+    if (this.tag != other.tag) {
+      return false;
+    }
+    if (this.tag.name in this) {
+      return this[this.tag.name].equals(other[othe.tag.name]);
+    } else {
+      return true;
+    }
+  }
+
   innerToString() {
     if (this.tag.name in this) {
       return this[this.tag.name].toString();
@@ -55,6 +69,9 @@ class EitherTag extends Value {
   constructor(type, name) {
     super(type);
     this.name = name;
+  }
+  equals(other) {
+    return this.type == other.type && this.name == other.name;
   }
   innerToString() {
     return `${this.name}`;

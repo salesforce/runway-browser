@@ -26,7 +26,7 @@ bower_components/parsimmon/build/parsimmon.commonjs.js: bower_components/parsimm
 test: unit-test system-test
 
 .PNONY: unit-test
-unit-test: $(wildcard *-test.js)
+unit-test: $(shell git ls-files '*-test.js' '**/*-test.js')
 	./node_modules/mocha/bin/mocha $^
 
 .PHONY: system-test
@@ -43,5 +43,5 @@ system-test-parser-tokenring: parser.js tokenring.model
 	git diff -w --exit-code output-tokenring.json
 
 .PHONY: format
-format: $(shell git ls-files *.js)
+format: $(shell git ls-files '*.js' '**/*.js')
 	./node_modules/jsfmt/bin/jsfmt --write $^

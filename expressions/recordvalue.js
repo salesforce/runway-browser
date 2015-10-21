@@ -7,11 +7,11 @@ class RecordValue extends Expression {
     super(parsed, env);
     let makeExpression = require('./factory.js');
     this.fields = new Map(this.parsed.fields.map((field) => [
-      field.id.value,
-      makeExpression(field.expr, this.env),
+        field.id.value,
+        makeExpression(field.expr, this.env),
     ]));
   }
-  // TODO: evaluate()
+// TODO: evaluate()
 }
 
 module.exports = RecordValue;
