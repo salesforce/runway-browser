@@ -1,12 +1,14 @@
 "use strict";
 
+let Environment = require('../environment.js');
 let Statement = require('./statement.js');
 
 class Rule extends Statement {
   constructor(parsed, env) {
     super(parsed, env);
     let makeStatement = require('./factory.js');
-    this.inner = makeStatement(this.parsed.code, this.env);
+    this.innerEnv = new Environment(this.env);
+    this.inner = makeStatement(this.parsed.code, this.innerEnv);
     if (this.env.rules === undefined) { // XXX- hack
       this.env.rules = {};
     }

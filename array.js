@@ -12,6 +12,9 @@ class ArrayValue extends Value {
     },
       () => this.type.valuetype.makeDefaultValue());
   }
+  index(i) {
+    return this.items[i - this.type.indextype.low];
+  }
   toString() {
     let inner = this.items.map((v, i) => {
       return `${this.type.indextype.low + i}: ${v.toString()}`;
