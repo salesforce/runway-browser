@@ -2,7 +2,6 @@
 
 let Type = require('./type.js');
 let Value = require('./value.js');
-let makeType = require('./typefactory.js');
 
 class RecordValue extends Value {
 
@@ -45,8 +44,24 @@ class RecordType extends Type {
         type: makeType(field.type, this.env),
     }));
   }
+  fieldType(name) {
+    let retval = undefined;
+    this.fieldtypes.forEach((ft) => {
+      if (ft.name == name) {
+        retval = ft.type;
+      }
+    });
+    return retval;
+  }
   makeDefaultValue() {
     return new RecordValue(this);
+  }
+  toString() {
+    let name = this.getName();
+    if (name !== undefined) {
+      return name;
+    }
+    return 'anonymous record';
   }
 }
 

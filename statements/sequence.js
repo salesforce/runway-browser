@@ -17,6 +17,10 @@ class Sequence extends Statement {
     this.statements.forEach((s) => s.execute());
   }
 
+  typecheck() {
+    this.statements.forEach((s) => s.typecheck());
+  }
+
   toString(indent) {
     if (indent === undefined) {
       indent = '';

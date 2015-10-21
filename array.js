@@ -30,6 +30,9 @@ class ArrayType extends Type {
   makeDefaultValue() {
     return new ArrayValue(this);
   }
+  toString() {
+    return `Array<${this.valueType}>[${this.indexType}]`;
+  }
 }
 
 module.exports = ArrayType;

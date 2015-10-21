@@ -41,6 +41,13 @@ class RangeType extends Type {
   makeDefaultValue() {
     return new RangeValue(this);
   }
+  toString() {
+    let name = this.getName();
+    if (name !== undefined) {
+      return name;
+    }
+    return `${this.low}..${this.high}`;
+  }
 }
 
 module.exports = RangeType;

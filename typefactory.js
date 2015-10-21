@@ -1,7 +1,7 @@
 "use strict";
 
 let ArrayType = require('./array.js');
-let EitherType = require('./either.js');
+let EitherType = require('./either.js').Type;
 let RangeType = require('./range.js');
 let RecordType = require('./record.js');
 

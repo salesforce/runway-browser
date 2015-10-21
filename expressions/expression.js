@@ -6,6 +6,10 @@ class Expression {
     this.env = env;
   }
 
+  typecheck() {
+    throw Error(`typecheck() not implemented for ${this.parsed.kind} expression`);
+  }
+
   evaluate() {
     throw Error(`evaluate() not implemented for ${this.parsed.kind} expression`);
   }

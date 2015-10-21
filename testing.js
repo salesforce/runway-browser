@@ -12,6 +12,7 @@ let run = function(code) {
 
   let parsed = Parser.parse(new Input('unit test', code));
   let module = main.load(parsed, env);
+  module.ast.typecheck();
   module.ast.execute();
   return module;
 };

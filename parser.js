@@ -269,20 +269,6 @@ let complexType = Parsimmon.alt(
   record,
   either);
 
-let param = seqMap(keywords.param,
-  id,
-  colon,
-  type,
-  equals,
-  expr,
-  semicolon,
-  (_, id, _2, type, _3, value, _4) => ({
-      kind: 'paramdecl',
-      id: id,
-      type: type,
-      default: value
-  }));
-
 let typedecl = seqMap(keywords.type,
   id,
   colon,
@@ -303,6 +289,24 @@ let vardecl = seqMap(keywords.var,
   (_, id, _2, type, value, _3) => {
     let o = {
       'kind': 'vardecl',
+      id: id,
+      type: type,
+    };
+    if (value.length > 0) {
+      o.default = value[0];
+    }
+    return o;
+  });
+
+let param = seqMap(keywords.param,
+  id,
+  colon,
+  type,
+  equals.then(expr).times(0, 1),
+  semicolon,
+  (_, id, _2, type, value, _3) => {
+    let o = {
+      'kind': 'paramdecl',
       id: id,
       type: type,
     };

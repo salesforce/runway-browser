@@ -131,7 +131,9 @@ describe('main.js', function() {
     it('basic', function() {
       let parsed = parseInline('param ELEVATORS: 1..1024 = 6;');
       let env = new Environment();
-      main.load(parsed, env);
+      let module = main.load(parsed, env);
+      module.ast.typecheck();
+      module.ast.execute();
       assert.equal(6, env.getVar('ELEVATORS').toString());
     });
   });
@@ -143,7 +145,9 @@ describe('main.js', function() {
         var bar: 11..20;
       `);
       let env = new Environment();
-      main.load(parsed, env);
+      let module = main.load(parsed, env);
+      module.ast.typecheck();
+      module.ast.execute();
       assert.equal(8, env.getVar('foo').toString());
       assert.equal(11, env.getVar('bar').toString());
     });
@@ -172,7 +176,9 @@ describe('main.js', function() {
           y = 2;
         }
       `);
-      main.load(parsed, env);
+      let module = main.load(parsed, env);
+      module.ast.typecheck();
+      module.ast.execute();
       env.rules['foo'].execute();
       assert.equal('True', env.getVar('x'));
       assert.equal('2', env.getVar('y'));

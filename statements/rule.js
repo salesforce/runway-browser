@@ -13,6 +13,10 @@ class Rule extends Statement {
     this.env.rules[this.parsed.id.value] = this;
   }
 
+  typecheck() {
+    this.inner.typecheck();
+  }
+
   execute() {
     this.inner.execute();
   }

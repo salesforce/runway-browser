@@ -103,6 +103,9 @@ class EitherVariant extends Type {
       this.recordtype = makeType(decl.type, this.env);
     }
   }
+  toString() {
+    return `${this.tag} (EitherVariant)`;
+  }
 }
 
 class EitherType extends Type {
@@ -115,6 +118,18 @@ class EitherType extends Type {
   makeDefaultValue() {
     return new EitherValue(this);
   }
+  toString() {
+    let name = this.getName();
+    if (name !== undefined) {
+      return name;
+    }
+    return 'anonymous either';
+  }
 }
 
-module.exports = EitherType;
+module.exports = {
+  Value: EitherValue,
+  Tag: EitherTag,
+  Variant: EitherVariant,
+  Type: EitherType,
+};

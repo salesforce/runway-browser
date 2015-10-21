@@ -6,6 +6,10 @@ class Statement {
     this.env = env;
   }
 
+  typecheck() {
+    throw Error(`typecheck() not implemented for ${this.parsed.kind} statement`);
+  }
+
   execute() {
     throw Error(`execute() not implemented for ${this.parsed.kind} statement`);
   }

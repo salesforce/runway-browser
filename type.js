@@ -15,7 +15,6 @@ class Type {
       return this.name.value;
     }
   }
-
 }
 
 module.exports = Type;

@@ -1,12 +1,26 @@
 "use strict";
 
 let Expression = require('./expression.js');
+let Types = require('../types.js');
 
 class Apply extends Expression {
   constructor(parsed, env) {
     super(parsed, env);
     let makeExpression = require('./factory.js');
     this.args = this.parsed.args.map((a) => makeExpression(a, this.env));
+  }
+
+  typecheck() {
+    if (this.parsed.func == '==') {
+      this.type = this.env.getType('Boolean');
+      if (this.args.length != 2) {
+        throw Error(`== takes exactly two arguments`);
+      }
+      this.args.forEach((arg) => arg.typecheck());
+      if (!Types.haveEquality(this.args[0].type, this.args[1].type)) {
+        throw Error(`TypeError: cannot compare ${this.args[0].type} to ${this.args[1].type}`);
+      }
+    }
   }
 
   evaluate() {
