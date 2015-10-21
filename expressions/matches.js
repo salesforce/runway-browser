@@ -10,6 +10,7 @@ class Matches extends Expression {
   }
 
   evaluate() {
+    console.log(this.parsed.variant.value);
     return this.env.getVar('False'); // TODO
   }
 
