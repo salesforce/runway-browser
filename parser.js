@@ -446,8 +446,8 @@ let statement = Parsimmon.alt(
 // main parser
 let file = lazy(() => {
   return lexeme(string('')).then(statement.many()).map((statements) => ({
-    kind: 'sequence',
-    statements: statements,
+      kind: 'sequence',
+      statements: statements,
   }));
 });
 

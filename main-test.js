@@ -173,7 +173,7 @@ describe('main.js', function() {
         }
       `);
       main.load(parsed, env);
-      env.rules['foo'].evaluate();
+      env.rules['foo'].execute();
       assert.equal('True', env.getVar('x'));
       assert.equal('2', env.getVar('y'));
     });
