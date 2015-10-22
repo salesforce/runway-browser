@@ -12,6 +12,7 @@ type Server: record {
 }
 
 var servers: Array<Server>[ServerId];
+servers[1].hasToken = True;
 
 rule deliverToken {
     if token matches Intransit {
