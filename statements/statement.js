@@ -1,5 +1,7 @@
 "use strict";
 
+let errors = require('../errors.js');
+
 class Statement {
   constructor(parsed, env) {
     this.parsed = parsed;
@@ -7,11 +9,11 @@ class Statement {
   }
 
   typecheck() {
-    throw Error(`typecheck() not implemented for ${this.parsed.kind} statement`);
+    throw new errors.Type(`typecheck() not implemented for ${this.parsed.kind} statement`);
   }
 
   execute() {
-    throw Error(`execute() not implemented for ${this.parsed.kind} statement`);
+    throw new errors.Type(`execute() not implemented for ${this.parsed.kind} statement`);
   }
 
   toString(indent) {

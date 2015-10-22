@@ -1,5 +1,6 @@
 "use strict";
 
+let errors = require('../errors.js');
 let makeExpression = require('../expressions/factory.js');
 let makeType = require('../typefactory.js');
 let Statement = require('./statement.js');
@@ -26,7 +27,7 @@ class VarDecl extends Statement {
     if (this.defaultExpr !== null) {
       this.defaultExpr.typecheck();
       if (!Types.subtypeOf(this.defaultExpr.type, this.value.type)) {
-        throw Error(`TypeError: cannot assign ${this.defaultExpr.type} to variable of type ${this.value.type}`);
+        throw new errors.Type(`Cannot assign ${this.defaultExpr.type} to variable of type ${this.value.type}`);
       }
     }
   }

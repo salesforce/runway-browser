@@ -1,5 +1,6 @@
 "use strict";
 
+let errors = require('./errors.js');
 let ArrayType = require('./array.js');
 let EitherType = require('./either.js').Type;
 let RangeType = require('./range.js');
@@ -15,17 +16,17 @@ let make = function(decl, env, name) {
   } else if (decl.kind == 'alias') {
     let t = env.getType(decl.value);
     if (t === undefined) {
-      throw Error(`Unknown type ${decl.value}`);
+      throw new errors.Lookup(`Unknown type ${decl.value}`);
     }
     return t;
   } else if (decl.kind == 'generic') {
     if (decl.base.value == 'Array') {
       return new ArrayType(decl, env, name);
     } else {
-      throw Error(`Unknown type '${decl.base.value}'`);
+      throw new errors.Unimplemented(`Unknown type '${decl.base.value}'`);
     }
   }
   let o = JSON.stringify(decl, null, 2);
-  throw Error(`Unknown type '${name}': ${o}`);
+  throw new errors.Unimplemented(`Unknown type '${name}': ${o}`);
 }
 module.exports = make;

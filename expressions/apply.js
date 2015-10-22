@@ -1,5 +1,6 @@
 "use strict";
 
+let errors = require('../errors.js');
 let Expression = require('./expression.js');
 let Types = require('../types.js');
 
@@ -14,11 +15,11 @@ class Apply extends Expression {
     if (this.parsed.func == '==') {
       this.type = this.env.getType('Boolean');
       if (this.args.length != 2) {
-        throw Error(`== takes exactly two arguments`);
+        throw new errors.Type(`== takes exactly two arguments`);
       }
       this.args.forEach((arg) => arg.typecheck());
       if (!Types.haveEquality(this.args[0].type, this.args[1].type)) {
-        throw Error(`TypeError: cannot compare ${this.args[0].type} to ${this.args[1].type}`);
+        throw new errors.Type(`Cannot compare ${this.args[0].type} to ${this.args[1].type}`);
       }
     }
   }
@@ -33,7 +34,7 @@ class Apply extends Expression {
         return this.env.getVar('False');
       }
     }
-    throw new Error(`The function ${this.parsed.func} is not implemented`);
+    throw new errors.Unimplemented(`The function ${this.parsed.func} is not implemented`);
   }
 
   toString(indent) {

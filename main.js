@@ -72,8 +72,10 @@ if (require.main === module) {
           readline.write('huh?\n');
         } else if (input.slice(0, 2) == 'do') {
           try {
-            load(parser.parse(new Input('REPL',
+            var module = load(parser.parse(new Input('REPL',
               `rule interactive { ${input.slice(2)} }`)), env);
+            module.ast.typecheck();
+            module.execute();
             env.rules['interactive'].execute();
           } catch ( e ) {
             readline.write(`${e}\n`);

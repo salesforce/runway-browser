@@ -1,5 +1,6 @@
 "use strict";
 
+let errors = require('../errors.js');
 let makeExpression = require('../expressions/factory.js');
 let Statement = require('./statement.js');
 let Types = require('../types.js');
@@ -15,7 +16,7 @@ class Assign extends Statement {
     this.lhs.typecheck();
     this.rhs.typecheck();
     if (!Types.subtypeOf(this.rhs.type, this.lhs.type)) {
-      throw Error(`TypeError: cannot assign ${this.rhs.type} to variable of type ${this.lhs.type}`);
+      throw new errors.Type(`Cannot assign ${this.rhs.type} to variable of type ${this.lhs.type}`);
     }
   }
 

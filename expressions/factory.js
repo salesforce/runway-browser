@@ -1,5 +1,7 @@
 "use strict";
 
+let errors = require('../errors.js');
+
 let kinds = [
   'apply',
   'id',
@@ -19,6 +21,6 @@ let make = function(parsed, env) {
     return new expression(parsed, env);
   }
   let o = JSON.stringify(parsed, null, 2);
-  throw Error(`Unknown expression: ${o}`);
+  throw new errors.Unimplemented(`Unknown expression: ${o}`);
 }
 module.exports = make;

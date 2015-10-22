@@ -20,6 +20,10 @@ class Rule extends Statement {
   }
 
   execute() {
+    // do nothing
+  }
+
+  fire() {
     this.inner.execute();
   }
 

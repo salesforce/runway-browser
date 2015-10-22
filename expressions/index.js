@@ -1,5 +1,6 @@
 "use strict";
 
+let errors = require('../errors.js');
 let Expression = require('./expression.js');
 
 class Index extends Expression {
@@ -14,7 +15,7 @@ class Index extends Expression {
     this.container.typecheck();
     this.by.typecheck();
     if (!(this.container.type instanceof ArrayType)) {
-      throw Error(`Can only index into Arrays (for now)`);
+      throw new errors.Type(`Can only index into Arrays (for now)`);
     }
   // TODO: more checks
   }

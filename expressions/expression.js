@@ -1,5 +1,7 @@
 "use strict";
 
+let errors = require('../errors.js');
+
 class Expression {
   constructor(parsed, env) {
     this.parsed = parsed;
@@ -7,15 +9,15 @@ class Expression {
   }
 
   typecheck() {
-    throw Error(`typecheck() not implemented for ${this.parsed.kind} expression`);
+    throw new errors.Unimplemented(`typecheck() not implemented for ${this.parsed.kind} expression`);
   }
 
   evaluate() {
-    throw Error(`evaluate() not implemented for ${this.parsed.kind} expression`);
+    throw new errors.Unimplemented(`evaluate() not implemented for ${this.parsed.kind} expression`);
   }
 
   toString(indent) {
-    return `[${this.parsed.kind} is missing toString()]`
+    throw new errors.Unimplemented(`${this.parsed.kind} is missing toString()`);
   }
 }
 

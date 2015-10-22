@@ -1,5 +1,6 @@
 "use strict";
 
+let errors = require('./errors.js');
 let Type = require('./type.js');
 let Value = require('./value.js');
 
@@ -40,7 +41,7 @@ class EitherValue extends Value {
       }
       return;
     }
-    throw Error(`Cannot assign value of ${newValue} to either-type ${this.type.getName()}`);
+    throw new errors.Internal(`Cannot assign value of ${newValue} to either-type ${this.type.getName()}`);
   }
 
   equals(other) {

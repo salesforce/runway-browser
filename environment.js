@@ -1,5 +1,6 @@
 "use strict";
 
+let errors = require('./errors.js');
 let util = require('util');
 
 class Environment {
@@ -16,7 +17,7 @@ class Environment {
   assignType(id, decl) {
     let v = this.getType(id);
     if (v != undefined) {
-      throw Error(`Cannot shadow type ${v} with ${decl}`);
+      throw new erorrs.Type(`Cannot shadow type ${v} with ${decl}`);
     }
     this.types.set(id, decl);
   }
@@ -44,7 +45,7 @@ class Environment {
   assignVar(id, decl) {
     let v = this.getVar(id);
     if (v != undefined) {
-      throw Error(`Cannot shadow variable ${v} with ${decl}`);
+      throw new errors.Type(`Cannot shadow variable ${v} with ${decl}`);
     }
     this.vars.set(id, decl);
   }

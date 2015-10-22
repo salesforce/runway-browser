@@ -1,5 +1,7 @@
 "use strict";
 
+let errors = require('../errors.js');
+
 let kinds = [
   'assign',
   'foreach',
@@ -24,6 +26,6 @@ let make = function(parsed, env) {
     }
   }
   let o = JSON.stringify(parsed, null, 2);
-  throw Error(`Unknown statement: ${o}`);
+  throw new errors.Unimplemented(`Unknown statement: ${o}`);
 }
 module.exports = make;

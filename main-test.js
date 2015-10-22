@@ -179,8 +179,8 @@ describe('main.js', function() {
       let module = main.load(parsed, env);
       module.ast.typecheck();
       module.ast.execute();
-      env.rules['foo'].execute();
-      assert.equal('True', env.getVar('x'));
+      env.rules['foo'].fire();
+      assert.equal('True', env.getVar('x').toString());
       assert.equal('2', env.getVar('y'));
     });
   });

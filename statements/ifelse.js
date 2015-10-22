@@ -1,5 +1,6 @@
 "use strict";
 
+let errors = require('../errors.js');
 let makeExpression = require('../expressions/factory.js');
 let Statement = require('./statement.js');
 let Types = require('../types.js');
@@ -16,7 +17,7 @@ class IfElse extends Statement {
   typecheck() {
     this.condition.typecheck();
     if (!Types.subtypeOf(this.condition.type, this.env.getType('Boolean'))) {
-      throw Error(`Condition of if statement must be a Boolean, found ${this.condition.type}`);
+      throw new errors.Type(`Condition of if statement must be a Boolean, found ${this.condition.type}`);
     }
     this.trueStatements.typecheck();
     this.falseStatements.typecheck();

@@ -1,5 +1,6 @@
 "use strict";
 
+let errors = require('./errors.js');
 let Type = require('./type.js');
 let Value = require('./value.js');
 
@@ -13,13 +14,13 @@ class RangeValue extends Value {
   assign(newValue) {
     if (typeof newValue == 'number') {
       if (newValue < this.type.low || newValue > this.type.high) {
-        throw Error(`Cannot assign value of ${newValue} to range ${this.type.getName()}: ${this.type.low}..${this.type.high};`);
+        throw new errors.Bounds(`Cannot assign value of ${newValue} to range ${this.type.getName()}: ${this.type.low}..${this.type.high};`);
       }
       this.value = newValue;
     } else if (newValue instanceof RangeValue) {
       return this.assign(newValue.value);
     } else {
-      throw Error(`Trying to assign ${newValue.type.toString()} to range ${this.type.getName()}: ${this.type.low}..${this.type.high};`);
+      throw new errors.Internal(`Trying to assign ${newValue.type.toString()} to range ${this.type.getName()}: ${this.type.low}..${this.type.high};`);
     }
   }
 

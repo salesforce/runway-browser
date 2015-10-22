@@ -1,5 +1,6 @@
 "use strict";
 
+let errors = require('../errors.js');
 let Expression = require('./expression.js');
 
 class Identifier extends Expression {
@@ -10,7 +11,7 @@ class Identifier extends Expression {
   evaluate() {
     let r = this.env.getVar(this.parsed.value);
     if (r === undefined) {
-      throw Error(`'${this.parsed.value}' is not a variable/constant in scope`);
+      throw new errors.Lookup(`'${this.parsed.value}' is not a variable/constant in scope`);
     }
     return r;
   }

@@ -1,5 +1,6 @@
 "use strict";
 
+let errors = require('./errors.js');
 let Type = require('./type.js');
 let Value = require('./value.js');
 
@@ -15,7 +16,7 @@ class NumberValue extends Value {
     } else if (newValue instanceof RangeValue) {
       this.value = newValue.value;
     } else {
-      throw Error(`Trying to assign ${newValue.type} to Number;`);
+      throw new errors.Internal(`Trying to assign ${newValue.type} to Number;`);
     }
   }
 

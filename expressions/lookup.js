@@ -1,5 +1,6 @@
 "use strict";
 
+let errors = require('../errors.js');
 let Expression = require('./expression.js');
 
 class Lookup extends Expression {
@@ -13,11 +14,11 @@ class Lookup extends Expression {
     let RecordType = require('../record.js');
     this.parent.typecheck();
     if (!(this.parent.type instanceof RecordType)) {
-      throw Error(`Cannot lookup field in a ${this.parent.type} (defined at ${this.parent.parsed.source})`);
+      throw new errors.Type(`Cannot lookup field in a ${this.parent.type} (defined at ${this.parent.parsed.source})`);
     }
     this.type = this.parent.type.fieldType(this.parsed.child.value);
     if (this.type === undefined) {
-      throw Error(`TypeError: ${this.parent.type} has no field ${this.parsed.child.value}`);
+      throw new errors.Type(`${this.parent.type} has no field ${this.parsed.child.value}`);
     }
   }
 

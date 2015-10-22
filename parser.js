@@ -1,5 +1,6 @@
 "use strict";
 
+let errors = require('./errors.js');
 let Input = require('./input.js');
 let Source = require('./source.js');
 let process = require('process');
@@ -481,7 +482,7 @@ let parse = function(input) {
       }
     });
     expected = expected.sort();
-    let error = Error(`Parsing failed in ${input.filename} at line ${at.line}, col ${at.col}:
+    let error = new errors.Parse(`Parsing failed in ${input.filename} at line ${at.line}, col ${at.col}:
 ${input.highlight(at)}
 Expected one of: ${expected.join(', ')}`);
     error.input = input;
