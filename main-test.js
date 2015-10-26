@@ -16,15 +16,13 @@ describe('main.js', function() {
     it('range', function() {
       let parsed = parseInline('type DoubleDigits: 10..99;');
       let typedecl = parsed.statements[0];
-      assert.equal('typedecl', typedecl.kind);
+      assert.equal(typedecl.kind, 'typedecl');
       let env = new Environment();
       let type = makeType(typedecl.type, env, typedecl.id);
       let value = type.makeDefaultValue();
-      assert.equal('10',
-        value.toString());
+      assert.equal(value.toString(), '10');
       value.assign(11);
-      assert.equal('11',
-        value.toString());
+      assert.equal(value.toString(), '11');
       assert.throws(() => {
         value.assign(9);
       });
@@ -39,15 +37,13 @@ describe('main.js', function() {
           second: 12..17,
         };`);
       let typedecl = parsed.statements[0];
-      assert.equal('typedecl', typedecl.kind);
+      assert.equal(typedecl.kind, 'typedecl');
       let env = new Environment();
       let type = makeType(typedecl.type, env, typedecl.id);
       let value = type.makeDefaultValue();
-      assert.equal('Pair { first: 10, second: 12 }',
-        value.toString());
+      assert.equal(value.toString(), 'Pair { first: 10, second: 12 }');
       value.first.assign(13);
-      assert.equal('Pair { first: 13, second: 12 }',
-        value.toString());
+      assert.equal(value.toString(), 'Pair { first: 13, second: 12 }');
     });
   });
 
@@ -55,15 +51,13 @@ describe('main.js', function() {
     it('enum', function() {
       let parsed = parseInline('type Boolean: either { False, True };');
       let typedecl = parsed.statements[0];
-      assert.equal('typedecl', typedecl.kind);
+      assert.equal(typedecl.kind, 'typedecl');
       let env = new Environment();
       let type = makeType(typedecl.type, env, typedecl.id);
       let value = type.makeDefaultValue();
-      assert.equal('False',
-        value.toString());
+      assert.equal(value.toString(), 'False');
       value.assign('True');
-      assert.equal('True',
-        value.toString());
+      assert.equal(value.toString(), 'True');
       assert.throws(() => {
         value.assign('Whatever');
       });
@@ -79,15 +73,13 @@ describe('main.js', function() {
         };
       `);
       let typedecl = parsed.statements[0];
-      assert.equal('typedecl', typedecl.kind);
+      assert.equal(typedecl.kind, 'typedecl');
       let env = new Environment();
       let type = makeType(typedecl.type, env, typedecl.id);
       let value = type.makeDefaultValue();
-      assert.equal('Something { thing: 10 }',
-        value.toString());
+      assert.equal(value.toString(), 'Something { thing: 10 }');
       value.assign('Nothing');
-      assert.equal('Nothing',
-        value.toString());
+      assert.equal(value.toString(), 'Nothing');
       assert.throws(() => {
         value.assign('Whatever');
       });
@@ -113,8 +105,7 @@ describe('main.js', function() {
       let env = new Environment();
       main.load(parsed, env);
       let value = env.getType('Truthful').makeDefaultValue();
-      assert.equal('False',
-        value.toString());
+      assert.equal(value.toString(), 'False');
     });
   });
 
@@ -123,7 +114,7 @@ describe('main.js', function() {
       let prelude = main.loadPrelude();
       let booleanType = prelude.getType('Boolean');
       let booleanValue = booleanType.makeDefaultValue();
-      assert.equal('False', booleanValue.tag);
+      assert.equal(booleanValue.tag, 'False');
     });
   }); // loadPrelude
 
@@ -134,7 +125,7 @@ describe('main.js', function() {
       let module = main.load(parsed, env);
       module.ast.typecheck();
       module.ast.execute();
-      assert.equal(6, env.getVar('ELEVATORS').toString());
+      assert.equal(env.getVar('ELEVATORS').toString(), '6');
     });
   });
 
@@ -148,8 +139,8 @@ describe('main.js', function() {
       let module = main.load(parsed, env);
       module.ast.typecheck();
       module.ast.execute();
-      assert.equal(8, env.getVar('foo').toString());
-      assert.equal(11, env.getVar('bar').toString());
+      assert.equal(env.getVar('foo').toString(), '8');
+      assert.equal(env.getVar('bar').toString(), '11');
     });
 
     it('array', function() {
@@ -158,8 +149,8 @@ describe('main.js', function() {
       `);
       let env = new Environment(main.loadPrelude());
       main.load(parsed, env);
-      assert.equal('[11: False, 12: False, 13: False]',
-        env.getVar('bitvector').toString());
+      assert.equal(env.getVar('bitvector').toString(),
+        '[11: False, 12: False, 13: False]');
     });
 
   });
@@ -180,8 +171,8 @@ describe('main.js', function() {
       module.ast.typecheck();
       module.ast.execute();
       env.rules['foo'].fire();
-      assert.equal('True', env.getVar('x').toString());
-      assert.equal('2', env.getVar('y'));
+      assert.equal(env.getVar('x').toString(), 'True');
+      assert.equal(env.getVar('y'), '2');
     });
   });
 });

@@ -19,9 +19,9 @@ describe('source.js', function() {
   describe('Source', function() {
     it('basic', function() {
       let source = new Source(10, 20);
-      assert.equal('chars 10-20', source.toString());
+      assert.equal(source.toString(), 'chars 10-20');
       source.setInput(new Input('foo.txt', alphabet));
-      assert.equal('foo.txt: line 3, col 3 to line 6, col 1', source.toString());
+      assert.equal(source.toString(), 'foo.txt: line 3, col 3 to line 6, col 1');
     });
   });
 });
