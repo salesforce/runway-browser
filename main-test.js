@@ -56,7 +56,7 @@ describe('main.js', function() {
       let type = makeType(typedecl.type, env, typedecl.id);
       let value = type.makeDefaultValue();
       assert.equal(value.toString(), 'False');
-      value.assign('True');
+      value.assign(env.getVar('True'));
       assert.equal(value.toString(), 'True');
       assert.throws(() => {
         value.assign('Whatever');
@@ -78,7 +78,7 @@ describe('main.js', function() {
       let type = makeType(typedecl.type, env, typedecl.id);
       let value = type.makeDefaultValue();
       assert.equal(value.toString(), 'Something { thing: 10 }');
-      value.assign('Nothing');
+      value.assign(env.getVar('Nothing'));
       assert.equal(value.toString(), 'Nothing');
       assert.throws(() => {
         value.assign('Whatever');

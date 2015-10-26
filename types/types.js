@@ -18,7 +18,7 @@ let subtypeOf = function(sub, par) {
   }
   if (sub instanceof Either.Variant &&
     par instanceof Either.Type &&
-    sub.eithertype == par) {
+    sub.parenttype == par) {
     return true;
   }
   return false;
@@ -33,7 +33,7 @@ let haveEquality = function(left, right) {
   }
   if (left instanceof Either.Variant &&
     right instanceof Either.Variant &&
-    left.eithertype == right.eithertype) {
+    left.parenttype == right.parenttype) {
     return true;
   }
   return false;
