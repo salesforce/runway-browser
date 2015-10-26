@@ -30,12 +30,6 @@ class EitherValue extends Value {
       }
       return;
     }
-    if (newValue instanceof EitherTag &&
-        newValue.type.parenttype == this.tag.type.parenttype) {
-      let _ = delete this[this.tag.name];
-      this.tag = newValue;
-      return;
-    }
     throw new errors.Internal(`Cannot assign value of ${newValue} to ` +
       `either-type ${this.type.getName()}`);
   }
@@ -74,12 +68,6 @@ class EitherValue extends Value {
 
 // The variants of an either-type are each identified by a tag. The 'type' is
 // an EitherVariant.
-//
-// This goes into the environment as a "constant" for either variants that have
-// no record fields.
-// For example, in:
-//   var x : Boolean = False;
-// the 'False' is an EitherTag in the environment.
 class EitherTag extends Value {
   constructor(type, name) {
     super(type);
@@ -105,13 +93,21 @@ class EitherVariant extends Type {
     super(decl, env, name);
     this.parenttype = parenttype;
     this.tag = new EitherTag(this, name);
-    if (decl.kind == 'enumvariant') {
-      this.env.assignVar(name, this.tag);
-    } else {
+    if (this.decl.kind != 'enumvariant') {
       let makeType = require('./factory.js');
       this.recordtype = makeType(decl.type, this.env);
     }
   }
+
+  setEnvConstants() {
+    if (this.decl.kind == 'enumvariant') {
+      let v = new EitherValue(this.parenttype);
+      let _ = delete v[v.tag.name];
+      v.tag = this.tag;
+      this.env.assignVar(this.name, v);
+    }
+  }
+
   toString() {
     return `${this.tag} (EitherVariant)`;
   }
@@ -127,6 +123,7 @@ class EitherType extends Type {
     this.fieldtypes = this.decl.fields.map(
       (field) => new EitherVariant(field, this.env, field.id.value, this)
     );
+    this.fieldtypes.forEach((field) => field.setEnvConstants());
   }
   makeDefaultValue() {
     return new EitherValue(this);
