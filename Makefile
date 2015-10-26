@@ -1,6 +1,9 @@
 # empty string to terminate multi-line lists
 NULL=
 
+ALLJSFILES=$(shell git ls-files '*.js' '**/*.js')
+TESTJSFILES=$(shell git ls-files '*-test.js' '**/*-test.js')
+
 .PHONY: setup
 setup: bower_components/parsimmon/build/parsimmon.commonjs.js \
        node_modules/jsfmt/bin/jsfmt \
@@ -26,7 +29,7 @@ bower_components/parsimmon/build/parsimmon.commonjs.js: bower_components/parsimm
 test: unit-test system-test
 
 .PNONY: unit-test
-unit-test: $(shell git ls-files '*-test.js' '**/*-test.js')
+unit-test: $(TESTJSFILES)
 	./node_modules/mocha/bin/mocha $^
 
 .PHONY: system-test
@@ -43,5 +46,9 @@ system-test-parser-tokenring: parser.js tokenring.model
 	git diff -w --exit-code output-tokenring.json
 
 .PHONY: format
-format: $(shell git ls-files '*.js' '**/*.js')
+format: $(ALLJSFILES)
 	./node_modules/jsfmt/bin/jsfmt --write $^
+
+.PHONY: lint
+lint: $(ALLJSFILES)
+	eslint $(ALLJSFILES)
