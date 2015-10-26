@@ -5,8 +5,8 @@ let Environment = require('./environment.js');
 let Input = require('./input.js');
 let Parser = require('./parser.js');
 let main = require('./main.js');
-let Type = require('./type.js');
-let makeType = require('./typefactory.js');
+let Type = require('./types/type.js');
+let makeType = require('./types/factory.js');
 
 let parseInline = (text) => Parser.parse(new Input('unit test', text));
 

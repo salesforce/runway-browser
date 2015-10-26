@@ -2,9 +2,9 @@
 
 let errors = require('../errors.js');
 let makeExpression = require('../expressions/factory.js');
-let makeType = require('../typefactory.js');
+let makeType = require('../types/factory.js');
 let Statement = require('./statement.js');
-let Types = require('../types.js');
+let Types = require('../types/types.js');
 
 // var x : Boolean;
 // var x : Boolean = False;

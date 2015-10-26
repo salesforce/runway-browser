@@ -26,7 +26,7 @@ class ArrayValue extends Value {
 class ArrayType extends Type {
   constructor(decl, env, name) {
     super(decl, env, name);
-    let makeType = require('./typefactory.js');
+    let makeType = require('./factory.js');
     this.valuetype = makeType(this.decl.args[0], this.env);
     this.indextype = makeType(this.decl.indexBy, this.env);
   }

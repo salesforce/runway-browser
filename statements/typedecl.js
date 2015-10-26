@@ -1,6 +1,6 @@
 "use strict";
 
-let makeType = require('../typefactory.js');
+let makeType = require('../types/factory.js');
 let Statement = require('./statement.js');
 
 // type T : Boolean;

@@ -1,6 +1,6 @@
 "use strict";
 
-let errors = require('./errors.js');
+let errors = require('../errors.js');
 let ArrayType = require('./array.js');
 let EitherType = require('./either.js').Type;
 let RangeType = require('./range.js');

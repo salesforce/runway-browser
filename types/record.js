@@ -38,7 +38,7 @@ class RecordValue extends Value {
 class RecordType extends Type {
   constructor(decl, env, name) {
     super(decl, env, name);
-    let makeType = require('./typefactory.js');
+    let makeType = require('./factory.js');
     this.fieldtypes = this.decl.fields.map((field) => ({
         name: field.id.value,
         type: makeType(field.type, this.env),

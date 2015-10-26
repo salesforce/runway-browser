@@ -3,9 +3,9 @@
 let Input = require('./input.js');
 let parser = require('./parser.js');
 let Environment = require('./environment.js');
-let Type = require('./type.js');
+let Type = require('./types/type.js');
 let makeStatement = require('./statements/factory.js');
-let makeType = require('./typefactory.js');
+let makeType = require('./types/factory.js');
 let process = require('process');
 
 let out = function(o) {

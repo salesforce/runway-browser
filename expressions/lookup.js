@@ -2,6 +2,7 @@
 
 let errors = require('../errors.js');
 let Expression = require('./expression.js');
+let RecordType = require('../types/record.js');
 
 class Lookup extends Expression {
   constructor(parsed, env) {
@@ -11,7 +12,6 @@ class Lookup extends Expression {
   }
 
   typecheck() {
-    let RecordType = require('../record.js');
     this.parent.typecheck();
     if (!(this.parent.type instanceof RecordType)) {
       throw new errors.Type(`Cannot lookup field in a ${this.parent.type} (defined at ${this.parent.parsed.source})`);

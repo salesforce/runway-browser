@@ -1,6 +1,6 @@
 "use strict";
 
-let errors = require('./errors.js');
+let errors = require('../errors.js');
 let Type = require('./type.js');
 let Value = require('./value.js');
 
@@ -100,7 +100,7 @@ class EitherVariant extends Type {
     if (decl.kind == 'enumvariant') {
       this.env.assignVar(name, this.tag);
     } else {
-      let makeType = require('./typefactory.js');
+      let makeType = require('./factory.js');
       this.recordtype = makeType(decl.type, this.env);
     }
   }

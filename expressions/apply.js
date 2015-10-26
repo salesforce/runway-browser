@@ -2,7 +2,7 @@
 
 let errors = require('../errors.js');
 let Expression = require('./expression.js');
-let Types = require('../types.js');
+let Types = require('../types/types.js');
 
 class Apply extends Expression {
   constructor(parsed, env) {

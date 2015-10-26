@@ -1,6 +1,6 @@
 "use strict";
 
-let errors = require('./errors.js');
+let errors = require('../errors.js');
 let Type = require('./type.js');
 let Value = require('./value.js');
 

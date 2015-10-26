@@ -1,7 +1,7 @@
 "use strict";
 
 let Expression = require('./expression.js');
-let NumberType = require('../number.js');
+let NumberType = require('../types/number.js');
 
 class NumberExpr extends Expression {
   constructor(parsed, env) {
