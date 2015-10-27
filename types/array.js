@@ -2,17 +2,21 @@
 
 let Type = require('./type.js');
 let Value = require('./value.js');
+let errors = require('../errors.js');
 
 class ArrayValue extends Value {
   constructor(type) {
     super(type);
-    let length = type.indextype.high - type.indextype.low + 1;
+    let length = this.type.indextype.high - this.type.indextype.low + 1;
     this.items = Array.from({
       length: length
     },
       () => this.type.valuetype.makeDefaultValue());
   }
   index(i) {
+    if (i < this.type.indextype.low || i > this.type.indextype.high) {
+      throw new errors.Bounds(`Cannot access index ${i} of ${this}`);
+    }
     return this.items[i - this.type.indextype.low];
   }
   toString() {

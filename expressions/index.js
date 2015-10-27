@@ -2,6 +2,7 @@
 
 let errors = require('../errors.js');
 let Expression = require('./expression.js');
+let ArrayType = require('../types/array.js');
 
 class Index extends Expression {
   constructor(parsed, env) {

@@ -60,10 +60,11 @@ class Bounds extends Runtime {
 
 module.exports = {
   Base: Base,
+  Bounds: Bounds,
   Internal: Internal,
-  Unimplemented: Unimplemented,
   Lookup: Lookup,
   Parse: Parse,
-  Type: Type,
   Runtime: Runtime,
+  Type: Type,
+  Unimplemented: Unimplemented,
 }
