@@ -7,26 +7,23 @@ let Value = require('./value.js');
 // An instance of an EitherVariant.
 // 'type' is the EitherType and doesn't change,
 // 'varianttype' is the current EitherVariant.
-// If the variant has record fields, those fields will be in an attribute named
-// after the variant name.
+// If the variant has record fields, those will be in an attribute named
+// 'fields'; otherwise, it'll be set to undefined.
 class EitherValue extends Value {
   constructor(type, varianttype) {
     super(type);
     this.varianttype = varianttype;
     if (this.varianttype.recordtype === null) {
-      // enumvariant has no fields: do nothing
+      this.fields = undefined;
     } else {
-      this[this.tag()] = this.varianttype.recordtype.makeDefaultValue();
+      this.fields = this.varianttype.recordtype.makeDefaultValue();
     }
   }
 
   assign(newValue) {
     if (newValue instanceof EitherValue && this.type == newValue.type) {
-      let _ = delete this[this.tag()];
       this.varianttype = newValue.varianttype;
-      if (this.tag() in newValue) {
-        this[this.tag()] = newValue[this.tag()];
-      }
+      this.fields = newValue.fields;
     } else {
       throw new errors.Internal(`Cannot assign value of ${newValue} to ` +
         `either-type ${this.type.getName()}`);
@@ -37,31 +34,26 @@ class EitherValue extends Value {
     if (this.varianttype != other.varianttype) {
       return false;
     }
-    if (this.tag() in this) {
-      return this[this.tag()].equals(other[this.tag()]);
+    if (this.fields !== undefined) {
+      return this.fields.equals(other.fields);
     } else {
       return true;
     }
   }
 
   innerToString() {
-    if (this.tag() in this) {
-      return this[this.tag()].toString();
+    if (this.fields !== undefined) {
+      return this.fields.toString();
     } else {
-      return this.tag();
+      return this.varianttype.name;
     }
   }
 
-  tag() {
-    return this.varianttype.name;
-  }
-
   toString() {
-    if (this.tag() in this) {
-      let fields = this[this.tag()].innerToString();
-      return `${this.tag()} { ${fields} }`;
+    if (this.fields !== undefined) {
+      return `${this.varianttype.name} { ${this.fields.innerToString()} }`;
     } else {
-      return this.tag();
+      return this.varianttype.name;
     }
   }
 }
