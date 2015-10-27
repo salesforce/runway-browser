@@ -1,7 +1,7 @@
 "use strict";
 
 let Expression = require('./expression.js');
-let NumberType = require('../types/number.js');
+let NumberType = require('../types/number.js').Type;
 
 class NumberExpr extends Expression {
   constructor(parsed, env) {
@@ -14,7 +14,9 @@ class NumberExpr extends Expression {
   }
 
   evaluate() {
-    return this.parsed.value;
+    let v = NumberType.singleton.makeDefaultValue();
+    v.assign(this.parsed.value);
+    return v;
   }
 
   toString(indent) {

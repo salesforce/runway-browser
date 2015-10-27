@@ -1,5 +1,6 @@
 "use strict";
 
+let errors = require('../errors');
 let Type = require('./type.js');
 let Value = require('./value.js');
 
@@ -12,8 +13,40 @@ class RecordValue extends Value {
     });
   }
 
+  assign(other) {
+    if (other === undefined) {
+      throw new errors.Internal(`Can't assign undefined to ${this}`);
+    }
+    if (this.type !== other.type) {
+      throw new errors.Internal(`Can't assign ${other} to ${this}`);
+    }
+    this.type.fieldtypes.forEach((fieldtype) => {
+      this[fieldtype.name] = other[fieldtype.name];
+    });
+  }
+
+  equals(other) {
+    if (this.type !== other.type) {
+      return false;
+    }
+    let equal = true;
+    this.type.fieldtypes.forEach((fieldtype) => {
+      if (typeof this[fieldtype.name].equals != 'function') {
+        throw new errors.Internal(`This value doesn't have equals(): ${this[fieldtype.name]}`);
+      }
+      if (!this[fieldtype.name].equals(other[fieldtype.name])) {
+        equal = false;
+      }
+    });
+    return equal;
+  }
+
   lookup(fieldname) {
     return this[fieldname];
+  }
+
+  set(fieldname, value) {
+    this[fieldname] = value;
   }
 
   innerToString() {

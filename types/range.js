@@ -3,6 +3,7 @@
 let errors = require('../errors.js');
 let Type = require('./type.js');
 let Value = require('./value.js');
+let NumberValue = require('./number.js').Value;
 
 class RangeValue extends Value {
 
@@ -17,6 +18,8 @@ class RangeValue extends Value {
         throw new errors.Bounds(`Cannot assign value of ${newValue} to range ${this.type.getName()}: ${this.type.low}..${this.type.high};`);
       }
       this.value = newValue;
+    } else if (newValue instanceof NumberValue) {
+      return this.assign(newValue.value);
     } else if (newValue instanceof RangeValue) {
       return this.assign(newValue.value);
     } else {

@@ -20,6 +20,10 @@ class NumberValue extends Value {
     }
   }
 
+  equals(other) {
+    return this.type == other.type && this.value == other.value;
+  }
+
   innerToString() {
     return `${this.value}`;
   }
@@ -43,4 +47,7 @@ class NumberType extends Type {
 
 NumberType.singleton = new NumberType();
 
-module.exports = NumberType;
+module.exports = {
+  Type: NumberType,
+  Value: NumberValue,
+};

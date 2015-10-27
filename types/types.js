@@ -2,7 +2,7 @@
 
 let ArrayType = require('./array.js');
 let Either = require('./either.js');
-let NumberType = require('./number.js');
+let NumberType = require('./number.js').Type;
 let RangeType = require('./range.js');
 let RecordType = require('./record.js');
 

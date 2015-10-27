@@ -30,15 +30,19 @@ class EitherValue extends Value {
     }
   }
 
+  set(name, value) {
+    return this.fields.set(name, value);
+  }
+
+
   equals(other) {
     if (this.varianttype != other.varianttype) {
       return false;
     }
     if (this.fields !== undefined) {
       return this.fields.equals(other.fields);
-    } else {
-      return true;
     }
+    return true;
   }
 
   innerToString() {
@@ -75,6 +79,14 @@ class EitherVariant extends Type {
     }
   }
 
+  makeDefaultValue() {
+    return new EitherValue(this.parenttype, this);
+  }
+
+  fieldType(name) {
+    return this.recordtype.fieldType(name);
+  }
+
   toString() {
     return `${this.name} (EitherVariant)`;
   }
@@ -90,6 +102,16 @@ class EitherType extends Type {
     this.variants = this.decl.fields.map(
       (field) => new EitherVariant(field, this.env, field.id.value, this)
     );
+  }
+
+  getVariant(tag) {
+    let variant = undefined;
+    this.variants.forEach((v) => {
+      if (v.name == tag) {
+        variant = v;
+      }
+    });
+    return variant;
   }
 
   makeDefaultValue() {
