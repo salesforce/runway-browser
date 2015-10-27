@@ -31,12 +31,10 @@ let sepByOptTrail = function(content, separator) {
   return sepBy(content, separator)
     .skip(separator.or(Parsimmon.succeed()));
 }
-
 let sepBy1OptTrail = function(content, separator) {
   return sepBy1(content, separator)
     .skip(separator.or(Parsimmon.succeed()));
 }
-
 let comment = regex(/\/\/[^\n]*/).desc('single-line comment');
 let lexeme = function(p) {
   return p.skip(whitespace.or(comment).many());
