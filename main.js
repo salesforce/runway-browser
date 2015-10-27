@@ -66,17 +66,17 @@ let repl = function(env) {
         let module = null;
         try {
           module = parse(input);
-        } catch (originalLoadError) {
+        } catch ( originalLoadError ) {
           // Give the input another chance if it's just missing a semicolon
           // at the end (it's a common error to forget these when typing
           // interactively).
           if (originalLoadError.expected === undefined ||
-              originalLoadError.expected.indexOf("';'") === -1) {
+            originalLoadError.expected.indexOf("';'") === -1) {
             printError(originalLoadError);
           } else {
             try {
               module = parse(input + ';');
-            } catch (rescueLoadError) {
+            } catch ( rescueLoadError ) {
               printError(originalLoadError); // perfer original error
             }
           }
@@ -85,7 +85,7 @@ let repl = function(env) {
           try {
             module.ast.typecheck();
             module.ast.execute();
-          } catch (executeError) {
+          } catch ( executeError ) {
             printError(executeError);
           }
         }

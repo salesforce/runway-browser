@@ -18,6 +18,7 @@ class Index extends Expression {
     if (!(this.container.type instanceof ArrayType)) {
       throw new errors.Type(`Can only index into Arrays (for now)`);
     }
+    this.type = this.container.type.valuetype;
   // TODO: more checks
   }
 
