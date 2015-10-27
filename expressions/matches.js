@@ -14,6 +14,11 @@ class Matches extends Expression {
     return this.env.getVar('False'); // TODO
   }
 
+  typecheck() {
+    // TODO: implement
+    this.type = this.env.getType('Boolean');
+  }
+
   toString(indent) {
     return `${this.lhs.toString(indent)} matches ${this.parsed.variant.value}`
   }

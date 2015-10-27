@@ -110,7 +110,9 @@ if (require.main === module) {
 
   if (process.argv.length > 2) { // filename given
     let filename = process.argv[2];
-    load(parser.parse(new Input(filename)), env);
+    let module = load(parser.parse(new Input(filename)), env);
+    module.ast.typecheck();
+    module.ast.execute();
     let printEnv = () => {
       env.getVarNames().forEach((v) => {
         console.log(v, '=', env.getVar(v).toString());
@@ -120,7 +122,7 @@ if (require.main === module) {
     printEnv();
     for (let rule in env.rules) {
       console.log('Executing ', rule);
-      env.rules[rule].execute();
+      env.rules[rule].fire();
       printEnv();
     }
   }
