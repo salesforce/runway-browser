@@ -21,6 +21,7 @@ let lazy = Parsimmon.lazy;
 let optWhitespace = Parsimmon.optWhitespace;
 let regex = Parsimmon.regex;
 let sepBy = Parsimmon.sepBy;
+let sepBy1 = Parsimmon.sepBy1;
 let seq = Parsimmon.seq;
 let seqMap = Parsimmon.seqMap;
 let string = Parsimmon.string;
@@ -30,6 +31,12 @@ let sepByOptTrail = function(content, separator) {
   return sepBy(content, separator)
     .skip(separator.or(Parsimmon.succeed()));
 }
+
+let sepBy1OptTrail = function(content, separator) {
+  return sepBy1(content, separator)
+    .skip(separator.or(Parsimmon.succeed()));
+}
+
 let comment = regex(/\/\/[^\n]*/).desc('single-line comment');
 let lexeme = function(p) {
   return p.skip(whitespace.or(comment).many());
@@ -229,7 +236,7 @@ let eitherfield = seqMap(id,
     id: id,
     kind: 'enumvariant',
 })));
-let eitherfieldlist = sepByOptTrail(eitherfield, comma);
+let eitherfieldlist = sepBy1OptTrail(eitherfield, comma);
 
 let either = keywords.either
   .skip(lbrace)

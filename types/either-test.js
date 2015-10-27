@@ -22,5 +22,9 @@ describe('types/either.js', function() {
       assert.equal(module.env.getVar('c').toString(), 'False');
       assert.equal(module.env.getVar('d').toString(), 'False');
     });
+
+    it('empty disallowed', function() {
+      assert.throws(() => testing.run(`type E : either {}`));
+    });
   });
 });
