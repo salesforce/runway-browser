@@ -45,6 +45,34 @@ let repl = function(env) {
     }
   };
 
+  var forgivingParse = function(input, env) {
+    let parse = (input) => load(parser.parse(new Input('REPL', input)), env);
+    let rescueAttempts = [
+      (input) => parse(input + ';'),
+      (input) => parse('print ' + input),
+      (input) => parse('print ' + input + ';'),
+    ];
+    try {
+      return parse(input);
+    } catch ( originalError ) {
+      let module = null;
+      rescueAttempts.forEach((attempt) => {
+        if (module === null) {
+          try {
+            module = attempt(input);
+          } catch (uselessError) {
+            // do nothing
+          }
+        }
+      });
+      if (module === null) {
+        throw originalError;
+      } else {
+        return module;
+      }
+    }
+  };
+
   var loop = function() {
     let processInput = function(input) {
       if (input.endsWith('\\')) {
@@ -62,32 +90,12 @@ let repl = function(env) {
       } else if (input[0] == '.') {
         console.log('huh?');
       } else {
-        let parse = (input) => load(parser.parse(new Input('REPL', input)), env);
-        let module = null;
         try {
-          module = parse(input);
-        } catch ( originalLoadError ) {
-          // Give the input another chance if it's just missing a semicolon
-          // at the end (it's a common error to forget these when typing
-          // interactively).
-          if (originalLoadError.expected === undefined ||
-            originalLoadError.expected.indexOf("';'") === -1) {
-            printError(originalLoadError);
-          } else {
-            try {
-              module = parse(input + ';');
-            } catch ( rescueLoadError ) {
-              printError(originalLoadError); // perfer original error
-            }
-          }
-        }
-        if (module !== null) { // execute code
-          try {
-            module.ast.typecheck();
-            module.ast.execute();
-          } catch ( executeError ) {
-            printError(executeError);
-          }
+          let module = forgivingParse(input, env);
+          module.ast.typecheck();
+          module.ast.execute();
+        } catch ( e ) {
+          printError(e);
         }
       }
       loop();
