@@ -114,7 +114,7 @@ describe('main.js', function() {
       let prelude = main.loadPrelude();
       let booleanType = prelude.getType('Boolean');
       let booleanValue = booleanType.makeDefaultValue();
-      assert.equal(booleanValue.tag, 'False');
+      assert.equal(booleanValue, 'False');
     });
   }); // loadPrelude
 
