@@ -6,6 +6,9 @@ let Source = require('./source.js');
 let process = require('process');
 let Parsimmon = require('./bower_components/parsimmon/build/parsimmon.commonjs.js');
 
+
+////////// Helpers //////////
+
 // Like .mark() except puts start and end in a 'source' attribute hanging off value.
 // The 'input' attribute of the Source values is set later in parse().
 Parsimmon.Parser.prototype.source = function() {
@@ -31,13 +34,12 @@ let sepByOptTrail = function(content, separator) {
   return sepBy(content, separator)
     .skip(separator.or(Parsimmon.succeed()));
 }
-
 let sepBy1OptTrail = function(content, separator) {
   return sepBy1(content, separator)
     .skip(separator.or(Parsimmon.succeed()));
 }
-
 let comment = regex(/\/\/[^\n]*/).desc('single-line comment');
+
 let lexeme = function(p) {
   return p.skip(whitespace.or(comment).many());
 }
@@ -105,6 +107,9 @@ let id = lexeme(regex(/[a-z_]\w*/i)).desc('identifier').map((v) => ({
     value: v,
 })).source();
 
+
+////////// Expressions //////////
+
 let binop = alt(
   times,
   plus,
@@ -148,7 +153,6 @@ let lhs = seqMap(id,
   lhsmore.many(),
   lhshelper);
 
-
 let expratom = lazy(() => alt(
     numberWithUnit,
     number,
@@ -175,6 +179,9 @@ let expr = lazy(() => alt(
       })),
     expratom)
     .desc('expression'));
+
+
+////////// Types //////////
 
 let range = seqMap(expr, dots, expr,
   (low, _, high) => ({
@@ -277,6 +284,9 @@ let complexType = Parsimmon.alt(
   record,
   either);
 
+
+////////// Statements //////////
+
 let typedecl = seqMap(keywords.type,
   id,
   colon,
@@ -287,6 +297,7 @@ let typedecl = seqMap(keywords.type,
       id: id,
       type: type,
   }));
+
 
 let vardecl = seqMap(keywords.var,
   id,
@@ -306,6 +317,7 @@ let vardecl = seqMap(keywords.var,
     return o;
   });
 
+
 let param = seqMap(keywords.param,
   id,
   colon,
@@ -323,6 +335,7 @@ let param = seqMap(keywords.param,
     }
     return o;
   });
+
 
 let block = lazy(() => {
   return lbrace
@@ -455,7 +468,9 @@ let statement = Parsimmon.alt(
   returnStmt,
   vardecl).source();
 
-// main parser
+
+////////// Main parser (entry point) //////////
+
 let file = lazy(() => {
   return lexeme(string('')).then(statement.many()).map((statements) => ({
       kind: 'sequence',
