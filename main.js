@@ -82,6 +82,12 @@ let repl = function(env) {
         console.log(`${env.getTypeNames().join(' ')}`);
       } else if (input == '.vars') {
         console.log(`${env.getVarNames().join(' ')}`);
+      } else if (input.startsWith('.js')) {
+        try {
+          eval(input.slice(3));
+        } catch ( e ) {
+          printError(e);
+        }
       } else if (input == 'exit') {
         readline.close();
         return;
