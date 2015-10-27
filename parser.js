@@ -48,6 +48,7 @@ let colon = lexeme(string(':'));
 let comma = lexeme(string(','));
 let dot = lexeme(string('.'));
 let dots = lexeme(string('..'));
+let doubleArrow = lexeme(string('=>'));
 let doubleEquals = lexeme(string('=='));
 let equals = lexeme(string('='));
 let langle = lexeme(string('<'));
@@ -67,12 +68,14 @@ let times = lexeme(string('*'));
 
 let keywords = {};
 [
+  'as',
   'distribution',
   'either',
   'else',
   'for',
   'if',
   'in',
+  'match',
   'matches',
   'node',
   'param',
@@ -379,6 +382,36 @@ let returnStmt = keywords.return
 }))
   .skip(semicolon);
 
+let matchvariant = seqMap(id,
+  keywords.as,
+  id,
+  doubleArrow,
+  block,
+  (type, _, id, _2, block) => ({
+    kind: 'matchvariant',
+    type: type,
+    id: id,
+    code: block,
+  })).or(seqMap(id,
+  doubleArrow,
+  block,
+  (type, _, block) => ({
+    kind: 'matchvariant',
+    type: type,
+    code: block,
+  })));
+
+let match = seqMap(keywords.match,
+  expr,
+  lbrace,
+  sepBy1OptTrail(matchvariant, comma),
+  rbrace,
+  (_, expr, _2, variants, _3) => ({
+    kind: 'match',
+    expr: expr,
+    variants: variants,
+  }));
+
 let assignment = seqMap(
   lhs,
   equals,
@@ -461,6 +494,7 @@ let statement = Parsimmon.alt(
   distribution,
   ifElse,
   foreachLoop,
+  match,
   assignment,
   print,
   rule,

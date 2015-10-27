@@ -15,9 +15,13 @@ var servers: Array<Server>[ServerId];
 servers[1].hasToken = True;
 
 rule deliverToken {
-    if token matches Intransit {
-        servers[token.to].hasToken = True;
-        token = AtServer { at: token.to };
+    match token {
+      InTransit as transit => {
+        servers[transit.to].hasToken = True;
+        token = AtServer { at: transit.to };
+      },
+      AtServer => {
+      },
     }
 }
 
