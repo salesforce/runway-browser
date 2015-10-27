@@ -17,7 +17,8 @@ class IfElse extends Statement {
   typecheck() {
     this.condition.typecheck();
     if (!Types.subtypeOf(this.condition.type, this.env.getType('Boolean'))) {
-      throw new errors.Type(`Condition of if statement must be a Boolean, found ${this.condition.type}`);
+      throw new errors.Type(`Condition of if statement must be a Boolean, ` +
+        `found ${this.condition.type} at ${this.condition.source}`);
     }
     this.trueStatements.typecheck();
     this.falseStatements.typecheck();

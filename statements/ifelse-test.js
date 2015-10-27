@@ -30,6 +30,18 @@ describe('statements/ifelse.js', function() {
       assert.equal(module.env.getVar('x').toString(), '1');
     });
 
+    it('if-else expression', function() {
+      let module = testing.run(`
+        var x : 0..2; 
+        if True == True {
+          x = 1;
+        } else {
+          x = 2;
+        }
+      `);
+      assert.equal(module.env.getVar('x').toString(), '1');
+    });
+
     it('if-only False', function() {
       let module = testing.run(`
         var x : 0..2; 

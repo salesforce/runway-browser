@@ -16,6 +16,11 @@ let subtypeOf = function(sub, par) {
     // let runtime check handle this for now
     return true;
   }
+  if (sub instanceof RangeType &&
+    par instanceof RangeType) {
+    // let runtime check handle this for now
+    return true;
+  }
   if (sub instanceof Either.Variant &&
     par instanceof Either.Type &&
     sub.parenttype == par) {
@@ -37,8 +42,19 @@ let haveEquality = function(left, right) {
     return true;
   }
   return false;
-}
+};
+
+let isNumeric = function(t) {
+  return t instanceof NumberType || t instanceof RangeType;
+};
+
+let haveOrdering = function(left, right) {
+  return isNumeric(left) && isNumeric(right);
+};
+
 module.exports = {
   subtypeOf: subtypeOf,
   haveEquality: haveEquality,
+  haveOrdering: haveOrdering,
+  isNumeric: isNumeric,
 };

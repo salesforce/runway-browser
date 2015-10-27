@@ -171,7 +171,7 @@ let expr = lazy(() => alt(
           kind: 'apply',
           func: op,
           args: [left, right]
-      })),
+      })).source(),
     seqMap(expratom,
       keywords.matches,
       id,
@@ -388,17 +388,17 @@ let matchvariant = seqMap(id,
   doubleArrow,
   block,
   (type, _, id, _2, block) => ({
-    kind: 'matchvariant',
-    type: type,
-    id: id,
-    code: block,
+      kind: 'matchvariant',
+      type: type,
+      id: id,
+      code: block,
   })).or(seqMap(id,
   doubleArrow,
   block,
   (type, _, block) => ({
-    kind: 'matchvariant',
-    type: type,
-    code: block,
+      kind: 'matchvariant',
+      type: type,
+      code: block,
   })));
 
 let match = seqMap(keywords.match,
@@ -407,9 +407,9 @@ let match = seqMap(keywords.match,
   sepBy1OptTrail(matchvariant, comma),
   rbrace,
   (_, expr, _2, variants, _3) => ({
-    kind: 'match',
-    expr: expr,
-    variants: variants,
+      kind: 'match',
+      expr: expr,
+      variants: variants,
   }));
 
 let assignment = seqMap(

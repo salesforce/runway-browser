@@ -6,6 +6,7 @@ let kinds = [
   'assign',
   'foreach',
   'ifelse',
+  'match',
   'paramdecl',
   'print',
   'rule',

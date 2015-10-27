@@ -5,7 +5,11 @@ let Expression = require('./expression.js');
 
 class Identifier extends Expression {
   typecheck() {
-    this.type = this.env.getVar(this.parsed.value).type;
+    let v = this.env.getVar(this.parsed.value);
+    if (v === undefined) {
+      throw new errors.Lookup(`'${this.parsed.value}' is not a variable/constant in scope`);
+    }
+    this.type = v.type;
   }
 
   evaluate() {

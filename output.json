@@ -117,7 +117,14 @@
                 "endchar": 61
               }
             }
-          ]
+          ],
+          "source": {
+            "input": {
+              "filename": "input.model"
+            },
+            "startchar": 48,
+            "endchar": 61
+          }
         },
         "source": {
           "input": {
