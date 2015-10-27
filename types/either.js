@@ -38,11 +38,11 @@ class EitherValue extends Value {
     if (this.type != other.type) {
       return false;
     }
-    if (this.tag != other.tag) {
+    if (!this.tag.equals(other.tag)) {
       return false;
     }
     if (this.tag.name in this) {
-      return this[this.tag.name].equals(other[othe.tag.name]);
+      return this[this.tag.name].equals(other[other.tag.name]);
     } else {
       return true;
     }
@@ -68,16 +68,13 @@ class EitherValue extends Value {
 
 // The variants of an either-type are each identified by a tag. The 'type' is
 // an EitherVariant.
-class EitherTag extends Value {
+class EitherTag {
   constructor(type, name) {
-    super(type);
+    this.type = type;
     this.name = name;
   }
   equals(other) {
     return this.type == other.type && this.name == other.name;
-  }
-  innerToString() {
-    return `${this.name}`;
   }
   toString() {
     return `${this.name}`;
