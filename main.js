@@ -7,6 +7,7 @@ let Type = require('./types/type.js');
 let makeStatement = require('./statements/factory.js');
 let makeType = require('./types/factory.js');
 let process = require('process');
+let errors = require('./errors.js');
 
 let out = function(o) {
   console.log(JSON.stringify(o, null, 2));
@@ -57,38 +58,66 @@ if (require.main === module) {
       output: process.stdout
     });
 
+    let printError = function(error) {
+      if (error instanceof errors.Base) { // modeling error
+        console.log(`${error}`);
+      } else { // JS error
+        if (error.stack !== undefined) {
+          console.log(`${error.stack}`);
+        } else {
+          console.log(`${error}`);
+        }
+      }
+    };
+
     var loop = function() {
-      readline.question('> ', function(input) {
-        if (input == '.types') {
-          readline.write(`${env.getTypeNames().join(' ')}\n`);
+      let processInput = function(input) {
+        if (input.endsWith('\\')) {
+          readline.question('... ', (more) => processInput(input.slice(0, -1) + more));
+          return;
+        } else if (input == '.types') {
+          console.log(`${env.getTypeNames().join(' ')}`);
         } else if (input == '.vars') {
-          readline.write(`${env.getVarNames().join(' ')}\n`);
+          console.log(`${env.getVarNames().join(' ')}`);
         } else if (input == 'exit') {
           readline.close();
           return;
         } else if (input.length == 0) {
           // do nothing
         } else if (input[0] == '.') {
-          readline.write('huh?\n');
-        } else if (input.slice(0, 2) == 'do') {
-          try {
-            var module = load(parser.parse(new Input('REPL',
-              `rule interactive { ${input.slice(2)} }`)), env);
-            module.ast.typecheck();
-            module.execute();
-            env.rules['interactive'].execute();
-          } catch ( e ) {
-            readline.write(`${e}\n`);
-          }
+          console.log('huh?');
         } else {
+          let parse = (input) => load(parser.parse(new Input('REPL', input)), env);
+          let module = null;
           try {
-            load(parser.parse(new Input('REPL', input)), env);
-          } catch ( e ) {
-            readline.write(`${e}\n`);
+            module = parse(input);
+          } catch (originalLoadError) {
+            // Give the input another chance if it's just missing a semicolon
+            // at the end (it's a common error to forget these when typing
+            // interactively).
+            if (originalLoadError.expected === undefined ||
+                originalLoadError.expected.indexOf("';'") === -1) {
+              printError(originalLoadError);
+            } else {
+              try {
+                module = parse(input + ';');
+              } catch (rescueLoadError) {
+                printError(originalLoadError); // perfer original error
+              }
+            }
+          }
+          if (module !== null) { // execute code
+            try {
+              module.ast.typecheck();
+              module.ast.execute();
+            } catch (executeError) {
+              printError(executeError);
+            }
           }
         }
         loop();
-      });
+      };
+      readline.question('> ', processInput);
     };
     loop();
   }

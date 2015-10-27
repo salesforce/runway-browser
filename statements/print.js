@@ -9,6 +9,10 @@ class Print extends Statement {
     this.expr = makeExpression(this.parsed.expr, this.env);
   }
 
+  typecheck() {
+    this.expr.typecheck();
+  }
+
   execute() {
     console.log(this.expr.evaluate().toString());
   }

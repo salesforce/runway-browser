@@ -17,7 +17,7 @@ class Environment {
   assignType(id, decl) {
     let v = this.getType(id);
     if (v != undefined) {
-      throw new erorrs.Type(`Cannot shadow type ${v} with ${decl}`);
+      throw new errors.Type(`Cannot shadow type ${v} with ${decl}`);
     }
     this.types.set(id, decl);
   }

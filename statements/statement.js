@@ -9,11 +9,11 @@ class Statement {
   }
 
   typecheck() {
-    throw new errors.Type(`typecheck() not implemented for ${this.parsed.kind} statement`);
+    throw new errors.Internal(`typecheck() not implemented for ${this.parsed.kind} statement`);
   }
 
   execute() {
-    throw new errors.Type(`execute() not implemented for ${this.parsed.kind} statement`);
+    throw new errors.Internal(`execute() not implemented for ${this.parsed.kind} statement`);
   }
 
   toString(indent) {
