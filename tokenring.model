@@ -1,4 +1,3 @@
-
 type ServerId: 1..5;
 
 type Token: either {
@@ -24,9 +23,7 @@ rule deliverToken {
     }
 }
 
-rule passToken for serverx in servers {
-    var id: ServerId; // XXX- temporary
-    var server: Server; // XXX- temporary
+rule passToken for id, server in servers {
     if server.hasToken {
         var next : ServerId = 1;
         if id < 5 {

@@ -25,7 +25,7 @@ class IfElse extends Statement {
   }
 
   execute() {
-    if (this.condition.evaluate() == this.env.getVar('True')) {
+    if (this.condition.evaluate().equals(this.env.getVar('True'))) {
       this.trueStatements.execute();
     } else {
       this.falseStatements.execute();

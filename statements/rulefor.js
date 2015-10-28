@@ -25,12 +25,15 @@ class RuleFor extends Rule {
     super.typecheck();
   }
 
-  fire(index) {
-    // index might come in as a plain JS number, but we want it in a proper
-    // value.
-    let iv = this.expr.type.indextype.makeDefaultValue();
-    iv.assign(index);
-    index = iv;
+  fire(indexArg) {
+    let index = this.expr.type.indextype.makeDefaultValue();
+    if (indexArg === undefined) {
+      // no index given, fire the first one
+    } else {
+      // index might come in as a plain JS number, but we want it in a proper
+      // value.
+      index.assign(indexArg);
+    }
 
     let dummyValue = this.innerEnv.getVar(this.parsed.value.value);
     let restoreValue = () => {

@@ -10,8 +10,8 @@
           "input": {
             "filename": "tokenring.model"
           },
-          "startchar": 6,
-          "endchar": 14
+          "startchar": 5,
+          "endchar": 13
         }
       },
       "type": {
@@ -23,8 +23,8 @@
             "input": {
               "filename": "tokenring.model"
             },
-            "startchar": 16,
-            "endchar": 17
+            "startchar": 15,
+            "endchar": 16
           }
         },
         "high": {
@@ -34,24 +34,24 @@
             "input": {
               "filename": "tokenring.model"
             },
-            "startchar": 19,
-            "endchar": 20
+            "startchar": 18,
+            "endchar": 19
           }
         },
         "source": {
           "input": {
             "filename": "tokenring.model"
           },
-          "startchar": 16,
-          "endchar": 20
+          "startchar": 15,
+          "endchar": 19
         }
       },
       "source": {
         "input": {
           "filename": "tokenring.model"
         },
-        "startchar": 1,
-        "endchar": 23
+        "startchar": 0,
+        "endchar": 22
       }
     },
     {
@@ -63,8 +63,8 @@
           "input": {
             "filename": "tokenring.model"
           },
-          "startchar": 28,
-          "endchar": 33
+          "startchar": 27,
+          "endchar": 32
         }
       },
       "type": {
@@ -78,8 +78,8 @@
                 "input": {
                   "filename": "tokenring.model"
                 },
-                "startchar": 46,
-                "endchar": 56
+                "startchar": 45,
+                "endchar": 55
               }
             },
             "type": {
@@ -93,8 +93,8 @@
                       "input": {
                         "filename": "tokenring.model"
                       },
-                      "startchar": 58,
-                      "endchar": 60
+                      "startchar": 57,
+                      "endchar": 59
                     }
                   },
                   "type": {
@@ -104,8 +104,8 @@
                       "input": {
                         "filename": "tokenring.model"
                       },
-                      "startchar": 62,
-                      "endchar": 71
+                      "startchar": 61,
+                      "endchar": 70
                     }
                   }
                 }
@@ -120,8 +120,8 @@
                 "input": {
                   "filename": "tokenring.model"
                 },
-                "startchar": 76,
-                "endchar": 85
+                "startchar": 75,
+                "endchar": 84
               }
             },
             "type": {
@@ -135,8 +135,8 @@
                       "input": {
                         "filename": "tokenring.model"
                       },
-                      "startchar": 87,
-                      "endchar": 89
+                      "startchar": 86,
+                      "endchar": 88
                     }
                   },
                   "type": {
@@ -146,8 +146,8 @@
                       "input": {
                         "filename": "tokenring.model"
                       },
-                      "startchar": 91,
-                      "endchar": 100
+                      "startchar": 90,
+                      "endchar": 99
                     }
                   }
                 }
@@ -160,8 +160,8 @@
         "input": {
           "filename": "tokenring.model"
         },
-        "startchar": 23,
-        "endchar": 105
+        "startchar": 22,
+        "endchar": 104
       }
     },
     {
@@ -173,8 +173,8 @@
           "input": {
             "filename": "tokenring.model"
           },
-          "startchar": 109,
-          "endchar": 114
+          "startchar": 108,
+          "endchar": 113
         }
       },
       "type": {
@@ -184,16 +184,16 @@
           "input": {
             "filename": "tokenring.model"
           },
-          "startchar": 116,
-          "endchar": 121
+          "startchar": 115,
+          "endchar": 120
         }
       },
       "source": {
         "input": {
           "filename": "tokenring.model"
         },
-        "startchar": 105,
-        "endchar": 124
+        "startchar": 104,
+        "endchar": 123
       }
     },
     {
@@ -205,8 +205,8 @@
           "input": {
             "filename": "tokenring.model"
           },
-          "startchar": 129,
-          "endchar": 135
+          "startchar": 128,
+          "endchar": 134
         }
       },
       "type": {
@@ -220,8 +220,8 @@
                 "input": {
                   "filename": "tokenring.model"
                 },
-                "startchar": 148,
-                "endchar": 156
+                "startchar": 147,
+                "endchar": 155
               }
             },
             "type": {
@@ -231,8 +231,8 @@
                 "input": {
                   "filename": "tokenring.model"
                 },
-                "startchar": 158,
-                "endchar": 165
+                "startchar": 157,
+                "endchar": 164
               }
             }
           }
@@ -242,8 +242,8 @@
         "input": {
           "filename": "tokenring.model"
         },
-        "startchar": 124,
-        "endchar": 170
+        "startchar": 123,
+        "endchar": 169
       }
     },
     {
@@ -255,8 +255,8 @@
           "input": {
             "filename": "tokenring.model"
           },
-          "startchar": 174,
-          "endchar": 181
+          "startchar": 173,
+          "endchar": 180
         }
       },
       "type": {
@@ -268,8 +268,8 @@
             "input": {
               "filename": "tokenring.model"
             },
-            "startchar": 183,
-            "endchar": 188
+            "startchar": 182,
+            "endchar": 187
           }
         },
         "args": [
@@ -280,8 +280,8 @@
               "input": {
                 "filename": "tokenring.model"
               },
-              "startchar": 189,
-              "endchar": 195
+              "startchar": 188,
+              "endchar": 194
             }
           }
         ],
@@ -292,8 +292,8 @@
             "input": {
               "filename": "tokenring.model"
             },
-            "startchar": 197,
-            "endchar": 205
+            "startchar": 196,
+            "endchar": 204
           }
         }
       },
@@ -301,8 +301,8 @@
         "input": {
           "filename": "tokenring.model"
         },
-        "startchar": 170,
-        "endchar": 209
+        "startchar": 169,
+        "endchar": 208
       }
     },
     {
@@ -314,8 +314,8 @@
           "input": {
             "filename": "tokenring.model"
           },
-          "startchar": 214,
-          "endchar": 227
+          "startchar": 213,
+          "endchar": 226
         }
       },
       "code": {
@@ -330,8 +330,8 @@
                 "input": {
                   "filename": "tokenring.model"
                 },
-                "startchar": 239,
-                "endchar": 245
+                "startchar": 238,
+                "endchar": 244
               }
             },
             "variants": [
@@ -344,8 +344,8 @@
                     "input": {
                       "filename": "tokenring.model"
                     },
-                    "startchar": 253,
-                    "endchar": 263
+                    "startchar": 252,
+                    "endchar": 262
                   }
                 },
                 "id": {
@@ -355,8 +355,8 @@
                     "input": {
                       "filename": "tokenring.model"
                     },
-                    "startchar": 266,
-                    "endchar": 274
+                    "startchar": 265,
+                    "endchar": 273
                   }
                 },
                 "code": {
@@ -373,8 +373,8 @@
                             "input": {
                               "filename": "tokenring.model"
                             },
-                            "startchar": 307,
-                            "endchar": 316
+                            "startchar": 306,
+                            "endchar": 315
                           }
                         },
                         "parent": {
@@ -388,8 +388,8 @@
                                 "input": {
                                   "filename": "tokenring.model"
                                 },
-                                "startchar": 303,
-                                "endchar": 305
+                                "startchar": 302,
+                                "endchar": 304
                               }
                             },
                             "parent": {
@@ -399,8 +399,8 @@
                                 "input": {
                                   "filename": "tokenring.model"
                                 },
-                                "startchar": 295,
-                                "endchar": 302
+                                "startchar": 294,
+                                "endchar": 301
                               }
                             }
                           },
@@ -411,8 +411,8 @@
                               "input": {
                                 "filename": "tokenring.model"
                               },
-                              "startchar": 287,
-                              "endchar": 294
+                              "startchar": 286,
+                              "endchar": 293
                             }
                           }
                         }
@@ -424,16 +424,16 @@
                           "input": {
                             "filename": "tokenring.model"
                           },
-                          "startchar": 318,
-                          "endchar": 322
+                          "startchar": 317,
+                          "endchar": 321
                         }
                       },
                       "source": {
                         "input": {
                           "filename": "tokenring.model"
                         },
-                        "startchar": 287,
-                        "endchar": 332
+                        "startchar": 286,
+                        "endchar": 331
                       }
                     },
                     {
@@ -445,8 +445,8 @@
                           "input": {
                             "filename": "tokenring.model"
                           },
-                          "startchar": 332,
-                          "endchar": 338
+                          "startchar": 331,
+                          "endchar": 337
                         }
                       },
                       "rhs": {
@@ -458,8 +458,8 @@
                             "input": {
                               "filename": "tokenring.model"
                             },
-                            "startchar": 340,
-                            "endchar": 349
+                            "startchar": 339,
+                            "endchar": 348
                           }
                         },
                         "fields": [
@@ -471,8 +471,8 @@
                                 "input": {
                                   "filename": "tokenring.model"
                                 },
-                                "startchar": 351,
-                                "endchar": 353
+                                "startchar": 350,
+                                "endchar": 352
                               }
                             },
                             "expr": {
@@ -484,8 +484,8 @@
                                   "input": {
                                     "filename": "tokenring.model"
                                   },
-                                  "startchar": 363,
-                                  "endchar": 366
+                                  "startchar": 362,
+                                  "endchar": 365
                                 }
                               },
                               "parent": {
@@ -495,8 +495,8 @@
                                   "input": {
                                     "filename": "tokenring.model"
                                   },
-                                  "startchar": 355,
-                                  "endchar": 362
+                                  "startchar": 354,
+                                  "endchar": 361
                                 }
                               }
                             }
@@ -507,8 +507,8 @@
                         "input": {
                           "filename": "tokenring.model"
                         },
-                        "startchar": 332,
-                        "endchar": 375
+                        "startchar": 331,
+                        "endchar": 374
                       }
                     }
                   ]
@@ -523,8 +523,8 @@
                     "input": {
                       "filename": "tokenring.model"
                     },
-                    "startchar": 384,
-                    "endchar": 393
+                    "startchar": 383,
+                    "endchar": 392
                   }
                 },
                 "code": {
@@ -537,8 +537,8 @@
               "input": {
                 "filename": "tokenring.model"
               },
-              "startchar": 233,
-              "endchar": 413
+              "startchar": 232,
+              "endchar": 412
             }
           }
         ]
@@ -547,8 +547,8 @@
         "input": {
           "filename": "tokenring.model"
         },
-        "startchar": 209,
-        "endchar": 416
+        "startchar": 208,
+        "endchar": 415
       }
     },
     {
@@ -560,19 +560,30 @@
           "input": {
             "filename": "tokenring.model"
           },
-          "startchar": 421,
-          "endchar": 431
+          "startchar": 420,
+          "endchar": 430
         }
       },
-      "value": {
+      "index": {
         "kind": "id",
-        "value": "serverx",
+        "value": "id",
         "source": {
           "input": {
             "filename": "tokenring.model"
           },
-          "startchar": 435,
-          "endchar": 443
+          "startchar": 434,
+          "endchar": 436
+        }
+      },
+      "value": {
+        "kind": "id",
+        "value": "server",
+        "source": {
+          "input": {
+            "filename": "tokenring.model"
+          },
+          "startchar": 438,
+          "endchar": 445
         }
       },
       "expr": {
@@ -582,77 +593,13 @@
           "input": {
             "filename": "tokenring.model"
           },
-          "startchar": 446,
-          "endchar": 454
+          "startchar": 448,
+          "endchar": 456
         }
       },
       "code": {
         "kind": "sequence",
         "statements": [
-          {
-            "kind": "vardecl",
-            "id": {
-              "kind": "id",
-              "value": "id",
-              "source": {
-                "input": {
-                  "filename": "tokenring.model"
-                },
-                "startchar": 464,
-                "endchar": 466
-              }
-            },
-            "type": {
-              "kind": "alias",
-              "value": "ServerId",
-              "source": {
-                "input": {
-                  "filename": "tokenring.model"
-                },
-                "startchar": 468,
-                "endchar": 476
-              }
-            },
-            "source": {
-              "input": {
-                "filename": "tokenring.model"
-              },
-              "startchar": 460,
-              "endchar": 500
-            }
-          },
-          {
-            "kind": "vardecl",
-            "id": {
-              "kind": "id",
-              "value": "server",
-              "source": {
-                "input": {
-                  "filename": "tokenring.model"
-                },
-                "startchar": 504,
-                "endchar": 510
-              }
-            },
-            "type": {
-              "kind": "alias",
-              "value": "Server",
-              "source": {
-                "input": {
-                  "filename": "tokenring.model"
-                },
-                "startchar": 512,
-                "endchar": 518
-              }
-            },
-            "source": {
-              "input": {
-                "filename": "tokenring.model"
-              },
-              "startchar": 500,
-              "endchar": 542
-            }
-          },
           {
             "kind": "ifelse",
             "condition": {
@@ -664,8 +611,8 @@
                   "input": {
                     "filename": "tokenring.model"
                   },
-                  "startchar": 552,
-                  "endchar": 561
+                  "startchar": 472,
+                  "endchar": 481
                 }
               },
               "parent": {
@@ -675,8 +622,8 @@
                   "input": {
                     "filename": "tokenring.model"
                   },
-                  "startchar": 545,
-                  "endchar": 551
+                  "startchar": 465,
+                  "endchar": 471
                 }
               }
             },
@@ -692,8 +639,8 @@
                       "input": {
                         "filename": "tokenring.model"
                       },
-                      "startchar": 575,
-                      "endchar": 580
+                      "startchar": 495,
+                      "endchar": 500
                     }
                   },
                   "type": {
@@ -703,8 +650,8 @@
                       "input": {
                         "filename": "tokenring.model"
                       },
-                      "startchar": 582,
-                      "endchar": 591
+                      "startchar": 502,
+                      "endchar": 511
                     }
                   },
                   "default": {
@@ -714,16 +661,16 @@
                       "input": {
                         "filename": "tokenring.model"
                       },
-                      "startchar": 593,
-                      "endchar": 594
+                      "startchar": 513,
+                      "endchar": 514
                     }
                   },
                   "source": {
                     "input": {
                       "filename": "tokenring.model"
                     },
-                    "startchar": 571,
-                    "endchar": 604
+                    "startchar": 491,
+                    "endchar": 524
                   }
                 },
                 {
@@ -739,8 +686,8 @@
                           "input": {
                             "filename": "tokenring.model"
                           },
-                          "startchar": 607,
-                          "endchar": 610
+                          "startchar": 527,
+                          "endchar": 530
                         }
                       },
                       {
@@ -750,8 +697,8 @@
                           "input": {
                             "filename": "tokenring.model"
                           },
-                          "startchar": 612,
-                          "endchar": 614
+                          "startchar": 532,
+                          "endchar": 534
                         }
                       }
                     ],
@@ -759,8 +706,8 @@
                       "input": {
                         "filename": "tokenring.model"
                       },
-                      "startchar": 607,
-                      "endchar": 614
+                      "startchar": 527,
+                      "endchar": 534
                     }
                   },
                   "thenblock": {
@@ -775,8 +722,8 @@
                             "input": {
                               "filename": "tokenring.model"
                             },
-                            "startchar": 628,
-                            "endchar": 633
+                            "startchar": 548,
+                            "endchar": 553
                           }
                         },
                         "rhs": {
@@ -790,8 +737,8 @@
                                 "input": {
                                   "filename": "tokenring.model"
                                 },
-                                "startchar": 635,
-                                "endchar": 638
+                                "startchar": 555,
+                                "endchar": 558
                               }
                             },
                             {
@@ -801,8 +748,8 @@
                                 "input": {
                                   "filename": "tokenring.model"
                                 },
-                                "startchar": 640,
-                                "endchar": 641
+                                "startchar": 560,
+                                "endchar": 561
                               }
                             }
                           ],
@@ -810,16 +757,16 @@
                             "input": {
                               "filename": "tokenring.model"
                             },
-                            "startchar": 635,
-                            "endchar": 641
+                            "startchar": 555,
+                            "endchar": 561
                           }
                         },
                         "source": {
                           "input": {
                             "filename": "tokenring.model"
                           },
-                          "startchar": 628,
-                          "endchar": 651
+                          "startchar": 548,
+                          "endchar": 571
                         }
                       }
                     ]
@@ -832,8 +779,8 @@
                     "input": {
                       "filename": "tokenring.model"
                     },
-                    "startchar": 604,
-                    "endchar": 661
+                    "startchar": 524,
+                    "endchar": 581
                   }
                 },
                 {
@@ -845,8 +792,8 @@
                       "input": {
                         "filename": "tokenring.model"
                       },
-                      "startchar": 661,
-                      "endchar": 667
+                      "startchar": 581,
+                      "endchar": 587
                     }
                   },
                   "rhs": {
@@ -858,8 +805,8 @@
                         "input": {
                           "filename": "tokenring.model"
                         },
-                        "startchar": 669,
-                        "endchar": 679
+                        "startchar": 589,
+                        "endchar": 599
                       }
                     },
                     "fields": [
@@ -871,8 +818,8 @@
                             "input": {
                               "filename": "tokenring.model"
                             },
-                            "startchar": 681,
-                            "endchar": 683
+                            "startchar": 601,
+                            "endchar": 603
                           }
                         },
                         "expr": {
@@ -882,8 +829,8 @@
                             "input": {
                               "filename": "tokenring.model"
                             },
-                            "startchar": 685,
-                            "endchar": 690
+                            "startchar": 605,
+                            "endchar": 610
                           }
                         }
                       }
@@ -893,8 +840,8 @@
                     "input": {
                       "filename": "tokenring.model"
                     },
-                    "startchar": 661,
-                    "endchar": 701
+                    "startchar": 581,
+                    "endchar": 621
                   }
                 },
                 {
@@ -908,8 +855,8 @@
                         "input": {
                           "filename": "tokenring.model"
                         },
-                        "startchar": 708,
-                        "endchar": 717
+                        "startchar": 628,
+                        "endchar": 637
                       }
                     },
                     "parent": {
@@ -919,8 +866,8 @@
                         "input": {
                           "filename": "tokenring.model"
                         },
-                        "startchar": 701,
-                        "endchar": 707
+                        "startchar": 621,
+                        "endchar": 627
                       }
                     }
                   },
@@ -931,16 +878,16 @@
                       "input": {
                         "filename": "tokenring.model"
                       },
-                      "startchar": 719,
-                      "endchar": 724
+                      "startchar": 639,
+                      "endchar": 644
                     }
                   },
                   "source": {
                     "input": {
                       "filename": "tokenring.model"
                     },
-                    "startchar": 701,
-                    "endchar": 730
+                    "startchar": 621,
+                    "endchar": 650
                   }
                 }
               ]
@@ -953,8 +900,8 @@
               "input": {
                 "filename": "tokenring.model"
               },
-              "startchar": 542,
-              "endchar": 732
+              "startchar": 462,
+              "endchar": 652
             }
           }
         ]
@@ -963,8 +910,8 @@
         "input": {
           "filename": "tokenring.model"
         },
-        "startchar": 416,
-        "endchar": 734
+        "startchar": 415,
+        "endchar": 654
       }
     }
   ]

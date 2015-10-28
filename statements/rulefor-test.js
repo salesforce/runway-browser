@@ -34,6 +34,9 @@ describe('statements/rulefor.js', function() {
       module.env.rules['setToIndex'].fire(5);
       assert.equal(module.env.getVar('ints').toString(),
         '[4: 0, 5: 5, 6: 0]');
+      module.env.rules['setToIndex'].fire();
+      assert.equal(module.env.getVar('ints').toString(),
+        '[4: 4, 5: 5, 6: 0]');
     });
 
   });
