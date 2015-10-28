@@ -17,5 +17,17 @@ describe('statements/foreach.js', function() {
       assert.equal(module.env.getVar('bools').toString(),
         '[1: True, 2: False, 3: True]');
     });
+
+    it('with index', function() {
+      let module = testing.run(`
+        type Digit : 0..9;
+        var ints : Array<Digit>[4..6];
+        for i, v in ints {
+          v = i;
+        }
+      `);
+      assert.equal(module.env.getVar('ints').toString(),
+        '[4: 4, 5: 5, 6: 6]');
+    });
   });
 });

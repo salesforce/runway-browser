@@ -433,13 +433,15 @@ let print = seqMap(
   }));
 
 let foreachLoop = seqMap(keywords.for,
+  id.skip(comma).times(0, 1),
   id,
   keywords.in,
   expr,
   block,
-  (_, id, _2, expr, block) => ({
+  (_, index, value, _2, expr, block) => ({
       kind: 'foreach',
-      id: id,
+      index: index.length == 1 ? index[0] : undefined,
+      value: value,
       expr: expr,
       code: block,
   }));
