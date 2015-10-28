@@ -112,7 +112,6 @@ let repl = function(env) {
 };
 
 module.exports = {
-  Type: Type,
   load: load,
   loadPrelude: loadPrelude,
   repl: repl,
