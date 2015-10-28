@@ -7,7 +7,9 @@ class Identifier extends Expression {
   typecheck() {
     let v = this.env.getVar(this.parsed.value);
     if (v === undefined) {
-      throw new errors.Lookup(`'${this.parsed.value}' is not a variable/constant in scope`);
+      throw new errors.Lookup(`'${this.parsed.value}' is not a ` +
+        `variable/constant in scope, ` +
+        `attempted access at ${this.parsed.source}`);
     }
     this.type = v.type;
   }
@@ -15,7 +17,8 @@ class Identifier extends Expression {
   evaluate() {
     let r = this.env.getVar(this.parsed.value);
     if (r === undefined) {
-      throw new errors.Lookup(`'${this.parsed.value}' is not a variable/constant in scope`);
+      throw new errors.Internal(`'${this.parsed.value}' is not a ` +
+        `variable/constant in scope`);
     }
     return r;
   }

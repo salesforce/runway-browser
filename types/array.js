@@ -19,6 +19,9 @@ class ArrayValue extends Value {
     }
     return this.items[i - this.type.indextype.low];
   }
+  forEach(cb) {
+    this.items.forEach((v, i) => cb(v, this.type.indextype.low + i));
+  }
   toString() {
     let inner = this.items.map((v, i) => {
       return `${this.type.indextype.low + i}: ${v.toString()}`;
