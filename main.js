@@ -27,6 +27,13 @@ let loadPrelude = function() {
   return env;
 };
 
+let printEnv = (env) => {
+  env.getVarNames().forEach((v) => {
+    console.log(v, '=', env.getVar(v).toString());
+  });
+  console.log();
+};
+
 let repl = function(env) {
   var readline = require('readline').createInterface({
     input: process.stdin,
@@ -91,8 +98,21 @@ let repl = function(env) {
       } else if (input == 'exit') {
         readline.close();
         return;
-      } else if (input.length == 0) {
-        // do nothing
+      } else if (input.startsWith('.fire')) {
+        let args = input.split(' ');
+        try {
+          if (args.length == 2) {
+            env.rules[args[1]].fire();
+            printEnv(env);
+          } else if (args.length == 3) {
+            env.rules[args[1]].fire(Number(args[2]));
+            printEnv(env);
+          } else {
+            console.log('huh?');
+          }
+        } catch ( e ) {
+          printError(e);
+        }
       } else if (input[0] == '.') {
         console.log('huh?');
       } else {
@@ -126,17 +146,11 @@ if (require.main === module) {
     let module = load(parser.parse(new Input(filename)), env);
     module.ast.typecheck();
     module.ast.execute();
-    let printEnv = () => {
-      env.getVarNames().forEach((v) => {
-        console.log(v, '=', env.getVar(v).toString());
-      });
-      console.log();
-    };
-    printEnv();
+    printEnv(env);
     for (let rule in env.rules) {
-      console.log('Executing ', rule);
+      console.log('Executing', rule);
       env.rules[rule].fire();
-      printEnv();
+      printEnv(env);
     }
   }
 
