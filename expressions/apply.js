@@ -49,14 +49,19 @@ class Apply extends Expression {
   }
 
   evaluate() {
+    let vals = this.args.map((arg) => arg.evaluate());
+    let toBool = (v) => this.env.getVar(v ? 'True' : 'False');
+    let toNumber = (v) => {
+      let n = NumberType.singleton.makeDefaultValue();
+      n.assign(v);
+      return n;
+    };
     if (this.parsed.func == '==') {
-      let lhs = this.args[0].evaluate();
-      let rhs = this.args[1].evaluate();
-      if (lhs.equals(rhs)) {
-        return this.env.getVar('True');
-      } else {
-        return this.env.getVar('False');
-      }
+      return toBool(vals[0].equals(vals[1]));
+    } else if (this.parsed.func == '<') {
+      return toBool(vals[0].value < vals[1].value);
+    } else if (this.parsed.func == '+') {
+      return toNumber(vals[0].value + vals[1].value);
     }
     throw new errors.Unimplemented(`The function ${this.parsed.func} is not implemented`);
   }
