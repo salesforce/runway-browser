@@ -478,14 +478,16 @@ let rule = seqMap(keywords.rule,
 let rulefor = seqMap(keywords.rule,
   id,
   keywords.for,
+  id.skip(comma).times(0, 1),
   id,
   keywords.in,
   expr,
   block,
-  (_, id, _2, variable, _3, expr, block) => ({
+  (_, id, _2, index, value, _3, expr, block) => ({
       kind: 'rulefor',
       id: id,
-      variable: variable,
+      index: index.length == 1 ? index[0] : undefined,
+      value: value,
       expr: expr,
       code: block,
   }));

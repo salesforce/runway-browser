@@ -564,7 +564,7 @@
           "endchar": 431
         }
       },
-      "variable": {
+      "value": {
         "kind": "id",
         "value": "serverx",
         "source": {

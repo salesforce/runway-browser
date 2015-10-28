@@ -54,4 +54,7 @@ class RangeType extends Type {
   }
 }
 
-module.exports = RangeType;
+module.exports = {
+  Type: RangeType,
+  Value: RangeValue,
+};

@@ -38,8 +38,8 @@ class ForEach extends Statement {
     let restoreIndex = () => {
     };
     if (this.parsed.index !== undefined) {
+      let dummyIndex = this.codeEnv.getVar(this.parsed.index.value);
       restoreIndex = () => {
-        let dummyIndex = this.codeEnv.getVar(this.parsed.index.value);
         this.codeEnv.vars.set(this.parsed.index.value, dummyIndex);
       };
     }

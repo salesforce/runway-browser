@@ -3,6 +3,8 @@
 let Type = require('./type.js');
 let Value = require('./value.js');
 let errors = require('../errors.js');
+let NumberValue = require('../types/number.js').Value;
+let RangeValue = require('../types/range.js').Value;
 
 class ArrayValue extends Value {
   constructor(type) {
@@ -14,6 +16,12 @@ class ArrayValue extends Value {
       () => this.type.valuetype.makeDefaultValue());
   }
   index(i) {
+    if (i instanceof NumberValue || i instanceof RangeValue) {
+      i = i.value;
+    }
+    if (typeof i !== 'number') {
+      throw new errors.Internal(`Trying to index array with ${i}`);
+    }
     if (i < this.type.indextype.low || i > this.type.indextype.high) {
       throw new errors.Bounds(`Cannot access index ${i} of ${this}`);
     }
