@@ -60,7 +60,7 @@ let repl = function(env) {
         if (module === null) {
           try {
             module = attempt(input);
-          } catch (uselessError) {
+          } catch ( uselessError ) {
             // do nothing
           }
         }
