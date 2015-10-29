@@ -11,6 +11,10 @@ BOWER ?= bower
 ESLINT ?= $(NODE) node_modules/eslint/bin/eslint.js
 JSFMT ?= $(NODE) node_modules/jsfmt/bin/jsfmt
 MOCHA ?= $(node) node_modules/mocha/bin/mocha
+WEBPACK ?= $(node) node_modules/webpack/bin/webpack.js
+
+.PHONY: all
+all: bundle.js
 
 .PHONY: setup
 setup: bower_components/parsimmon/build/parsimmon.commonjs.js \
@@ -39,12 +43,12 @@ system-test: system-test-parser system-test-parser-tokenring
 
 .PHONY: system-test-parser
 system-test-parser: parser.js input.model
-	$(NODE) parser.js >output.json 2>&1 || echo Exit status $$? >>output.json
+	$(NODE) parser-main.js >output.json 2>&1 || echo Exit status $$? >>output.json
 	git diff -w --exit-code output.json
 
 .PHONY: system-test-parser-tokenring
 system-test-parser-tokenring: parser.js tokenring.model
-	$(NODE) parser.js tokenring.model >output-tokenring.json 2>&1 || echo Exit status $$? >>output-tokenring.json
+	$(NODE) parser-main.js tokenring.model >output-tokenring.json 2>&1 || echo Exit status $$? >>output-tokenring.json
 	git diff -w --exit-code output-tokenring.json
 
 .PHONY: format
@@ -54,3 +58,6 @@ format: $(ALLJSFILES)
 .PHONY: lint
 lint: $(ALLJSFILES)
 	$(ESLINT) $(ALLJSFILES)
+
+bundle.js: $(ALLJSFILES)
+	$(WEBPACK)

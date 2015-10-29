@@ -1,16 +1,12 @@
 "use strict";
 
-let fs = require('fs');
-
 // Holds the textual input to the compiler that has been read from a particular file.
 class Input {
   // filename: where the text comes from. For interactive input, make up something.
   // text is optional: if not given, will read from the filename on disk.
   constructor(filename, text) {
     this.filename = filename;
-    if (text === undefined) {
-      text = fs.readFileSync(filename).toString();
-    }
+    console.assert(text !== undefined, 'Input needs text supplied');
     this.getText = () => text; // don't store directly so as to avoid printing on every json dump
   }
 

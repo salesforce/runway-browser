@@ -7,12 +7,12 @@ let ArrayType = require('../types/array.js');
 class RuleFor extends Rule {
   constructor(parsed, env) {
     super(parsed, env);
-    this.expr = makeExpression(this.parsed.expr, this.env);
+    this.expr = makeExpression.make(this.parsed.expr, this.env);
   }
 
   typecheck() {
     this.expr.typecheck();
-    if (!(this.expr.type instanceof ArrayType)) {
+    if (!(this.expr.type instanceof ArrayType.Type)) {
       throw new errors.Type(`Cannot iterate on a ${this.expr.type.getName()} ` +
         `at ${this.expr.source}`);
     }

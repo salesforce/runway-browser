@@ -3,6 +3,7 @@
 let errors = require('../errors');
 let Type = require('./type.js');
 let Value = require('./value.js');
+let makeType = require('./factory.js');
 
 class RecordValue extends Value {
 
@@ -71,10 +72,9 @@ class RecordValue extends Value {
 class RecordType extends Type {
   constructor(decl, env, name) {
     super(decl, env, name);
-    let makeType = require('./factory.js');
     this.fieldtypes = this.decl.fields.map((field) => ({
         name: field.id.value,
-        type: makeType(field.type, this.env),
+        type: makeType.make(field.type, this.env),
     }));
   }
   fieldType(name) {

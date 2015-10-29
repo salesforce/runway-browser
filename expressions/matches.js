@@ -1,12 +1,12 @@
 "use strict";
 
 let Expression = require('./expression.js');
+let makeExpression = require('./factory.js');
 
 class Matches extends Expression {
   constructor(parsed, env) {
     super(parsed, env);
-    let makeExpression = require('./factory.js');
-    this.lhs = makeExpression(this.parsed.expr, this.env);
+    this.lhs = makeExpression.make(this.parsed.expr, this.env);
   }
 
   evaluate() {

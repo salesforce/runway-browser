@@ -2,13 +2,13 @@
 
 let Environment = require('../environment.js');
 let Statement = require('./statement.js');
+let makeStatement = require('./factory.js');
 
 class Rule extends Statement {
   constructor(parsed, env) {
     super(parsed, env);
-    let makeStatement = require('./factory.js');
     this.innerEnv = new Environment(this.env);
-    this.inner = makeStatement(this.parsed.code, this.innerEnv);
+    this.inner = makeStatement.make(this.parsed.code, this.innerEnv);
     if (this.env.rules === undefined) { // XXX- hack
       this.env.rules = {};
     }

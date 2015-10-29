@@ -13,13 +13,13 @@ let Types = require('../types/types.js');
 class VarDecl extends Statement {
   constructor(parsed, env) {
     super(parsed, env);
-    let type = makeType(this.parsed.type, this.env);
+    let type = makeType.make(this.parsed.type, this.env);
     this.value = type.makeDefaultValue();
     this.env.assignVar(this.parsed.id.value, this.value);
     if (this.parsed.default === undefined) {
       this.defaultExpr = null;
     } else {
-      this.defaultExpr = makeExpression(this.parsed.default, this.env);
+      this.defaultExpr = makeExpression.make(this.parsed.default, this.env);
     }
   }
 

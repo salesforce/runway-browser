@@ -4,12 +4,12 @@ let errors = require('../errors.js');
 let Expression = require('./expression.js');
 let RecordType = require('../types/record.js');
 let EitherVariant = require('../types/either.js').Variant;
+let makeExpression = require('./factory.js');
 
 class Lookup extends Expression {
   constructor(parsed, env) {
     super(parsed, env);
-    let makeExpression = require('./factory.js');
-    this.parent = makeExpression(this.parsed.parent, this.env);
+    this.parent = makeExpression.make(this.parsed.parent, this.env);
   }
 
   typecheck() {

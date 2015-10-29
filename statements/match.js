@@ -3,20 +3,20 @@
 let errors = require('../errors.js');
 let Environment = require('../environment.js');
 let makeExpression = require('../expressions/factory.js');
+let makeStatement = require('./factory.js');
 let Statement = require('./statement.js');
 let EitherType = require('../types/either.js').Type;
 
 class Match extends Statement {
   constructor(parsed, env) {
     super(parsed, env);
-    let makeStatement = require('./factory.js');
-    this.expr = makeExpression(this.parsed.expr, this.env);
+    this.expr = makeExpression.make(this.parsed.expr, this.env);
     this.variants = new Map(this.parsed.variants.map((variant) => {
       let variantEnv = new Environment(this.env);
       return [variant.type.value,
         {
           id: variant.id,
-          code: makeStatement(variant.code, variantEnv),
+          code: makeStatement.make(variant.code, variantEnv),
           env: variantEnv,
         }]
     }));

@@ -6,7 +6,7 @@ let Statement = require('./statement.js');
 class Print extends Statement {
   constructor(parsed, env) {
     super(parsed, env);
-    this.expr = makeExpression(this.parsed.expr, this.env);
+    this.expr = makeExpression.make(this.parsed.expr, this.env);
   }
 
   typecheck() {

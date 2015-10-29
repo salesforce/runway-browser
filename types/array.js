@@ -1,10 +1,14 @@
 "use strict";
 
+let array = {};
+module.exports = array;
+
+let makeType = require('./factory.js');
 let Type = require('./type.js');
 let Value = require('./value.js');
 let errors = require('../errors.js');
-let NumberValue = require('../types/number.js').Value;
-let RangeValue = require('../types/range.js').Value;
+let NumberValue = require('./number.js');
+let RangeValue = require('./range.js');
 
 class ArrayValue extends Value {
   constructor(type) {
@@ -16,7 +20,7 @@ class ArrayValue extends Value {
       () => this.type.valuetype.makeDefaultValue());
   }
   index(i) {
-    if (i instanceof NumberValue || i instanceof RangeValue) {
+    if (i instanceof NumberValue.Value || i instanceof RangeValue.Value) {
       i = i.value;
     }
     if (typeof i !== 'number') {
@@ -41,9 +45,8 @@ class ArrayValue extends Value {
 class ArrayType extends Type {
   constructor(decl, env, name) {
     super(decl, env, name);
-    let makeType = require('./factory.js');
-    this.valuetype = makeType(this.decl.args[0], this.env);
-    this.indextype = makeType(this.decl.indexBy, this.env);
+    this.valuetype = makeType.make(this.decl.args[0], this.env);
+    this.indextype = makeType.make(this.decl.indexBy, this.env);
   }
   makeDefaultValue() {
     return new ArrayValue(this);
@@ -53,4 +56,5 @@ class ArrayType extends Type {
   }
 }
 
-module.exports = ArrayType;
+array.Type = ArrayType;
+array.Value = ArrayValue;

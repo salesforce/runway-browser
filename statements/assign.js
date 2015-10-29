@@ -8,8 +8,8 @@ let Types = require('../types/types.js');
 class Assign extends Statement {
   constructor(parsed, env) {
     super(parsed, env);
-    this.lhs = makeExpression(this.parsed.lhs, this.env);
-    this.rhs = makeExpression(this.parsed.rhs, this.env);
+    this.lhs = makeExpression.make(this.parsed.lhs, this.env);
+    this.rhs = makeExpression.make(this.parsed.rhs, this.env);
   }
 
   typecheck() {

@@ -1,30 +1,15 @@
 "use strict";
 
-let Input = require('./input.js');
-let parser = require('./parser.js');
 let Environment = require('./environment.js');
-let Type = require('./types/type.js');
-let makeStatement = require('./statements/factory.js');
-let makeType = require('./types/factory.js');
-let process = require('process');
+let Input = require('./input.js');
+let compiler = require('./compiler.js');
 let errors = require('./errors.js');
+let fs = require('fs');
+let parser = require('./parser.js');
+let process = require('process');
 
 let out = function(o) {
   console.log(JSON.stringify(o, null, 2));
-};
-
-let load = function(parsed, env) {
-  let ast = makeStatement(parsed, env);
-  return {
-    ast: ast,
-    env: env,
-  };
-};
-
-let loadPrelude = function() {
-  let env = new Environment();
-  load(parser.parse(new Input('prelude.model')), env);
-  return env;
 };
 
 let printEnv = (env) => {
@@ -53,7 +38,7 @@ let repl = function(env) {
   };
 
   var forgivingParse = function(input, env) {
-    let parse = (input) => load(parser.parse(new Input('REPL', input)), env);
+    let parse = (input) => compiler.load(new Input('REPL', input), env);
     let rescueAttempts = [
       (input) => parse(input + ';'),
       (input) => parse('print ' + input),
@@ -131,19 +116,19 @@ let repl = function(env) {
   loop();
 };
 
+let readFile = (filename) => fs.readFileSync(filename).toString();
+
 module.exports = {
-  load: load,
-  loadPrelude: loadPrelude,
   repl: repl,
 };
 
 if (require.main === module) {
-  let prelude = loadPrelude();
-  let env = new Environment(prelude);
+  let prelude = compiler.loadPrelude(readFile('prelude.model'));
+  let env = new Environment(prelude.env);
 
   if (process.argv.length > 2) { // filename given
     let filename = process.argv[2];
-    let module = load(parser.parse(new Input(filename)), env);
+    let module = compiler.load(new Input(filename, readFile(filename)), env);
     module.ast.typecheck();
     module.ast.execute();
     printEnv(env);

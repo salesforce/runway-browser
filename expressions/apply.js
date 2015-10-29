@@ -4,7 +4,7 @@ let errors = require('../errors.js');
 let Expression = require('./expression.js');
 let Types = require('../types/types.js');
 let NumberType = require('../types/number.js').Type;
-
+let makeExpression = require('./factory.js');
 
 class BaseFunction {
   constructor(name, numargs) {
@@ -147,8 +147,7 @@ let functions = [
 class Apply extends Expression {
   constructor(parsed, env) {
     super(parsed, env);
-    let makeExpression = require('./factory.js');
-    this.params = this.parsed.args.map((a) => makeExpression(a, this.env));
+    this.params = this.parsed.args.map((a) => makeExpression.make(a, this.env));
   }
 
   typecheck() {

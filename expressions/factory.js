@@ -2,18 +2,19 @@
 
 let errors = require('../errors.js');
 
-let kinds = [
-  'apply',
-  'id',
-  'index',
-  'lookup',
-  'matches',
-  'number',
-  'recordvalue',
-];
+let factory = {};
+module.exports = factory;
+// export empty object before requiring circular dependencies
 
-// map from kind to Statement subclass
-let expressions = new Map(kinds.map((kind) => [kind, require(`./${kind}.js`)]));
+let expressions = new Map([
+  ['apply', require('./apply.js')],
+  ['id', require('./id.js')],
+  ['index', require('./index.js')],
+  ['lookup', require('./lookup.js')],
+  ['matches', require('./matches.js')],
+  ['number', require('./number.js')],
+  ['recordvalue', require('./recordvalue.js')],
+]);
 
 let make = function(parsed, env) {
   let expression = expressions.get(parsed.kind);
@@ -23,4 +24,4 @@ let make = function(parsed, env) {
   let o = JSON.stringify(parsed, null, 2);
   throw new errors.Unimplemented(`Unknown expression: ${o}`);
 }
-module.exports = make;
+factory.make = make;

@@ -3,21 +3,21 @@
 let errors = require('../errors.js');
 let Environment = require('../environment.js');
 let makeExpression = require('../expressions/factory.js');
+let makeStatement = require('./factory.js');
 let Statement = require('./statement.js');
 let ArrayType = require('../types/array.js');
 
 class ForEach extends Statement {
   constructor(parsed, env) {
     super(parsed, env);
-    let makeStatement = require('./factory.js');
-    this.expr = makeExpression(this.parsed.expr, this.env);
+    this.expr = makeExpression.make(this.parsed.expr, this.env);
     this.codeEnv = new Environment(this.env);
-    this.code = makeStatement(this.parsed.code, this.codeEnv);
+    this.code = makeStatement.make(this.parsed.code, this.codeEnv);
   }
 
   typecheck() {
     this.expr.typecheck();
-    if (!(this.expr.type instanceof ArrayType)) {
+    if (!(this.expr.type instanceof ArrayType.Type)) {
       throw new errors.Type(`Cannot iterate on a ${this.expr.type.getName()} ` +
         `at ${this.expr.source}`);
     }

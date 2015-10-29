@@ -562,12 +562,3 @@ Expected one of: ${expected.join(', ')}`);
 module.exports = {
   parse: parse,
 };
-
-if (require.main === module) {
-  let filename = 'input.model';
-  if (process.argv.length > 2) {
-    filename = process.argv[2];
-  }
-  let parsed = parse(new Input(filename));
-  console.log(JSON.stringify(parsed, null, 2));
-}

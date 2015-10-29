@@ -2,22 +2,23 @@
 
 let errors = require('../errors.js');
 
-let kinds = [
-  'assign',
-  'foreach',
-  'ifelse',
-  'match',
-  'paramdecl',
-  'print',
-  'rule',
-  'rulefor',
-  'sequence',
-  'typedecl',
-  'vardecl',
-];
+let factory = {};
+module.exports = factory;
+// export empty object before requiring circular dependencies
 
-// map from kind to Statement subclass
-let statements = new Map(kinds.map((kind) => [kind, require(`./${kind}.js`)]));
+let statements = new Map([
+  ['assign', require('./assign.js')],
+  ['foreach', require('./foreach.js')],
+  ['ifelse', require('./ifelse.js')],
+  ['match', require('./match.js')],
+  ['paramdecl', require('./paramdecl.js')],
+  ['print', require('./print.js')],
+  ['rule', require('./rule.js')],
+  ['rulefor', require('./rulefor.js')],
+  ['sequence', require('./sequence.js')],
+  ['typedecl', require('./typedecl.js')],
+  ['vardecl', require('./vardecl.js')],
+]);
 
 let make = function(parsed, env) {
   if (parsed !== undefined && 'kind' in parsed) {
@@ -29,4 +30,4 @@ let make = function(parsed, env) {
   let o = JSON.stringify(parsed, null, 2);
   throw new errors.Unimplemented(`Unknown statement: ${o}`);
 }
-module.exports = make;
+factory.make = make;

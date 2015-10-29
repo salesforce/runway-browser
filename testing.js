@@ -1,18 +1,16 @@
 "use strict";
 
-let assert = require('assert');
 let Environment = require('./environment.js');
 let Input = require('./input.js');
-let Parser = require('./parser.js');
-let main = require('./main.js');
+let compiler = require('./compiler.js');
+let fs = require('fs');
+
+let readFile = (filename) => fs.readFileSync(filename).toString();
 
 let run = function(code) {
-  let prelude = main.loadPrelude();
-  let env = new Environment(prelude);
-
-  let parsed = Parser.parse(new Input('unit test', code));
-  let module = main.load(parsed, env);
-  module.ast.typecheck();
+  let prelude = compiler.loadPrelude(readFile('prelude.model'));
+  let env = new Environment(prelude.env);
+  let module = compiler.load(new Input('unit test', code), env);
   module.ast.execute();
   return module;
 };

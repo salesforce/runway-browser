@@ -3,14 +3,14 @@
 let errors = require('../errors.js');
 let either = require('../types/either.js');
 let Expression = require('./expression.js');
+let makeExpression = require('./factory.js');
 
 class RecordValue extends Expression {
   constructor(parsed, env) {
     super(parsed, env);
-    let makeExpression = require('./factory.js');
     this.fields = new Map(this.parsed.fields.map((field) => [
         field.id.value,
-        makeExpression(field.expr, this.env),
+        makeExpression.make(field.expr, this.env),
     ]));
   }
 
