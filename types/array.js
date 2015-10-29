@@ -29,7 +29,11 @@ class ArrayValue extends Value {
     if (i < this.type.indextype.low || i > this.type.indextype.high) {
       throw new errors.Bounds(`Cannot access index ${i} of ${this}`);
     }
-    return this.items[i - this.type.indextype.low];
+    let v = this.items[i - this.type.indextype.low];
+    if (v == undefined) {
+      throw new errors.Internal(`Bounds check failed to catch issue: ${i}`);
+    }
+    return v;
   }
   forEach(cb) {
     this.items.forEach((v, i) => cb(v, this.type.indextype.low + i));

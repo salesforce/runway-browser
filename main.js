@@ -37,15 +37,15 @@ let repl = function(env) {
     }
   };
 
-  var forgivingParse = function(input, env) {
-    let parse = (input) => compiler.load(new Input('REPL', input), env);
+  var forgivingLoad = function(input, env) {
+    let load = (input) => compiler.load(new Input('REPL', input), env);
     let rescueAttempts = [
-      (input) => parse(input + ';'),
-      (input) => parse('print ' + input),
-      (input) => parse('print ' + input + ';'),
+      (input) => load(input + ';'),
+      (input) => load('print ' + input),
+      (input) => load('print ' + input + ';'),
     ];
     try {
-      return parse(input);
+      return load(input);
     } catch ( originalError ) {
       let module = null;
       rescueAttempts.forEach((attempt) => {
@@ -102,8 +102,7 @@ let repl = function(env) {
         console.log('huh?');
       } else {
         try {
-          let module = forgivingParse(input, env);
-          module.ast.typecheck();
+          let module = forgivingLoad(input, env);
           module.ast.execute();
         } catch ( e ) {
           printError(e);
@@ -129,7 +128,6 @@ if (require.main === module) {
   if (process.argv.length > 2) { // filename given
     let filename = process.argv[2];
     let module = compiler.load(new Input(filename, readFile(filename)), env);
-    module.ast.typecheck();
     module.ast.execute();
     printEnv(env);
     for (let rule in env.rules) {
