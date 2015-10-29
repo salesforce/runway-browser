@@ -44,6 +44,7 @@ let lexeme = function(p) {
   return p.skip(whitespace.or(comment).many());
 }
 let arrow = lexeme(string('->'));
+let bang = lexeme(string('!'));
 let colon = lexeme(string(':'));
 let comma = lexeme(string(','));
 let dot = lexeme(string('.'));
@@ -174,6 +175,11 @@ let expr = lazy(() => alt(
           func: op,
           args: [left, right]
       })).source(),
+    bang.then(expr).map((v) => ({
+        kind: 'apply',
+        func: '!',
+        args: [v]
+    })).source(),
     seqMap(expratom,
       keywords.matches,
       id,

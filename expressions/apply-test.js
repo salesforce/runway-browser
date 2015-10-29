@@ -51,6 +51,19 @@ describe('expressions/apply.js', function() {
       assert.equal(module.env.getVar('c').toString(), '9');
     });
 
+    it('negation', function() {
+      let module = testing.run(`
+        var a : Boolean = !False;
+        var b : Boolean = !True;
+        var c : Boolean = !(3 < 4);
+        var d : Boolean = !(3 > 4);
+      `);
+      assert.equal(module.env.getVar('a').toString(), 'True');
+      assert.equal(module.env.getVar('b').toString(), 'False');
+      assert.equal(module.env.getVar('c').toString(), 'False');
+      assert.equal(module.env.getVar('d').toString(), 'True');
+    });
+
     it('equals', function() {
       let module = testing.run(`
         var ff : Boolean = False == False;

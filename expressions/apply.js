@@ -42,6 +42,24 @@ class BaseFunction {
   }
 }
 
+class NegateFunction extends BaseFunction {
+  constructor() {
+    super('!', 1);
+  }
+  typecheckSub(params, env) {
+    let boolType = env.getType('Boolean');
+    if (!Types.subtypeOf(params[0].type, boolType)) {
+      throw new errors.Type(`Cannot negate ${params[0].type}`);
+    }
+    return boolType;
+  }
+  evaluateSub(args, env) {
+    let isFalse = (args[0] === env.getVar('False'));
+    return env.getVar(isFalse ? 'True' : 'False');
+  }
+}
+;
+
 class EqualityFunction extends BaseFunction {
   typecheckSub(params, env) {
     if (!Types.haveEquality(params[0].type, params[1].type)) {
@@ -114,6 +132,7 @@ class ArithmeticFunction extends BaseFunction {
 }
 
 let functions = [
+  new NegateFunction(),
   new EqualsFunction(),
   new NotEqualsFunction(),
   new OrderingFunction('<', (x, y) => (x < y)),
