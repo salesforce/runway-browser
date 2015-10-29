@@ -4,22 +4,24 @@ NULL=
 ALLJSFILES=$(shell git ls-files '*.js' '**/*.js')
 TESTJSFILES=$(shell git ls-files '*-test.js' '**/*-test.js')
 
+NODE ?= node
+NPM ?= npm
+BOWER ?= bower
+
+ESLINT ?= $(NODE) node_modules/eslint/bin/eslint.js
+JSFMT ?= $(NODE) node_modules/jsfmt/bin/jsfmt
+MOCHA ?= $(node) node_modules/mocha/bin/mocha
+
 .PHONY: setup
 setup: bower_components/parsimmon/build/parsimmon.commonjs.js \
-       node_modules/jsfmt/bin/jsfmt \
-       node_modules/mocha/bin/mocha \
+       npm_setup \
        $(NULL)
 
-node_modules/jsfmt/bin/jsfmt:
-	mkdir -p node_modules
-	npm install jsfmt
-
-node_modules/jsfmt/bin/mocha:
-	mkdir -p node_modules
-	npm install mocha
+npm_setup:
+	$(NPM) install
 
 bower_components/parsimmon/Makefile:
-	bower install
+	$(BOWER) install
 
 bower_components/parsimmon/build/parsimmon.commonjs.js: bower_components/parsimmon/Makefile
 	(cd bower_components/parsimmon; make build/parsimmon.commonjs.js)
@@ -30,25 +32,25 @@ test: unit-test system-test
 
 .PNONY: unit-test
 unit-test: $(TESTJSFILES)
-	./node_modules/mocha/bin/mocha $^
+	$(MOCHA) $^
 
 .PHONY: system-test
 system-test: system-test-parser system-test-parser-tokenring
 
 .PHONY: system-test-parser
 system-test-parser: parser.js input.model
-	node parser.js >output.json 2>&1 || echo Exit status $$? >>output.json
+	$(NODE) parser.js >output.json 2>&1 || echo Exit status $$? >>output.json
 	git diff -w --exit-code output.json
 
 .PHONY: system-test-parser-tokenring
 system-test-parser-tokenring: parser.js tokenring.model
-	node parser.js tokenring.model >output-tokenring.json 2>&1 || echo Exit status $$? >>output-tokenring.json
+	$(NODE) parser.js tokenring.model >output-tokenring.json 2>&1 || echo Exit status $$? >>output-tokenring.json
 	git diff -w --exit-code output-tokenring.json
 
 .PHONY: format
 format: $(ALLJSFILES)
-	./node_modules/jsfmt/bin/jsfmt --write $^
+	$(JSFMT) --write $^
 
 .PHONY: lint
 lint: $(ALLJSFILES)
-	eslint $(ALLJSFILES)
+	$(ESLINT) $(ALLJSFILES)

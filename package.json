@@ -1,0 +1,21 @@
+{
+  "name": "modeling-compiler",
+  "version": "0.0.1-alpha.0",
+  "description": "Requires node >=v4.x, bower, npm.",
+  "main": "main.js",
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "^1.7.3",
+    "jsfmt": "^0.5.1",
+    "mocha": "^2.3.3"
+  },
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@localhost:dongaro/modeling-compiler.git"
+  },
+  "author": "Diego Ongaro <dongaro@salesforce.com>",
+  "license": "UNLICENSED"
+}
