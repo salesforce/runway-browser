@@ -122,8 +122,8 @@
             "input": {
               "filename": "input.model"
             },
-            "startchar": 48,
-            "endchar": 61
+            "startchar": 47,
+            "endchar": 63
           }
         },
         "source": {

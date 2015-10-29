@@ -402,6 +402,13 @@
                                 "startchar": 294,
                                 "endchar": 301
                               }
+                            },
+                            "source": {
+                              "input": {
+                                "filename": "tokenring.model"
+                              },
+                              "startchar": 294,
+                              "endchar": 304
                             }
                           },
                           "parent": {
@@ -498,10 +505,24 @@
                                   "startchar": 354,
                                   "endchar": 361
                                 }
+                              },
+                              "source": {
+                                "input": {
+                                  "filename": "tokenring.model"
+                                },
+                                "startchar": 354,
+                                "endchar": 365
                               }
                             }
                           }
-                        ]
+                        ],
+                        "source": {
+                          "input": {
+                            "filename": "tokenring.model"
+                          },
+                          "startchar": 339,
+                          "endchar": 366
+                        }
                       },
                       "source": {
                         "input": {
@@ -625,6 +646,13 @@
                   "startchar": 465,
                   "endchar": 471
                 }
+              },
+              "source": {
+                "input": {
+                  "filename": "tokenring.model"
+                },
+                "startchar": 465,
+                "endchar": 481
               }
             },
             "thenblock": {
@@ -834,7 +862,14 @@
                           }
                         }
                       }
-                    ]
+                    ],
+                    "source": {
+                      "input": {
+                        "filename": "tokenring.model"
+                      },
+                      "startchar": 589,
+                      "endchar": 611
+                    }
                   },
                   "source": {
                     "input": {

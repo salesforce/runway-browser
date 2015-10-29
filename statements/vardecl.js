@@ -39,7 +39,11 @@ class VarDecl extends Statement {
   }
 
   toString(indent) {
-    return `${indent}var ${this.parsed.id.value} : ...;`;
+    let defVal = '';
+    if (this.defaultExpr !== null) {
+      defVal = ` = ${this.defaultExpr}`;
+    }
+    return `${indent}var ${this.parsed.id.value} : ${this.value.type}${defVal};`;
   }
 }
 

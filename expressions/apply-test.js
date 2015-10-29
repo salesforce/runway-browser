@@ -84,5 +84,22 @@ describe('expressions/apply.js', function() {
       assert.equal(module.env.getVar('ft').toString(), 'False');
     });
 
+    it('precedence', function() {
+      let module = testing.run(`
+        var a : 0..99 = 3 + 4 * 5;
+        var b : 0..99 = 3 * 4 + 5;
+        var c : Boolean = 3 * 4 > 5;
+        var d : Boolean = 5 > 3 * 4;
+        var e : Boolean = 3 < 4 == True;
+        var f : Boolean = True != 3 < 4;
+      `);
+      assert.equal(module.env.getVar('a').toString(), '23');
+      assert.equal(module.env.getVar('b').toString(), '17');
+      assert.equal(module.env.getVar('c').toString(), 'True');
+      assert.equal(module.env.getVar('d').toString(), 'False');
+      assert.equal(module.env.getVar('e').toString(), 'True');
+      assert.equal(module.env.getVar('f').toString(), 'False');
+    });
+
   });
 });

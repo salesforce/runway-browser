@@ -115,17 +115,6 @@ let id = lexeme(regex(/[a-z_]\w*/i)).desc('identifier').map((v) => ({
 
 ////////// Expressions //////////
 
-let binop = alt(
-  neq,
-  times,
-  plus,
-  minus,
-  doubleEquals,
-  leq,
-  req,
-  langle,
-  rangle);
-
 let group = lazy(() => {
   return lparen.then(expr).skip(rparen)
 });
@@ -159,37 +148,66 @@ let lhs = seqMap(id,
   lhsmore.many(),
   lhshelper);
 
-let expratom = lazy(() => alt(
+let expr0 = lazy(() => alt(
     numberWithUnit,
     number,
     recordvalue,
     group,
     lhs));
 
-let expr = lazy(() => alt(
-    seqMap(expratom,
-      binop,
-      expr,
-      (left, op, right) => ({
-          kind: 'apply',
-          func: op,
-          args: [left, right]
-      })).source(),
-    bang.then(expr).map((v) => ({
+let expr1 = lazy(() => alt(
+    bang.then(expr0).map((v) => ({
         kind: 'apply',
         func: '!',
         args: [v]
     })).source(),
-    seqMap(expratom,
+    expr0));
+
+let expr2 = lazy(() => alt(
+    seqMap(expr1,
       keywords.matches,
       id,
       (expr, _, id) => ({
           kind: 'matches',
           expr: expr,
           variant: id
-      })),
-    expratom)
-    .desc('expression'));
+      })).source(),
+    expr1));
+
+// Order of parsers in this table defines precedence.
+let binop = [
+  times,
+  alt(plus, minus),
+  alt(leq, req, langle, rangle),
+  alt(neq, doubleEquals),
+];
+
+// This parser is "(exprprev op exprcurr) | (exprprev)", just rewritten as
+// "exprprev [op exprcurr]" to be more efficient.
+let makeBinopParser = (exprprev, ops, exprcurr) => seqMap(
+    exprprev,
+    seqMap(
+      ops,
+      exprcurr,
+      (op, right) => ((left) => ({
+            kind: 'apply',
+            func: op,
+            args: [left, right]
+        }))).times(0, 1),
+    (left, rest) => {
+      if (rest.length == 0) {
+        return left;
+      } else {
+        return rest[0](left);
+      }
+    }).source();
+
+let expr3 = binop.reduce((exprprev, ops) => {
+  let exprcurr = lazy(() => makeBinopParser(exprprev, ops, exprcurr));
+  return exprcurr;
+}, expr2);
+
+let expr = expr3.desc('expression');
 
 
 ////////// Types //////////
