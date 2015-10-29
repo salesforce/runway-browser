@@ -9,6 +9,10 @@ module.exports = {
       {
         test: /\.css$/,
         loader: "style!css"
+      },
+      {
+        test: /\.model$/,
+        loader: "raw"
       }
     ]
   }

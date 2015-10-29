@@ -4,8 +4,13 @@ let compiler = require('./compiler.js');
 let Environment = require('./environment.js');
 let Input = require('./input.js');
 
+let preludeText = require('./prelude.model');
+
+let prelude = compiler.loadPrelude(preludeText);
+
 let meval = (text) => {
-  let module = compiler.load(new Input('eval', text), new Environment());
+  let env = new Environment(prelude.env);
+  let module = compiler.load(new Input('eval', text), env);
   module.ast.execute();
 };
 
