@@ -9,6 +9,16 @@ let Parsimmon = require('./bower_components/parsimmon/build/parsimmon.commonjs.j
 
 ////////// Helpers //////////
 
+// Calls anonymous function immediatey. Used to make clear when anonymous
+// functions are used only for scoping, as in the following example:
+//   let x = call(function() {
+//     let tmp = 3;
+//     return tmp * tmp;
+//   });
+let call = function(fn) {
+  return fn();
+};
+
 // Like .mark() except puts start and end in a 'source' attribute hanging off value.
 // The 'input' attribute of the Source values is set later in parse().
 Parsimmon.Parser.prototype.source = function() {
@@ -33,16 +43,17 @@ let whitespace = Parsimmon.whitespace;
 let sepByOptTrail = function(content, separator) {
   return sepBy(content, separator)
     .skip(separator.or(Parsimmon.succeed()));
-}
+};
 let sepBy1OptTrail = function(content, separator) {
   return sepBy1(content, separator)
     .skip(separator.or(Parsimmon.succeed()));
-}
+};
 let comment = regex(/\/\/[^\n]*/).desc('single-line comment');
 
 let lexeme = function(p) {
   return p.skip(whitespace.or(comment).many());
-}
+};
+
 let arrow = lexeme(string('->'));
 let bang = lexeme(string('!'));
 let colon = lexeme(string(':'));
@@ -91,18 +102,20 @@ let keywords = {};
   keywords[keyword] = lexeme(string(keyword));
 });
 
-let re = /([0-9]+)([a-z]+)/i;
-let numberWithUnit = lexeme(regex(re))
-  .map((s) => {
-    let result = re.exec(s);
-    return {
-      kind: 'numberWithUnit',
-      number: result[1],
-      unit: result[2],
-    };
-  })
-  .source()
-  .desc('number with unit');
+let numberWithUnit = call(function() {
+  let re = /([0-9]+)([a-z]+)/i;
+  return lexeme(regex(re))
+    .map((s) => {
+      let result = re.exec(s);
+      return {
+        kind: 'numberWithUnit',
+        number: result[1],
+        unit: result[2],
+      };
+    })
+    .source()
+    .desc('number with unit');
+});
 let number = lexeme(regex(/[0-9]+/).map(parseInt)).desc('number').map((v) => ({
     kind: 'number',
     value: v,
@@ -115,99 +128,102 @@ let id = lexeme(regex(/[a-z_]\w*/i)).desc('identifier').map((v) => ({
 
 ////////// Expressions //////////
 
-let group = lazy(() => {
-  return lparen.then(expr).skip(rparen)
+let lhs = call(function() {
+  let lhsmore = lazy(() => alt(
+      seqMap(lbracket,
+        expr,
+        rbracket,
+        (_, expr, _2) => ({
+            kind: 'index',
+            by: expr,
+        })),
+      seqMap(dot,
+        id,
+        (_, id) => ({
+            kind: 'lookup',
+            child: id,
+        }))));
+
+  let lhshelper = function(lhsparent, more) {
+    if (more.length == 0) {
+      return lhsparent;
+    }
+    let ret = more.shift(0);
+    ret.parent = lhsparent;
+    return lhshelper(ret, more);
+  };
+
+  return seqMap(id,
+    lhsmore.many(),
+    lhshelper);
 });
 
-let lhsmore = lazy(() => alt(
-    seqMap(lbracket,
-      expr,
-      rbracket,
-      (_, expr, _2) => ({
-          kind: 'index',
-          by: expr,
-      })),
-    seqMap(dot,
-      id,
-      (_, id) => ({
-          kind: 'lookup',
-          child: id,
-      }))));
+let expr = call(function() {
+  let group = lazy(() => {
+    return lparen.then(expr).skip(rparen)
+  });
 
+  let expr0 = lazy(() => alt(
+      numberWithUnit,
+      number,
+      recordvalue,
+      group,
+      lhs));
 
-let lhshelper = function(lhsparent, more) {
-  if (more.length == 0) {
-    return lhsparent;
-  }
-  let ret = more.shift(0);
-  ret.parent = lhsparent;
-  return lhshelper(ret, more);
-};
-
-let lhs = seqMap(id,
-  lhsmore.many(),
-  lhshelper);
-
-let expr0 = lazy(() => alt(
-    numberWithUnit,
-    number,
-    recordvalue,
-    group,
-    lhs));
-
-let expr1 = lazy(() => alt(
-    bang.then(expr0).map((v) => ({
-        kind: 'apply',
-        func: '!',
-        args: [v]
-    })).source(),
-    expr0));
-
-let expr2 = lazy(() => alt(
-    seqMap(expr1,
-      keywords.matches,
-      id,
-      (expr, _, id) => ({
-          kind: 'matches',
-          expr: expr,
-          variant: id
+  let expr1 = lazy(() => alt(
+      bang.then(expr0).map((v) => ({
+          kind: 'apply',
+          func: '!',
+          args: [v]
       })).source(),
-    expr1));
+      expr0));
 
-// Order of parsers in this table defines precedence.
-let binop = [
-  times,
-  alt(plus, minus),
-  alt(leq, req, langle, rangle),
-  alt(neq, doubleEquals),
-];
+  let expr2 = lazy(() => alt(
+      seqMap(expr1,
+        keywords.matches,
+        id,
+        (expr, _, id) => ({
+            kind: 'matches',
+            expr: expr,
+            variant: id
+        })).source(),
+      expr1));
 
-// This parser is "(exprprev op exprcurr) | (exprprev)", just rewritten as
-// "exprprev [op exprcurr]" to be more efficient.
-let makeBinopParser = (exprprev, ops, exprcurr) => seqMap(
-    exprprev,
-    seqMap(
-      ops,
-      exprcurr,
-      (op, right) => ((left) => ({
-            kind: 'apply',
-            func: op,
-            args: [left, right]
-        }))).times(0, 1),
-    (left, rest) => {
-      if (rest.length == 0) {
-        return left;
-      } else {
-        return rest[0](left);
-      }
-    }).source();
+  // Order of parsers in this table defines precedence.
+  let binop = [
+    times,
+    alt(plus, minus),
+    alt(leq, req, langle, rangle),
+    alt(neq, doubleEquals),
+  ];
 
-let expr3 = binop.reduce((exprprev, ops) => {
-  let exprcurr = lazy(() => makeBinopParser(exprprev, ops, exprcurr));
-  return exprcurr;
-}, expr2);
+  // This parser is "(exprprev op exprcurr) | (exprprev)", just rewritten as
+  // "exprprev [op exprcurr]" to be more efficient.
+  let makeBinopParser = (exprprev, ops, exprcurr) => seqMap(
+      exprprev,
+      seqMap(
+        ops,
+        exprcurr,
+        (op, right) => ((left) => ({
+              kind: 'apply',
+              func: op,
+              args: [left, right]
+          }))).times(0, 1),
+      (left, rest) => {
+        if (rest.length == 0) {
+          return left;
+        } else {
+          return rest[0](left);
+        }
+      }).source();
 
-let expr = expr3.desc('expression');
+  let expr3 = binop.reduce((exprprev, ops) => {
+    let exprcurr = lazy(() => makeBinopParser(exprprev, ops, exprcurr));
+    return exprcurr;
+  }, expr2);
+
+  return expr3.desc('expression');
+});
 
 
 ////////// Types //////////
@@ -219,68 +235,69 @@ let range = seqMap(expr, dots, expr,
       high: high
   })).source();
 
-let field = lazy(() => seqMap(
-    id,
-    colon,
-    complexType.or(type),
-    (id, _, type) => ({
-        id: id,
-        type: type
-    })));
+let fieldlist = call(function() {
+  let field = lazy(() => seqMap(
+      id,
+      colon,
+      complexType.or(type),
+      (id, _, type) => ({
+          id: id,
+          type: type
+      })));
 
-
-let fieldlist = sepByOptTrail(field, comma).map((fields) => ({
-    kind: 'record',
-    fields: fields
-}));
-
-
-let fieldvalue = lazy(() => seqMap(
-    id,
-    colon,
-    expr,
-    (id, _, expr) => ({
-        id: id,
-        expr: expr,
-    })));
-
-
-let recordvalue = seqMap(id,
-  lbrace,
-  sepByOptTrail(fieldvalue, comma),
-  rbrace,
-  (id, _, fields, _2) => ({
-      kind: 'recordvalue',
-      type: id,
-      fields: fields,
+  return sepByOptTrail(field, comma).map((fields) => ({
+      kind: 'record',
+      fields: fields
   }));
+});
 
+let recordvalue = call(function() {
+  let fieldvalue = lazy(() => seqMap(
+      id,
+      colon,
+      expr,
+      (id, _, expr) => ({
+          id: id,
+          expr: expr,
+      })));
+  return seqMap(id,
+    lbrace,
+    sepByOptTrail(fieldvalue, comma),
+    rbrace,
+    (id, _, fields, _2) => ({
+        kind: 'recordvalue',
+        type: id,
+        fields: fields,
+    }));
+});
 
 let record = alt(keywords.node, keywords.record)
   .skip(lbrace)
   .then(fieldlist)
   .skip(rbrace);
 
-let eitherfield = seqMap(id,
-  lbrace,
-  fieldlist,
-  rbrace,
-  (id, _, fields, _2) => ({
+let either = call(function() {
+  let eitherfield = seqMap(id,
+    lbrace,
+    fieldlist,
+    rbrace,
+    (id, _, fields, _2) => ({
+        id: id,
+        type: fields,
+    })).or(id.map((id) => ({
       id: id,
-      type: fields,
-  })).or(id.map((id) => ({
-    id: id,
-    kind: 'enumvariant',
-})));
-let eitherfieldlist = sepBy1OptTrail(eitherfield, comma);
+      kind: 'enumvariant',
+  })));
+  let eitherfieldlist = sepBy1OptTrail(eitherfield, comma);
 
-let either = keywords.either
-  .skip(lbrace)
-  .then(eitherfieldlist.map((fields) => ({
-      kind: 'either',
-      fields: fields
-  })))
-  .skip(rbrace);
+  return keywords.either
+    .skip(lbrace)
+    .then(eitherfieldlist.map((fields) => ({
+        kind: 'either',
+        fields: fields
+    })))
+    .skip(rbrace);
+});
 
 let generic = lazy(() => seqMap(id,
     langle,
@@ -375,31 +392,33 @@ let block = lazy(() => {
     .skip(rbrace);
 });
 
-let arg = seqMap(id,
-  colon,
-  type,
-  (id, _, type) => ({
-      id: id,
-      type: type,
-  }));
+let distribution = call(function() {
+  let arg = seqMap(id,
+    colon,
+    type,
+    (id, _, type) => ({
+        id: id,
+        type: type,
+    }));
 
-let arglist = lparen
-  .then(sepBy(arg, comma))
-  .skip(rparen);
+  let arglist = lparen
+    .then(sepBy(arg, comma))
+    .skip(rparen);
 
-let distribution = seqMap(keywords.distribution,
-  id,
-  arglist,
-  arrow,
-  type,
-  block,
-  (_, id, args, _2, returntype, block) => ({
-      kind: 'distributiondecl',
-      id: id,
-      args: args,
-      returntype: returntype,
-      code: block
-  }));
+  return seqMap(keywords.distribution,
+    id,
+    arglist,
+    arrow,
+    type,
+    block,
+    (_, id, args, _2, returntype, block) => ({
+        kind: 'distributiondecl',
+        id: id,
+        args: args,
+        returntype: returntype,
+        code: block
+    }));
+});
 
 let returnStmt = keywords.return
   .then(expr).map((v) => ({
@@ -408,35 +427,36 @@ let returnStmt = keywords.return
 }))
   .skip(semicolon);
 
-let matchvariant = seqMap(id,
-  keywords.as,
-  id,
-  doubleArrow,
-  block,
-  (type, _, id, _2, block) => ({
-      kind: 'matchvariant',
-      type: type,
-      id: id,
-      code: block,
-  })).or(seqMap(id,
-  doubleArrow,
-  block,
-  (type, _, block) => ({
-      kind: 'matchvariant',
-      type: type,
-      code: block,
-  })));
-
-let match = seqMap(keywords.match,
-  expr,
-  lbrace,
-  sepBy1OptTrail(matchvariant, comma),
-  rbrace,
-  (_, expr, _2, variants, _3) => ({
-      kind: 'match',
-      expr: expr,
-      variants: variants,
-  }));
+let match = call(function() {
+  let matchvariant = seqMap(id,
+    keywords.as,
+    id,
+    doubleArrow,
+    block,
+    (type, _, id, _2, block) => ({
+        kind: 'matchvariant',
+        type: type,
+        id: id,
+        code: block,
+    })).or(seqMap(id,
+    doubleArrow,
+    block,
+    (type, _, block) => ({
+        kind: 'matchvariant',
+        type: type,
+        code: block,
+    })));
+  return seqMap(keywords.match,
+    expr,
+    lbrace,
+    sepBy1OptTrail(matchvariant, comma),
+    rbrace,
+    (_, expr, _2, variants, _3) => ({
+        kind: 'match',
+        expr: expr,
+        variants: variants,
+    }));
+});
 
 let assignment = seqMap(
   lhs,
