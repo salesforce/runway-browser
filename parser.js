@@ -57,6 +57,7 @@ let lbracket = lexeme(string('['));
 let leq = lexeme(string('<='));
 let lparen = lexeme(string('('));
 let minus = lexeme(string('-'));
+let neq = lexeme(string('!='));
 let plus = lexeme(string('+'));
 let rangle = lexeme(string('>'));
 let rbrace = lexeme(string('}'));
@@ -114,6 +115,7 @@ let id = lexeme(regex(/[a-z_]\w*/i)).desc('identifier').map((v) => ({
 ////////// Expressions //////////
 
 let binop = alt(
+  neq,
   times,
   plus,
   minus,
