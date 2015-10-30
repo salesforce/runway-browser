@@ -13,8 +13,8 @@ let out = function(o) {
 };
 
 let printEnv = (env) => {
-  env.getVarNames().forEach((v) => {
-    console.log(v, '=', env.getVar(v).toString());
+  env.vars.forEach((value, name) => {
+    console.log(`${name} = ${value}`);
   });
   console.log();
 };

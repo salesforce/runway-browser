@@ -1,4 +1,5 @@
 *.bck
+/README.html
 /bower_components/
 /bundle.js
 /node_modules/

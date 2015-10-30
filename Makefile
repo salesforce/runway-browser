@@ -61,3 +61,6 @@ lint: $(ALLJSFILES)
 
 bundle.js: $(ALLJSFILES)
 	$(WEBPACK)
+
+README.html: README.md
+	markdown $< >$@
