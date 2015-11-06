@@ -3,7 +3,9 @@
   "version": "0.0.1-alpha.0",
   "description": "Requires node >=v4.x, bower, npm.",
   "main": "main.js",
-  "dependencies": {},
+  "dependencies": {
+    "jquery": "^2.1.4"
+  },
   "devDependencies": {
     "eslint": "^1.7.3",
     "jsfmt": "^0.5.1",
