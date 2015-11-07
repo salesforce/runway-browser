@@ -1,8 +1,13 @@
 type ServerId: 1..5;
 
 type Token: either {
-  InTransit { to: ServerId },
-  AtServer { at: ServerId },
+  AtServer {
+    at: ServerId,
+  },
+  InTransit {
+    from: ServerId,
+    to: ServerId,
+  },
 }
 var token: Token;
 
@@ -11,6 +16,7 @@ type Server: record {
 }
 
 var servers: Array<Server>[ServerId];
+servers[1].hasToken = True;
 
 rule deliverToken {
     match token {
@@ -29,7 +35,10 @@ rule passToken for id, server in servers {
         if id < 5 {
             next = id + 1;
         }
-        token = InTransit { to: next };
+        token = InTransit {
+          from: id,
+          to: next,
+        };
         server.hasToken = False;
     }
 }
