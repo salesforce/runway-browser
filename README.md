@@ -118,12 +118,14 @@ making sure there aren't any regressions.
 Browser
 -------
 
-Run `make bundle.js`. Then open [index.html](index.html) in a web browser.
-This will literally display a blank page right now, but if you open up the
-developers console, you should see the number 9 output. In there, you can run
-things like:
+Run `make bundle.js`.
 
-    > meval('print 3*4 > 2;')
-    True
+Set up a web server to serve the top-level directory. For example:
 
-That's not terribly exciting yet, I know.
+    npm install -g nws
+    nws -o
+
+Then open `index.html` in a web browser as served through that web server (this
+is necessary for your browser to pull down `tokenring.model`). You'll see a
+token ring come up and can interact with it according to the rules of the
+model.
