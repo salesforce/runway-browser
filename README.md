@@ -34,6 +34,11 @@ Requires node >=v4.x, bower, npm.
 
 Run `make setup` to get started.
 
+Also, `model.vim` is a vim syntax file you can use. Copy it into
+`~/.vim/syntax/` and set your filetype to `model` in `~/.vimrc`:
+
+    autocmd BufRead,BufNewFile *.model set filetype=model
+
 REPL
 ----
 
