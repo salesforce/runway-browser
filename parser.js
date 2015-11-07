@@ -28,6 +28,23 @@ Parsimmon.Parser.prototype.source = function() {
   });
 }
 
+// Case-insensitive string match
+var istring = function(str) {
+  var len = str.length;
+  var expected = "'"+str+"'";
+  str = str.toLowerCase();
+  return Parsimmon.custom(function(success, failure) {
+    return function(stream, i) {
+      var head = stream.slice(i, i+len);
+      if (head.toLowerCase() === str) {
+        return success(i+len, head);
+      } else {
+        return failure(i, expected);
+      }
+    };
+  });
+};
+
 
 let alt = Parsimmon.alt;
 let lazy = Parsimmon.lazy;
@@ -37,7 +54,6 @@ let sepBy = Parsimmon.sepBy;
 let sepBy1 = Parsimmon.sepBy1;
 let seq = Parsimmon.seq;
 let seqMap = Parsimmon.seqMap;
-let string = Parsimmon.string;
 let whitespace = Parsimmon.whitespace;
 
 let sepByOptTrail = function(content, separator) {
@@ -54,30 +70,30 @@ let lexeme = function(p) {
   return p.skip(whitespace.or(comment).many());
 };
 
-let arrow = lexeme(string('->'));
-let bang = lexeme(string('!'));
-let colon = lexeme(string(':'));
-let comma = lexeme(string(','));
-let dot = lexeme(string('.'));
-let dots = lexeme(string('..'));
-let doubleArrow = lexeme(string('=>'));
-let doubleEquals = lexeme(string('=='));
-let equals = lexeme(string('='));
-let langle = lexeme(string('<'));
-let lbrace = lexeme(string('{'));
-let lbracket = lexeme(string('['));
-let leq = lexeme(string('<='));
-let lparen = lexeme(string('('));
-let minus = lexeme(string('-'));
-let neq = lexeme(string('!='));
-let plus = lexeme(string('+'));
-let rangle = lexeme(string('>'));
-let rbrace = lexeme(string('}'));
-let rbracket = lexeme(string(']'));
-let req = lexeme(string('>='));
-let rparen = lexeme(string(')'));
-let semicolon = lexeme(string(';'));
-let times = lexeme(string('*'));
+let arrow = lexeme(istring('->'));
+let bang = lexeme(istring('!'));
+let colon = lexeme(istring(':'));
+let comma = lexeme(istring(','));
+let dot = lexeme(istring('.'));
+let dots = lexeme(istring('..'));
+let doubleArrow = lexeme(istring('=>'));
+let doubleEquals = lexeme(istring('=='));
+let equals = lexeme(istring('='));
+let langle = lexeme(istring('<'));
+let lbrace = lexeme(istring('{'));
+let lbracket = lexeme(istring('['));
+let leq = lexeme(istring('<='));
+let lparen = lexeme(istring('('));
+let minus = lexeme(istring('-'));
+let neq = lexeme(istring('!='));
+let plus = lexeme(istring('+'));
+let rangle = lexeme(istring('>'));
+let rbrace = lexeme(istring('}'));
+let rbracket = lexeme(istring(']'));
+let req = lexeme(istring('>='));
+let rparen = lexeme(istring(')'));
+let semicolon = lexeme(istring(';'));
+let times = lexeme(istring('*'));
 
 let keywords = {};
 [
@@ -99,7 +115,7 @@ let keywords = {};
   'type',
   'var',
 ].forEach((keyword) => {
-  keywords[keyword] = lexeme(string(keyword));
+  keywords[keyword] = lexeme(istring(keyword));
 });
 
 let numberWithUnit = call(function() {
@@ -556,7 +572,7 @@ let statement = Parsimmon.alt(
 ////////// Main parser (entry point) //////////
 
 let file = lazy(() => {
-  return lexeme(string('')).then(statement.many()).map((statements) => ({
+  return lexeme(istring('')).then(statement.many()).map((statements) => ({
       kind: 'sequence',
       statements: statements,
   }));
