@@ -92,11 +92,6 @@ let updateStateDisplay = (module, servers, firstCall) => {
   });
 };
 
-let makeSVG = (tag) => {
-  let ns = 'http://www.w3.org/2000/svg';
-  return jQuery(document.createElementNS(ns, tag));
-};
-
 let createToken = (svg) => {
   return svg.rect(45, 45, 10, 10)
     .attr({
@@ -160,17 +155,18 @@ Promise.all([
           })));
   });
   servers.forEach((server, i) => {
+    server.addClass('clickable');
     server.click(() => {
       console.log('passToken', i + 1);
       module.env.rules['passToken'].fire(i + 1);
       redraw();
-      return false;
     });
   });
-  jQuery('#token').click(() => {
-    console.log('deliverToken');
-    module.env.rules['deliverToken'].fire();
-    redraw();
-    return false;
-  });
+  tokenElem
+    .addClass('clickable')
+    .click(() => {
+      console.log('deliverToken');
+      module.env.rules['deliverToken'].fire();
+      redraw();
+    });
 });
