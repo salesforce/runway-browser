@@ -66,7 +66,9 @@ class View {
         });
       let server = serverGroup.circle(point.x, point.y, 10);
       let text = serverGroup.text(point.x, point.y, id)
-        .attr({'text-anchor': 'middle'});
+        .attr({
+          'text-anchor': 'middle'
+        });
       text.attr({
         y: point.y + text.getBBox().height / 4,
       });
