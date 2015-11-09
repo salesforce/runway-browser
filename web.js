@@ -1,11 +1,15 @@
 "use strict";
 
 let compiler = require('./compiler.js');
+window.compiler = compiler;
 let Environment = require('./environment.js');
 let Input = require('./input.js');
 
 let preludeText = require('./prelude.model');
+
 let jQuery = require('./node_modules/jquery/dist/jquery.min.js');
+window.jQuery = jQuery;
+
 let Snap = require('./node_modules/snapsvg/dist/snap.svg.js');
 
 let prelude = compiler.loadPrelude(preludeText);
@@ -15,6 +19,7 @@ let meval = (text) => {
   let module = compiler.load(new Input('eval', text), env);
   module.ast.execute();
 };
+window.meval = meval;
 
 let fetchRemoteFile = (filename) => new Promise((resolve, reject) => {
     jQuery.get(filename).then((text) => {
@@ -22,105 +27,39 @@ let fetchRemoteFile = (filename) => new Promise((resolve, reject) => {
     });
   });
 
-
-window.compiler = compiler;
-window.Environment = Environment;
-window.Input = Input;
-window.meval = meval;
-window.jQuery = jQuery;
-
 meval('print 3 * 3;');
 
-let controls = [
-  ['deliver token', (rules) => rules['deliverToken'].fire()],
-  ['pass token 1', (rules) => rules['passToken'].fire(1)],
-  ['pass token 2', (rules) => rules['passToken'].fire(2)],
-  ['pass token 3', (rules) => rules['passToken'].fire(3)],
-  ['pass token 4', (rules) => rules['passToken'].fire(4)],
-  ['pass token 5', (rules) => rules['passToken'].fire(5)],
-];
-
-class Circle {
-  constructor(cx, cy, r) {
-    this.cx = cx;
-    this.cy = cy;
-    this.r = r;
+class Controller {
+  constructor() {
+    this.views = [];
   }
-  at(frac) {
-    let radian = frac * 2 * Math.PI;
-    return {
-      x: this.cx + this.r * Math.sin(radian),
-      y: this.cy - this.r * Math.cos(radian),
-    };
+  stateChanged() {
+    this.views.forEach((view) => view.update());
   }
 }
 
-let ring = new Circle(50, 50, 40);
-
-// only called after page has loaded
-let updateStateDisplay = (module, servers, firstCall) => {
-  let output = Array.from(module.env.vars).map((kv) => `${kv[0]}: ${kv[1]}`).join('\n');
-  jQuery('#state').text(output);
-  let token = module.env.getVar('token');
-  window.token = token;
-  let moveToken = (loc) => {
-    Snap('#token').animate({
-      x: loc.x - 5,
-      y: loc.y - 5,
-    }, firstCall === true ? 0 : 1000);
-  };
-  if (token.varianttype.name == 'AtServer') {
-    let atServer = token.fields.at.value;
-    moveToken(ring.at((atServer - 1) / 5));
-  } else { // InTransit
-    let fromServer = token.fields.from.value;
-    let toServer = token.fields.to.value;
-    let newLoc = ring.at(((fromServer + toServer) / 2 - 1) / 5);
-    if (fromServer > toServer) { // wrapped
-      newLoc = ring.at((fromServer - 0.5) / 5);
-    }
-    moveToken(newLoc);
+class DefaultView {
+  constructor(controller, elem, module) {
+    this.controller = controller;
+    this.elem = elem;
+    this.module = module;
+    this.update();
   }
-  var serversVar = module.env.getVar('servers');
-  servers.forEach((server, i) => {
-    let hasToken = (serversVar.index(i + 1).hasToken.varianttype.name == 'True');
-    if (hasToken) {
-      server.attr({fill: '#00aa00'});
-    } else {
-      server.attr({fill: '#aa6666'});
-    }
-  });
-};
 
-let createToken = (svg) => {
-  return svg.rect(45, 45, 10, 10)
-    .attr({
-      rx: 2,
-      ry: 2,
-      id: 'token',
-      fill: '#000088',
-    });
-};
-
-let createServers = (svg, count) => {
-  let createServer = (id) => {
-    let frac = (id - 1) / count;
-    let point = ring.at(frac);
-    let server = svg.circle(point.x, point.y, 10);
-    svg.text(point.x, point.y, id);
-    return server;
-  };
-  let ids = Array.from({
-    length: count
-  }, (v, k) => (k + 1));
-  let servers = ids.map((id) => createServer(id));
-  return servers;
-};
-
+  update() {
+    let vars = this.module.env.vars;
+    let output = Array.from(vars).map((kv) => `${kv[0]}: ${kv[1]}`)
+      .join('\n');
+    this.elem.text(output);
+  }
+}
 
 let pageLoaded = new Promise((resolve, reject) => {
   jQuery(window).load(resolve);
 });
+
+// TODO: fetch remotely
+let TokenRing = require('./tokenring.js');
 
 Promise.all([
   fetchRemoteFile('tokenring.model'),
@@ -132,41 +71,21 @@ Promise.all([
   let module = compiler.load(input, env);
   module.ast.execute();
   window.module = module;
-  let view = Snap('#view');
-  view.circle(50, 50, 40)
-    .attr({
-      id: 'ring',
-      fill: 'none',
-      stroke: 'black',
-    });
-  let servers = createServers(view, 5);
-  let tokenElem = createToken(view);
-  let redraw = () => updateStateDisplay(module, servers);
-  updateStateDisplay(module, servers, true);
-  controls.forEach((kv) => {
+  let controller = new Controller();
+  controller.views.push(
+    new DefaultView(controller, jQuery('#state'), module));
+  controller.views.push(
+    new TokenRing.View(controller, Snap('#view'), module));
+
+  TokenRing.makeControls(module).forEach((kv) => {
     jQuery('#controls').append(
       jQuery('<li></li>').append(
         jQuery('<a href="#"></a>')
           .text(kv[0])
           .click(() => {
-            kv[1](module.env.rules);
-            redraw();
+            kv[1]();
+            controller.stateChanged();
             return false;
           })));
   });
-  servers.forEach((server, i) => {
-    server.addClass('clickable');
-    server.click(() => {
-      console.log('passToken', i + 1);
-      module.env.rules['passToken'].fire(i + 1);
-      redraw();
-    });
-  });
-  tokenElem
-    .addClass('clickable')
-    .click(() => {
-      console.log('deliverToken');
-      module.env.rules['deliverToken'].fire();
-      redraw();
-    });
 });
