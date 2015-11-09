@@ -39,9 +39,8 @@ class View {
 
     this.createRing(this.snap);
     this.serverElems = this.createServers(this.snap);
-    this.updateServers(0);
     this.tokenElem = this.createToken(this.snap);
-    this.tokenElem.attr(this.tokenLocation());
+    this.update(0);
   }
 
   createRing(snap) {
@@ -74,10 +73,9 @@ class View {
       });
       return server;
     };
-    let ids = Array.from({
+    return Array.from({
       length: this.numServers
-    }, (v, k) => (k + 1));
-    return ids.map(createServer);
+    }, (v, i) => createServer(i + 1));
   }
 
   createToken(snap) {
@@ -96,26 +94,26 @@ class View {
       });
   }
 
-  update() {
-    this.updateServers();
-    this.updateToken();
-  }
-
-  updateServers(animateSpeed) {
+  update(animateSpeed) {
     if (animateSpeed === undefined) {
       animateSpeed = 1000;
     }
+    this.updateServers(animateSpeed);
+    this.updateToken(animateSpeed);
+  }
+
+  updateServers(animateSpeed) {
     let serversVar = this.module.env.getVar('servers');
     this.serverElems.forEach((server, i) => {
-      let id = i + 1;
-      let hasToken = (serversVar.index(id).hasToken.toString() == 'True');
+      let serverVar = serversVar.index(i + 1);
+      let hasToken = (serverVar.hasToken.toString() == 'True');
       server.animate({
         fill: hasToken ? '#00aa00' : '#aa6666',
       }, animateSpeed);
     });
   }
 
-  tokenLocation() {
+  updateToken(animateSpeed) {
     let tokenVar = this.module.env.getVar('token');
     let frac = tokenVar.match({
         AtServer: (t) => t.at.value - 1,
@@ -129,14 +127,10 @@ class View {
       }) / this.numServers;
     let center = this.ring.at(frac);
     let bbox = this.tokenElem.getBBox();
-    return {
+    this.tokenElem.animate({
       x: center.x - bbox.width / 2,
       y: center.y - bbox.height / 2,
-    };
-  }
-
-  updateToken() {
-    this.tokenElem.animate(this.tokenLocation(), 1000);
+    }, animateSpeed);
   }
 }
 
