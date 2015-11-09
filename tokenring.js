@@ -108,35 +108,25 @@ class View {
     let serversVar = this.module.env.getVar('servers');
     this.serverElems.forEach((server, i) => {
       let id = i + 1;
-      let hasToken = (serversVar.index(id).hasToken.varianttype.name == 'True');
-      if (hasToken) {
-        server.animate({
-          fill: '#00aa00'
-        }, animateSpeed);
-      } else {
-        server.animate({
-          fill: '#aa6666'
-        }, animateSpeed);
-      }
+      let hasToken = (serversVar.index(id).hasToken.toString() == 'True');
+      server.animate({
+        fill: hasToken ? '#00aa00' : '#aa6666',
+      }, animateSpeed);
     });
   }
 
   tokenLocation() {
-    let frac = (() => {
-        let tokenVar = this.module.env.getVar('token');
-        if (tokenVar.varianttype.name == 'AtServer') {
-          let atServer = tokenVar.fields.at.value;
-          return atServer - 1;
-        } else { // InTransit
-          let fromServer = tokenVar.fields.from.value;
-          let toServer = tokenVar.fields.to.value;
-          if (fromServer > toServer) { // wrap around
-            return fromServer - 0.5;
+    let tokenVar = this.module.env.getVar('token');
+    let frac = tokenVar.match({
+        AtServer: (t) => t.at.value - 1,
+        InTransit: (t) => {
+          if (t.from.value > t.to.value) { // wrap around
+            return t.from.value - 0.5;
           } else {
-            return (fromServer + toServer) / 2 - 1;
+            return (t.from.value + t.to.value) / 2 - 1;
           }
-        }
-      })() / this.numServers;
+        },
+      }) / this.numServers;
     let center = this.ring.at(frac);
     let bbox = this.tokenElem.getBBox();
     return {

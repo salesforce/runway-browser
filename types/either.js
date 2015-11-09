@@ -23,6 +23,19 @@ class EitherValue extends Value {
     }
   }
 
+  // call this from JS as follows:
+  // let x = thing.match({
+  //    Variant1: (t) => 1,
+  //    Variant2: (t) => { return t.two + 2; },
+  // });
+  match(variants) {
+    let fn = variants[this.varianttype.name];
+    if (fn === undefined) {
+      return undefined;
+    }
+    return fn(this.fields);
+  }
+
   assign(newValue) {
     let ok = false;
     if (this.type == this.eithertype) {
