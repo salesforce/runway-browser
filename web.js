@@ -58,15 +58,16 @@ class Circle {
 let ring = new Circle(50, 50, 40);
 
 // only called after page has loaded
-let updateStateDisplay = (module, servers) => {
+let updateStateDisplay = (module, servers, firstCall) => {
   let output = Array.from(module.env.vars).map((kv) => `${kv[0]}: ${kv[1]}`).join('\n');
   jQuery('#state').text(output);
   let token = module.env.getVar('token');
   window.token = token;
   let moveToken = (loc) => {
-    jQuery('#token')
-      .attr('x', loc.x - 5)
-      .attr('y', loc.y - 5);
+    Snap('#token').animate({
+      x: loc.x - 5,
+      y: loc.y - 5,
+    }, firstCall === true ? 0 : 1000);
   };
   if (token.varianttype.name == 'AtServer') {
     let atServer = token.fields.at.value;
@@ -84,13 +85,9 @@ let updateStateDisplay = (module, servers) => {
   servers.forEach((server, i) => {
     let hasToken = (serversVar.index(i + 1).hasToken.varianttype.name == 'True');
     if (hasToken) {
-      server.attr({
-        fill: '#00aa00'
-      });
+      server.attr({fill: '#00aa00'});
     } else {
-      server.attr({
-        fill: '#aa6666'
-      });
+      server.attr({fill: '#aa6666'});
     }
   });
 };
@@ -150,7 +147,7 @@ Promise.all([
   let servers = createServers(view, 5);
   let tokenElem = createToken(view);
   let redraw = () => updateStateDisplay(module, servers);
-  redraw();
+  updateStateDisplay(module, servers, true);
   controls.forEach((kv) => {
     jQuery('#controls').append(
       jQuery('<li></li>').append(
