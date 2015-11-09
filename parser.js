@@ -31,13 +31,13 @@ Parsimmon.Parser.prototype.source = function() {
 // Case-insensitive string match
 var istring = function(str) {
   var len = str.length;
-  var expected = "'"+str+"'";
+  var expected = "'" + str + "'";
   str = str.toLowerCase();
   return Parsimmon.custom(function(success, failure) {
     return function(stream, i) {
-      var head = stream.slice(i, i+len);
+      var head = stream.slice(i, i + len);
       if (head.toLowerCase() === str) {
-        return success(i+len, head);
+        return success(i + len, head);
       } else {
         return failure(i, expected);
       }
