@@ -48,7 +48,7 @@ class View {
         .addClass('clickable')
         .click(() => {
           console.log('passToken', id);
-          this.module.env.rules['passToken'].fire(id);
+          this.module.env.getRule('passToken').fire(id);
           this.controller.stateChanged();
         });
       let server = serverGroup.circle(point.x, point.y, 10);
@@ -77,7 +77,7 @@ class View {
       .addClass('clickable')
       .click(() => {
         console.log('deliverToken');
-        this.module.env.rules['deliverToken'].fire();
+        this.module.env.getRule('deliverToken').fire();
         this.controller.stateChanged();
       });
   }

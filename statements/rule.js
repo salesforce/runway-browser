@@ -1,6 +1,6 @@
 "use strict";
 
-let Environment = require('../environment.js');
+let Environment = require('../environment.js').Environment;
 let Statement = require('./statement.js');
 let makeStatement = require('./factory.js');
 
@@ -9,10 +9,7 @@ class Rule extends Statement {
     super(parsed, env);
     this.innerEnv = new Environment(this.env);
     this.inner = makeStatement.make(this.parsed.code, this.innerEnv);
-    if (this.env.rules === undefined) { // XXX- hack
-      this.env.rules = {};
-    }
-    this.env.rules[this.parsed.id.value] = this;
+    this.env.assignRule(this.parsed.id.value, this);
   }
 
   typecheck() {

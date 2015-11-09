@@ -1,7 +1,7 @@
 "use strict";
 
 let assert = require('assert');
-let Environment = require('./environment.js');
+let Environment = require('./environment.js').Environment;
 
 describe('environment.js', function() {
   describe('Environment', function() {

@@ -1,7 +1,9 @@
 "use strict";
 
 let assert = require('assert');
-let Environment = require('./environment.js');
+let environment = require('./environment.js');
+let Environment = environment.Environment;
+let GlobalEnvironment = environment.GlobalEnvironment;
 let Input = require('./input.js');
 let Parser = require('./parser.js');
 let compiler = require('./compiler.js');
@@ -86,7 +88,7 @@ describe('compiler.js', function() {
   describe('code evaluation', function() {
     it('basic', function() {
       let prelude = loadPrelude();
-      let env = new Environment(prelude.env);
+      let env = new GlobalEnvironment(prelude.env);
       let code = inline(`
         var x : Boolean;
         var y : 1..3;
@@ -97,7 +99,7 @@ describe('compiler.js', function() {
       `);
       let module = compiler.load(code, env);
       module.ast.execute();
-      env.rules['foo'].fire();
+      env.getRule('foo').fire();
       assert.equal(env.getVar('x').toString(), 'True');
       assert.equal(env.getVar('y'), '2');
     });

@@ -2,7 +2,7 @@
 
 let compiler = require('./compiler.js');
 window.compiler = compiler;
-let Environment = require('./environment.js');
+let GlobalEnvironment = require('./environment.js').GlobalEnvironment;
 let Input = require('./input.js');
 
 let preludeText = require('./prelude.model');
@@ -15,7 +15,7 @@ let Snap = require('./node_modules/snapsvg/dist/snap.svg.js');
 let prelude = compiler.loadPrelude(preludeText);
 
 let meval = (text) => {
-  let env = new Environment(prelude.env);
+  let env = new GlobalEnvironment(prelude.env);
   let module = compiler.load(new Input('eval', text), env);
   module.ast.execute();
 };
@@ -77,7 +77,7 @@ Promise.all([
 ]).then((results) => {
   let input = results[0];
   jQuery('#code').text(input.getText());
-  let env = new Environment(prelude.env);
+  let env = new GlobalEnvironment(prelude.env);
   let module = compiler.load(input, env);
   module.ast.execute();
   window.module = module;

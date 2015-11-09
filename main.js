@@ -1,6 +1,6 @@
 "use strict";
 
-let Environment = require('./environment.js');
+let GlobalEnvironment = require('./environment.js').GlobalEnvironment;
 let Input = require('./input.js');
 let compiler = require('./compiler.js');
 let errors = require('./errors.js');
@@ -87,10 +87,10 @@ let repl = function(env) {
         let args = input.split(' ');
         try {
           if (args.length == 2) {
-            env.rules[args[1]].fire();
+            env.getRule(args[1]).fire();
             printEnv(env);
           } else if (args.length == 3) {
-            env.rules[args[1]].fire(Number(args[2]));
+            env.getRule(args[1]).fire(Number(args[2]));
             printEnv(env);
           } else {
             console.log('huh?');
@@ -123,18 +123,18 @@ module.exports = {
 
 if (require.main === module) {
   let prelude = compiler.loadPrelude(readFile('prelude.model'));
-  let env = new Environment(prelude.env);
+  let env = new GlobalEnvironment(prelude.env);
 
   if (process.argv.length > 2) { // filename given
     let filename = process.argv[2];
     let module = compiler.load(new Input(filename, readFile(filename)), env);
     module.ast.execute();
     printEnv(env);
-    for (let rule in env.rules) {
+    env.listRules().forEach((rule) => {
       console.log('Executing', rule);
-      env.rules[rule].fire();
+      env.getRule(rule).fire();
       printEnv(env);
-    }
+    });
   }
 
   repl(env);

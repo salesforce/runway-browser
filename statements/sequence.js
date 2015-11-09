@@ -1,6 +1,6 @@
 "use strict";
 
-let Environment = require('../environment.js');
+let Environment = require('../environment.js').Environment;
 let Statement = require('./statement.js');
 let makeStatement = require('./factory.js');
 

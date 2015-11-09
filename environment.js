@@ -73,7 +73,32 @@ class Environment {
   toString() {
     return util.inspect(this);
   }
-
 }
 
-module.exports = Environment;
+class GlobalEnvironment extends Environment {
+  constructor(enclosing) {
+    super(enclosing);
+    this.rules = new Map();
+  }
+
+  getRule(id) {
+    return this.rules.get(id);
+  }
+
+  assignRule(id, decl) {
+    let v = this.rules.get(id);
+    if (v != undefined) {
+      throw new errors.Type(`Cannot shadow rule ${id} (${v}) with ${decl}`);
+    }
+    this.rules.set(id, decl);
+  }
+
+  listRules() {
+    return Array.from(this.rules.keys());
+  }
+}
+
+module.exports = {
+  Environment: Environment,
+  GlobalEnvironment: GlobalEnvironment,
+};

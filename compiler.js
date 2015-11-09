@@ -1,7 +1,7 @@
 "use strict";
 
 let parser = require('./parser.js');
-let Environment = require('./environment.js');
+let Environment = require('./environment.js').Environment;
 let Input = require('./input.js');
 let makeStatement = require('./statements/factory.js').make;
 

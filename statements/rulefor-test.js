@@ -16,7 +16,7 @@ describe('statements/rulefor.js', function() {
       `);
       assert.equal(module.env.getVar('bools').toString(),
         '[1: False, 2: True, 3: False]');
-      module.env.rules['invert'].fire(3);
+      module.env.getRule('invert').fire(3);
       assert.equal(module.env.getVar('bools').toString(),
         '[1: False, 2: True, 3: True]');
     });
@@ -31,10 +31,10 @@ describe('statements/rulefor.js', function() {
       `);
       assert.equal(module.env.getVar('ints').toString(),
         '[4: 0, 5: 0, 6: 0]');
-      module.env.rules['setToIndex'].fire(5);
+      module.env.getRule('setToIndex').fire(5);
       assert.equal(module.env.getVar('ints').toString(),
         '[4: 0, 5: 5, 6: 0]');
-      module.env.rules['setToIndex'].fire();
+      module.env.getRule('setToIndex').fire();
       assert.equal(module.env.getVar('ints').toString(),
         '[4: 4, 5: 5, 6: 0]');
     });

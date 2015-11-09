@@ -13,7 +13,7 @@ describe('statements/rule.js', function() {
         }
       `);
       assert.equal(module.env.getVar('bool').toString(), 'False');
-      module.env.rules['setToTrue'].fire();
+      module.env.getRule('setToTrue').fire();
       assert.equal(module.env.getVar('bool').toString(), 'True');
     });
   });

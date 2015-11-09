@@ -1,7 +1,7 @@
 "use strict";
 
 let errors = require('../errors.js');
-let Environment = require('../environment.js');
+let Environment = require('../environment.js').Environment;
 let makeExpression = require('../expressions/factory.js');
 let makeStatement = require('./factory.js');
 let Statement = require('./statement.js');
