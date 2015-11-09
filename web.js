@@ -7,7 +7,7 @@ let Input = require('./input.js');
 
 let preludeText = require('./prelude.model');
 
-let jQuery = require('./node_modules/jquery/dist/jquery.min.js');
+let jQuery = require('./node_modules/jquery/dist/jquery.js');
 window.jQuery = jQuery;
 
 let Snap = require('./node_modules/snapsvg/dist/snap.svg.js');
@@ -22,10 +22,22 @@ let meval = (text) => {
 window.meval = meval;
 
 let fetchRemoteFile = (filename) => new Promise((resolve, reject) => {
-    jQuery.get(filename).then((text) => {
+    jQuery.ajax(filename, {
+      dataType: 'text',
+    }).then((text) => {
       resolve(new Input(filename, text));
     });
   });
+
+let fetchRemoteModule = function(filename) {
+  return fetchRemoteFile(filename)
+    .then((input) => {
+      let load = eval(`(function load(module) { ${input.getText()} })`);
+      let module = {};
+      load(module);
+      return module.exports;
+    });
+};
 
 meval('print 3 * 3;');
 
@@ -58,11 +70,9 @@ let pageLoaded = new Promise((resolve, reject) => {
   jQuery(window).load(resolve);
 });
 
-// TODO: fetch remotely
-let TokenRing = require('./tokenring.js');
-
 Promise.all([
   fetchRemoteFile('tokenring.model'),
+  fetchRemoteModule('tokenring.js'),
   pageLoaded,
 ]).then((results) => {
   let input = results[0];
@@ -74,18 +84,8 @@ Promise.all([
   let controller = new Controller();
   controller.views.push(
     new DefaultView(controller, jQuery('#state'), module));
-  controller.views.push(
-    new TokenRing.View(controller, Snap('#view'), module));
 
-  TokenRing.makeControls(module).forEach((kv) => {
-    jQuery('#controls').append(
-      jQuery('<li></li>').append(
-        jQuery('<a href="#"></a>')
-          .text(kv[0])
-          .click(() => {
-            kv[1]();
-            controller.stateChanged();
-            return false;
-          })));
-  });
+  let userView = results[1];
+  controller.views.push(
+    new userView(controller, Snap('#view'), module));
 });

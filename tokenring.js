@@ -1,17 +1,5 @@
 "use strict";
 
-let makeControls = function(module) {
-  let rules = module.env.rules;
-  return [
-    ['deliver token', () => rules['deliverToken'].fire()],
-    ['pass token 1', () => rules['passToken'].fire(1)],
-    ['pass token 2', () => rules['passToken'].fire(2)],
-    ['pass token 3', () => rules['passToken'].fire(3)],
-    ['pass token 4', () => rules['passToken'].fire(4)],
-    ['pass token 5', () => rules['passToken'].fire(5)],
-  ];
-};
-
 // Calculates where points on the circumference of a circle lie.
 class Circle {
   constructor(cx, cy, r) {
@@ -134,7 +122,4 @@ class View {
   }
 }
 
-module.exports = {
-  View: View,
-  makeControls: makeControls,
-};
+module.exports = View;
