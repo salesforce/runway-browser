@@ -6,6 +6,7 @@ let Input = require('./input.js');
 
 let preludeText = require('./prelude.model');
 let jQuery = require('./node_modules/jquery/dist/jquery.min.js');
+let Snap = require('./node_modules/snapsvg/dist/snap.svg.js');
 
 let prelude = compiler.loadPrelude(preludeText);
 
