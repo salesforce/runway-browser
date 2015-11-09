@@ -1,13 +1,18 @@
 "use strict";
 
 let makeExpression = require('../expressions/factory.js');
-let Rule = require('./rule.js');
+let Environment = require('../environment.js').Environment;
+let Statement = require('./statement.js');
 let ArrayType = require('../types/array.js');
+let makeStatement = require('./factory.js');
 
-class RuleFor extends Rule {
+class RuleFor extends Statement {
   constructor(parsed, env) {
     super(parsed, env);
     this.expr = makeExpression.make(this.parsed.expr, this.env);
+    this.innerEnv = new Environment(this.env);
+    this.inner = makeStatement.make(this.parsed.code, this.innerEnv);
+    this.env.assignRule(this.parsed.id.value, this);
   }
 
   typecheck() {
@@ -22,7 +27,11 @@ class RuleFor extends Rule {
       let dummyIndex = this.expr.type.indextype.makeDefaultValue();
       this.innerEnv.assignVar(this.parsed.index.value, dummyIndex);
     }
-    super.typecheck();
+    this.inner.typecheck();
+  }
+
+  execute() {
+    // do nothing
   }
 
   fire(indexArg) {
@@ -56,7 +65,7 @@ class RuleFor extends Rule {
     if (this.parsed.index !== undefined) {
       this.innerEnv.vars.set(this.parsed.index.value, index);
     }
-    super.fire();
+    this.inner.execute();
 
     restoreIndex();
     restoreValue();
