@@ -84,9 +84,13 @@ let updateStateDisplay = (module, servers) => {
   servers.forEach((server, i) => {
     let hasToken = (serversVar.index(i + 1).hasToken.varianttype.name == 'True');
     if (hasToken) {
-      server.css('fill', '#00aa00');
+      server.attr({
+        fill: '#00aa00'
+      });
     } else {
-      server.css('fill', '#aa6666');
+      server.attr({
+        fill: '#aa6666'
+      });
     }
   });
 };
@@ -96,26 +100,28 @@ let makeSVG = (tag) => {
   return jQuery(document.createElementNS(ns, tag));
 };
 
-let createServers = (tpl, count) => {
+let createToken = (svg) => {
+  return svg.rect(45, 45, 10, 10)
+    .attr({
+      rx: 2,
+      ry: 2,
+      id: 'token',
+      fill: '#000088',
+    });
+};
+
+let createServers = (svg, count) => {
   let createServer = (id) => {
     let frac = (id - 1) / count;
     let point = ring.at(frac);
-    let server = tpl
-      .clone()
-      .removeAttr('id')
-      .attr('cx', point.x)
-      .attr('cy', point.y);
-    tpl.after(server);
-    server.after(makeSVG('text')
-      .text(id)
-      .attr(point));
+    let server = svg.circle(point.x, point.y, 10);
+    svg.text(point.x, point.y, id);
     return server;
   };
   let ids = Array.from({
     length: count
   }, (v, k) => (k + 1));
   let servers = ids.map((id) => createServer(id));
-  tpl.remove();
   return servers;
 };
 
@@ -134,7 +140,15 @@ Promise.all([
   let module = compiler.load(input, env);
   module.ast.execute();
   window.module = module;
-  let servers = createServers(jQuery('#server-tpl'), 5);
+  let view = Snap('#view');
+  view.circle(50, 50, 40)
+    .attr({
+      id: 'ring',
+      fill: 'none',
+      stroke: 'black',
+    });
+  let servers = createServers(view, 5);
+  let tokenElem = createToken(view);
   let redraw = () => updateStateDisplay(module, servers);
   redraw();
   controls.forEach((kv) => {
