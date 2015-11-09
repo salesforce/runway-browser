@@ -2,6 +2,7 @@
 
 let compiler = require('./compiler.js');
 window.compiler = compiler;
+let simulator = require('./simulator.js');
 let GlobalEnvironment = require('./environment.js').GlobalEnvironment;
 let Input = require('./input.js');
 
@@ -70,6 +71,8 @@ let pageLoaded = new Promise((resolve, reject) => {
   jQuery(window).load(resolve);
 });
 
+let simulateId = undefined;
+
 Promise.all([
   fetchRemoteFile('tokenring.model'),
   fetchRemoteModule('tokenring.js'),
@@ -88,4 +91,19 @@ Promise.all([
   let userView = results[1];
   controller.views.push(
     new userView(controller, Snap('#view'), module));
+
+  jQuery('#simulate').click(() => {
+    if (simulateId === undefined) {
+      let step = () => {
+        simulator(module);
+        controller.stateChanged();
+      };
+      step();
+      simulateId = setInterval(step, 2000);
+    } else {
+      window.clearTimeout(simulateId);
+      simulateId = undefined;
+    }
+    return false;
+  });
 });
