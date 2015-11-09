@@ -39,7 +39,7 @@ class View {
 
     this.createRing(this.snap);
     this.serverElems = this.createServers(this.snap);
-    this.updateServers();
+    this.updateServers(0);
     this.tokenElem = this.createToken(this.snap);
     this.tokenElem.attr(this.tokenLocation());
   }
@@ -99,18 +99,22 @@ class View {
     this.updateToken();
   }
 
-  updateServers() {
+  updateServers(animateSpeed) {
+    if (animateSpeed === undefined) {
+      animateSpeed = 1000;
+    }
     let serversVar = this.module.env.getVar('servers');
     this.serverElems.forEach((server, i) => {
-      let hasToken = (serversVar.index(i + 1).hasToken.varianttype.name == 'True');
+      let id = i + 1;
+      let hasToken = (serversVar.index(id).hasToken.varianttype.name == 'True');
       if (hasToken) {
-        server.attr({
+        server.animate({
           fill: '#00aa00'
-        });
+        }, animateSpeed);
       } else {
-        server.attr({
+        server.animate({
           fill: '#aa6666'
-        });
+        }, animateSpeed);
       }
     });
   }
