@@ -57,14 +57,19 @@ class View {
     let createServer = (id) => {
       let frac = (id - 1) / this.numServers;
       let point = this.ring.at(frac);
-      let server = snap.circle(point.x, point.y, 10)
+      let serverGroup = snap.group()
         .addClass('clickable')
         .click(() => {
           console.log('passToken', id);
           this.module.env.rules['passToken'].fire(id);
           this.controller.stateChanged();
         });
-      snap.text(point.x, point.y, id);
+      let server = serverGroup.circle(point.x, point.y, 10);
+      let text = serverGroup.text(point.x, point.y, id)
+        .attr({'text-anchor': 'middle'});
+      text.attr({
+        y: point.y + text.getBBox().height / 4,
+      });
       return server;
     };
     let ids = Array.from({
