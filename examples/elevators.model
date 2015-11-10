@@ -1,0 +1,73 @@
+type PersonId: 1..5;
+type ElevatorId: 1..3;
+type Floor: 1..6;
+
+type Person: either {
+    Sleeping {
+        floor: Floor,
+    },
+    Waiting {
+        floor: Floor,
+        destination: Floor,
+        //assert(floor != destination);
+    },
+    Riding {
+        elevator: ElevatorId,
+        destination: Floor,
+    },
+}
+var people: Array<Person>[PersonId];
+
+type FloorControl: record {
+    downActive: Boolean,
+    upActive: Boolean,
+}
+var floorControls: Array<FloorControl>[Floor];
+
+
+type Elevator: record {
+//    destinations: Set<Floor>,
+//    riders: Set<PersonId>,
+    direction: either {
+        Up,
+        Neutral,
+        Down,
+    },
+    location: either {
+        AtFloor {
+            at: Floor,
+            doors: either {
+                Closed,
+                Opening,
+                Open,
+                Closing,
+            },
+        },
+        Between {
+            next: Floor,
+            // doors are closed for safety purposes
+        },
+    },
+}
+var elevators: Array<Elevator>[ElevatorId];
+
+rule move for id, elevator in elevators {
+    match elevator.location {
+        Between as b => {
+            //elevator.location = AtFloor { at: b.next, doors: Closed };
+        },
+        AtFloor as f => {
+            if f.doors == Closed {
+                match elevator.direction {
+                    Up => {
+                        //elevator.location = Between { next: f.at + 1 };
+                    },
+                    Down => {
+                        //elevator.location = Between { next: f.at - 1 };
+                    },
+                    Neutral => {}, // do nothing: not moving
+                }
+            }
+        },
+    }
+}
