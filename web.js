@@ -13,6 +13,8 @@ window.jQuery = jQuery;
 
 let Snap = require('./node_modules/snapsvg/dist/snap.svg.js');
 
+let queryString = require('querystring');
+
 let prelude = compiler.loadPrelude(preludeText);
 
 let meval = (text) => {
@@ -73,9 +75,15 @@ let pageLoaded = new Promise((resolve, reject) => {
 
 let simulateId = undefined;
 
+let getParams = queryString.parse(window.location.search.slice(1));
+let basename = 'examples/tokenring';
+if ('model' in getParams) {
+  basename = 'examples/' + getParams['model'];
+}
+
 Promise.all([
-  fetchRemoteFile('examples/tokenring.model'),
-  fetchRemoteModule('examples/tokenring.js'),
+  fetchRemoteFile(basename + '.model'),
+  fetchRemoteModule(basename + '.js'),
   pageLoaded,
 ]).then((results) => {
   let input = results[0];
