@@ -74,8 +74,8 @@ let pageLoaded = new Promise((resolve, reject) => {
 let simulateId = undefined;
 
 Promise.all([
-  fetchRemoteFile('tokenring.model'),
-  fetchRemoteModule('tokenring.js'),
+  fetchRemoteFile('examples/tokenring.model'),
+  fetchRemoteModule('examples/tokenring.js'),
   pageLoaded,
 ]).then((results) => {
   let input = results[0];
