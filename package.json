@@ -10,7 +10,7 @@
   },
   "devDependencies": {
     "eslint": "^1.7.3",
-    "jsfmt": "^0.5.1",
+    "jsfmt": "^0.5.2",
     "mocha": "^2.3.3",
     "raw-loader": "^0.5.1",
     "webpack": "^1.12.2"

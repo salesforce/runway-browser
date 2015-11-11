@@ -51,7 +51,8 @@ let simulate = (module) => {
 
   shuffle(simpleRules);
   let start = stateString(module);
-  for (let nf of simpleRules) {
+  let nf;
+  for (nf of simpleRules) {
     let name = nf[0];
     let fire = nf[1];
     fire();
