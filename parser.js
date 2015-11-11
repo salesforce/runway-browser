@@ -312,7 +312,7 @@ let either = call(function() {
         kind: 'either',
         fields: fields
     })))
-    .skip(rbrace);
+    .skip(rbrace).source();
 });
 
 let generic = lazy(() => seqMap(id,

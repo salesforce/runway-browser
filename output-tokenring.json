@@ -178,7 +178,14 @@
               ]
             }
           }
-        ]
+        ],
+        "source": {
+          "input": {
+            "filename": "examples/tokenring.model"
+          },
+          "startchar": 34,
+          "endchar": 138
+        }
       },
       "source": {
         "input": {

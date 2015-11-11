@@ -732,7 +732,14 @@
                     ]
                   }
                 }
-              ]
+              ],
+              "source": {
+                "input": {
+                  "filename": "input.model"
+                },
+                "startchar": 440,
+                "endchar": 691
+              }
             }
           }
         ]
@@ -1090,7 +1097,14 @@
                   },
                   "kind": "enumvariant"
                 }
-              ]
+              ],
+              "source": {
+                "input": {
+                  "filename": "input.model"
+                },
+                "startchar": 950,
+                "endchar": 1007
+              }
             }
           },
           {
@@ -1302,7 +1316,14 @@
                                 ]
                               }
                             }
-                          ]
+                          ],
+                          "source": {
+                            "input": {
+                              "filename": "input.model"
+                            },
+                            "startchar": 1092,
+                            "endchar": 1375
+                          }
                         }
                       }
                     ]
@@ -1350,7 +1371,14 @@
                     ]
                   }
                 }
-              ]
+              ],
+              "source": {
+                "input": {
+                  "filename": "input.model"
+                },
+                "startchar": 1023,
+                "endchar": 1499
+              }
             }
           }
         ]

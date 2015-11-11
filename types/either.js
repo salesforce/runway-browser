@@ -4,6 +4,7 @@ let errors = require('../errors.js');
 let Type = require('./type.js');
 let Value = require('./value.js');
 let makeType = require('./factory.js');
+let RecordType = require('./record.js');
 
 // An instance of an EitherVariant.
 // 'eithertype' is the EitherType and doesn't change,
@@ -101,7 +102,8 @@ class EitherVariant extends Type {
       this.recordtype = null;
       this.env.assignVar(this.name, new EitherValue(this, this.parenttype, this));
     } else {
-      this.recordtype = makeType.make(decl.type, this.env);
+      this.recordtype = makeType.make(decl.type, this.env, this.name);
+      this.env.assignType(this.name, this);
     }
   }
 
@@ -149,7 +151,7 @@ class EitherType extends Type {
     if (name !== undefined) {
       return name;
     }
-    return 'anonymous either';
+    return `anonymous either (${this.decl.source})`;
   }
 }
 

@@ -24,19 +24,6 @@ class RecordValue extends Expression {
 
   typecheck() {
     this.type = this.env.getType(this.parsed.type.value);
-
-    if (this.type === undefined) {
-      this.env.getTypeNames().forEach((name) => {
-        let type = this.env.getType(name);
-        if (type instanceof either.Type) {
-          let variant = type.getVariant(this.parsed.type.value);
-          if (variant !== undefined) {
-            this.type = variant;
-          }
-        }
-      });
-    }
-
     if (this.type === undefined) {
       throw new errors.Lookup(`No type ${this.parsed.type.value} found in environment: ${this.parsed.type.source}`);
     }
