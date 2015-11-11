@@ -5,8 +5,8 @@ let numElevators = 3;
 let numPeople = 5;
 
 let range = (b) => Array.from({
-      length: b
-    }, (v, i) => i);
+    length: b
+  }, (v, i) => i);
 
 let fillBBox = (bbox) => {
   bbox.x2 = bbox.x + bbox.w;
@@ -19,10 +19,10 @@ let fillBBox = (bbox) => {
 let layout = {
   floor: floorId => {
     return fillBBox({
-        x: 2,
-        y: 5 + 15 * (numFloors - floorId),
-        w: 96,
-        h: 15,
+      x: 2,
+      y: 5 + 15 * (numFloors - floorId),
+      w: 96,
+      h: 15,
     });
   },
 
@@ -40,7 +40,7 @@ let layout = {
     let floor = layout.floor(floorId);
     let label = layout.label(floorId);
     return fillBBox({
-      x: label.x2, 
+      x: label.x2,
       y: floor.y + 2,
       w: numElevators * 15,
       h: floor.h - 4,
@@ -83,7 +83,9 @@ class Elevator {
   constructor(controller, snap, module, id) {
     this.controller = controller;
     this.snap = snap.group()
-      .attr({id: `elevator-${id}`});
+      .attr({
+        id: `elevator-${id}`
+      });
     this.module = module;
     this.id = id;
 
@@ -128,7 +130,9 @@ class Person {
   constructor(controller, snap, module, id) {
     this.controller = controller;
     this.snap = snap.group()
-      .attr({id: `person-${id}`});
+      .attr({
+        id: `person-${id}`
+      });
     this.module = module;
     this.id = id;
 
@@ -151,7 +155,9 @@ class View {
 
   createFloors(snap) {
     snap = snap.group()
-      .attr({id: 'floors'});
+      .attr({
+        id: 'floors'
+      });
     let lowerLine = (id) => {
       let bbox = debugBBox(snap, layout.floor(id));
       snap.line(bbox.x, bbox.y2, bbox.x2, bbox.y2)
@@ -170,9 +176,10 @@ class View {
 
   createElevators(snap) {
     snap = snap.group()
-      .attr({id: 'elevators'});
-    return range(numElevators).map((v, i) =>
-      new Elevator(this.controller,
+      .attr({
+        id: 'elevators'
+      });
+    return range(numElevators).map((v, i) => new Elevator(this.controller,
         snap,
         this.module,
         i + 1));
@@ -180,16 +187,16 @@ class View {
 
   createPeople(snap) {
     snap = snap.group()
-      .attr({id: 'people'});
-    return range(numPeople).map((v, i) =>
-      new Person(this.controller,
+      .attr({
+        id: 'people'
+      });
+    return range(numPeople).map((v, i) => new Person(this.controller,
         snap,
         this.module,
         i + 1));
   }
 
-  update() {
-  }
+  update() {}
 }
 
 module.exports = View;
