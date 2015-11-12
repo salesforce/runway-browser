@@ -47,6 +47,7 @@ syn match modelSpecial "[{}\(\)\[\]]"
 
 " Comments. This is defined so late so that it overrides previous matches.
 syn region modelComment start="//" end="$" contains=modelTodo
+syn region modelComment start="/\*" end="\*/" contains=modelTodo
 
 highlight link modelComment     Comment
 highlight link modelString      String

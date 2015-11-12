@@ -64,7 +64,17 @@ let sepBy1OptTrail = function(content, separator) {
   return sepBy1(content, separator)
     .skip(separator.or(Parsimmon.succeed()));
 };
-let comment = regex(/\/\/[^\n]*/).desc('single-line comment');
+
+
+let comment = call(function() {
+  let eolComment = regex(/\/\/[^\n]*/); // this kind
+  let moreComment = lazy(() => istring('*/')
+      .or(Parsimmon.any.then(moreComment)));
+  let multilineComment = istring('/*').then(moreComment);
+  return eolComment
+    .or(multilineComment)
+    .desc('comment');
+});
 
 let lexeme = function(p) {
   return p.skip(whitespace.or(comment).many());
