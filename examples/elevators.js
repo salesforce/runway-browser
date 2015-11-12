@@ -130,16 +130,16 @@ class Elevator {
     });
     this.dirArrow.attr(evar.lookup('direction').match({
       Up: () => ({
-        x1: bbox.cx,
-        x2: bbox.cx,
-        y1: bbox.y,
-        y2: bbox.y - 4,
+          x1: bbox.cx,
+          x2: bbox.cx,
+          y1: bbox.y,
+          y2: bbox.y - 4,
       }),
       Down: () => ({
-        x1: bbox.cx,
-        x2: bbox.cx,
-        y1: bbox.y2,
-        y2: bbox.y2 + 4,
+          x1: bbox.cx,
+          x2: bbox.cx,
+          y1: bbox.y2,
+          y2: bbox.y2 + 4,
       }),
     }));
   }
