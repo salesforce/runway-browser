@@ -1,6 +1,7 @@
 "use strict";
 
 let assert = require('assert');
+let errors = require('../errors.js');
 let testing = require('../testing.js');
 
 describe('expressions/recordvalue.js', function() {
@@ -27,6 +28,16 @@ describe('expressions/recordvalue.js', function() {
         }
       `);
       assert.equal(module.env.getVar('floor').toString(), '3');
+    });
+
+    it('outside range', function() {
+      assert.throws(() => testing.run(`
+        type T: record {
+            f: 1..5,
+        }
+        var t : T;
+        t = T { f: 6 };
+      `), errors.RangeError);
     });
 
   });

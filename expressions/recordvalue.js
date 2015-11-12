@@ -17,7 +17,7 @@ class RecordValue extends Expression {
   evaluate() {
     let value = this.type.makeDefaultValue();
     this.fields.forEach((field, name) => {
-      value.set(name, field.evaluate());
+      value.lookup(name).assign(field.evaluate());
     });
     return value;
   }
