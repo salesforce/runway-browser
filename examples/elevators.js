@@ -89,20 +89,51 @@ class Elevator {
     this.module = module;
     this.id = id;
 
-    let bbox = debugBBox(this.snap, layout.elevator(1, id));
-    this.mainElem = this.snap.rect(bbox.x, bbox.y, bbox.w, bbox.h)
+    this.mainElem = this.snap.rect()
       .attr({
         fill: 'none',
         stroke: 'black',
       });
-    this.upArrow = this.snap.line(bbox.cx,
-      bbox.y,
-      bbox.cx,
-      bbox.y - 4)
+    this.upArrow = this.snap.line()
       .attr({
         stroke: 'green',
         style: 'marker-end: url(#greentriangle)',
+      })
+      .addClass('clickable')
+      .click(() => {
+        console.log('move', this.id);
+        this.module.env.getRule('move').fire(this.id);
+        this.controller.stateChanged();
       });
+    this.update();
+  }
+
+  getVar() {
+    return this.module.env.getVar('elevators').index(this.id);
+  }
+
+  update() {
+    let evar = this.getVar();
+    let floor = evar.lookup('location').match({
+      AtFloor: a => a.at,
+      Between: a => evar.lookup('direction').match({
+          'Up': () => a.next - 0.5,
+          'Down': () => a.next + 0.5,
+        }),
+    });
+    let bbox = debugBBox(this.snap, layout.elevator(floor, this.id));
+    this.mainElem.attr({
+      x: bbox.x,
+      y: bbox.y,
+      width: bbox.w,
+      height: bbox.h,
+    });
+    this.upArrow.attr({
+      x1: bbox.cx,
+      x2: bbox.cx,
+      y1: bbox.y,
+      y2: bbox.y - 4,
+    });
   }
 }
 
@@ -149,7 +180,7 @@ class View {
     this.module = module;
 
     this.createFloors(this.snap);
-    this.elevatorElems = this.createElevators(this.snap);
+    this.elevators = this.createElevators(this.snap);
     this.peopleElems = this.createPeople(this.snap);
   }
 
@@ -196,7 +227,9 @@ class View {
         i + 1));
   }
 
-  update() {}
+  update() {
+    this.elevators.forEach(elevator => elevator.update());
+  }
 }
 
 module.exports = View;

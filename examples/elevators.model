@@ -54,16 +54,16 @@ var elevators: Array<Elevator>[ElevatorId];
 rule move for id, elevator in elevators {
     match elevator.location {
         Between as b => {
-            //elevator.location = AtFloor { at: b.next, doors: Closed };
+            elevator.location = AtFloor { at: b.next, doors: Closed };
         },
         AtFloor as f => {
             if f.doors == Closed {
                 match elevator.direction {
                     Up => {
-                        //elevator.location = Between { next: f.at + 1 };
+                        elevator.location = Between { next: f.at + 1 };
                     },
                     Down => {
-                        //elevator.location = Between { next: f.at - 1 };
+                        elevator.location = Between { next: f.at - 1 };
                     },
                     Neutral => {}, // do nothing: not moving
                 }
