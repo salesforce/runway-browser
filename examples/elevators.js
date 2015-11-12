@@ -91,7 +91,7 @@ class Elevator {
 
     this.mainElem = this.snap.rect()
       .attr({
-        fill: 'none',
+        fill: 'white',
         stroke: 'black',
       });
     this.dirArrow = this.snap.line()
