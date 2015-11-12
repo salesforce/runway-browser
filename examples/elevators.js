@@ -94,7 +94,7 @@ class Elevator {
         fill: 'none',
         stroke: 'black',
       });
-    this.upArrow = this.snap.line()
+    this.dirArrow = this.snap.line()
       .attr({
         stroke: 'green',
         style: 'marker-end: url(#greentriangle)',
@@ -115,10 +115,10 @@ class Elevator {
   update() {
     let evar = this.getVar();
     let floor = evar.lookup('location').match({
-      AtFloor: a => a.at,
-      Between: a => evar.lookup('direction').match({
-          'Up': () => a.next - 0.5,
-          'Down': () => a.next + 0.5,
+      AtFloor: a => a.at.value,
+      Between: b => evar.lookup('direction').match({
+          'Up': () => b.next.value - 0.5,
+          'Down': () => b.next.value + 0.5,
         }),
     });
     let bbox = debugBBox(this.snap, layout.elevator(floor, this.id));
@@ -128,12 +128,20 @@ class Elevator {
       width: bbox.w,
       height: bbox.h,
     });
-    this.upArrow.attr({
-      x1: bbox.cx,
-      x2: bbox.cx,
-      y1: bbox.y,
-      y2: bbox.y - 4,
-    });
+    this.dirArrow.attr(evar.lookup('direction').match({
+      Up: () => ({
+        x1: bbox.cx,
+        x2: bbox.cx,
+        y1: bbox.y,
+        y2: bbox.y - 4,
+      }),
+      Down: () => ({
+        x1: bbox.cx,
+        x2: bbox.cx,
+        y1: bbox.y2,
+        y2: bbox.y2 + 4,
+      }),
+    }));
   }
 }
 
