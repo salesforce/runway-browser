@@ -42,8 +42,6 @@ let fetchRemoteModule = function(filename) {
     });
 };
 
-meval('print 3 * 3;');
-
 class Controller {
   constructor() {
     this.views = [];
