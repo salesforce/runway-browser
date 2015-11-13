@@ -14,7 +14,9 @@ let out = function(o) {
 
 let printEnv = (env) => {
   env.vars.forEach((value, name) => {
-    console.log(`${name} = ${value}`);
+    if (value.isConstant !== true) {
+      console.log(`${name} = ${value}`);
+    }
   });
   console.log();
 };

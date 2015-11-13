@@ -100,7 +100,9 @@ class EitherVariant extends Type {
     this.parenttype = parenttype;
     if (this.decl.kind == 'enumvariant') {
       this.recordtype = null;
-      this.env.assignVar(this.name, new EitherValue(this, this.parenttype, this));
+      let constant = new EitherValue(this, this.parenttype, this);
+      constant.isConstant = true;
+      this.env.assignVar(this.name, constant);
     } else {
       this.recordtype = makeType.make(decl.type, this.env, this.name);
       this.env.assignType(this.name, this);
