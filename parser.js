@@ -86,8 +86,10 @@ let colon = lexeme(istring(':'));
 let comma = lexeme(istring(','));
 let dot = lexeme(istring('.'));
 let dots = lexeme(istring('..'));
+let doubleAnd = lexeme(istring('&&'));
 let doubleArrow = lexeme(istring('=>'));
 let doubleEquals = lexeme(istring('=='));
+let doublePipe = lexeme(istring('||'));
 let equals = lexeme(istring('='));
 let langle = lexeme(istring('<'));
 let lbrace = lexeme(istring('{'));
@@ -221,6 +223,8 @@ let expr = call(function() {
     alt(plus, minus),
     alt(leq, req, langle, rangle),
     alt(neq, doubleEquals),
+    doubleAnd,
+    doublePipe,
   ];
 
   // This parser is "(exprprev op exprcurr) | (exprprev)", just rewritten as

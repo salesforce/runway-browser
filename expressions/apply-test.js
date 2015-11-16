@@ -108,5 +108,58 @@ describe('expressions/apply.js', function() {
       assert.equal(module.env.getVar('x').toString(), '8');
     });
 
+    it('&& basic', function() {
+      let module = testing.run(`
+        var x1 : Boolean = False && False;
+        var x2 : Boolean = False && True;
+        var x3 : Boolean = True && False;
+        var x4 : Boolean = True && True;
+      `);
+      assert.equal(module.env.getVar('x1').toString(), 'False');
+      assert.equal(module.env.getVar('x2').toString(), 'False');
+      assert.equal(module.env.getVar('x3').toString(), 'False');
+      assert.equal(module.env.getVar('x4').toString(), 'True');
+    });
+
+    it('|| basic', function() {
+      let module = testing.run(`
+        var x1 : Boolean = False || False;
+        var x2 : Boolean = False || True;
+        var x3 : Boolean = True || False;
+        var x4 : Boolean = True || True;
+      `);
+      assert.equal(module.env.getVar('x1').toString(), 'False');
+      assert.equal(module.env.getVar('x2').toString(), 'True');
+      assert.equal(module.env.getVar('x3').toString(), 'True');
+      assert.equal(module.env.getVar('x4').toString(), 'True');
+    });
+
+    it('&& || precedence', function() {
+      let module = testing.run(`
+        var x1 : Boolean = False && False || True;
+        var x2 : Boolean = True || True && False;
+      `);
+      assert.equal(module.env.getVar('x1').toString(), 'True');
+      assert.equal(module.env.getVar('x2').toString(), 'True');
+    });
+
+    it('&& || short-cirtuit', function() {
+      let module = testing.run(`
+        type Digit : 0..9;
+        var set : OrderedSet<Digit>[Digit];
+        push(set, 0);
+        push(set, 1);
+        push(set, 2);
+        push(set, 3);
+        var x1 : Boolean = False && pop(set) == 0;
+        var x2 : Boolean = True || pop(set) == 0;
+      `);
+      assert.equal(module.env.getVar('x1').toString(), 'False');
+      assert.equal(module.env.getVar('x2').toString(), 'True');
+      assert.equal(module.env.getVar('set').toString(),
+        '{0: 0, 1: 1, 2: 2, 3: 3}');
+    });
+
+
   });
 });

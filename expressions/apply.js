@@ -92,6 +92,52 @@ class NotEqualsFunction extends EqualityFunction {
   }
 }
 
+class BinaryBooleanFunction extends BaseFunction {
+  constructor(name) {
+    super(name, 2);
+    this.shortCircuit = true;
+  }
+  typecheckSub(params, env) {
+    let type = env.getType('Boolean');
+    if (!Types.subtypeOf(params[0].type, type)) {
+      throw new errors.Type(`${this.name} only works on Boolean ` +
+        `but given ${params[0].type}`);
+    }
+    if (!Types.subtypeOf(params[0].type, type)) {
+      throw new errors.Type(`${this.name} only works on Boolean ` +
+        `but given ${params[1].type}`);
+    }
+    return type;
+  }
+}
+
+class AndFunction extends BinaryBooleanFunction {
+  constructor() {
+    super('&&');
+  }
+  evaluateSub(args, env) {
+    if (args[0].evaluate().equals(env.getVar('True'))) {
+      return args[1].evaluate();
+    } else {
+      return env.getVar('False');
+    }
+  }
+}
+
+class OrFunction extends BinaryBooleanFunction {
+  constructor() {
+    super('||');
+  }
+  evaluateSub(args, env) {
+    let True = env.getVar('True');
+    if (args[0].evaluate().equals(True)) {
+      return True;
+    } else {
+      return args[1].evaluate();
+    }
+  }
+}
+
 class OrderingFunction extends BaseFunction {
   constructor(name, nativeFn) {
     super(name, 2);
@@ -99,7 +145,7 @@ class OrderingFunction extends BaseFunction {
   }
   typecheckSub(params, env) {
     if (!Types.haveOrdering(params[0].type, params[1].type)) {
-      throw new errors.Type(`Cannot compare (${this.parsed.func}) ` +
+      throw new errors.Type(`Cannot compare (${this.name}) ` +
         `${params[0].type} to ${params[1].type}`);
     }
     return env.getType('Boolean');
@@ -118,7 +164,7 @@ class ArithmeticFunction extends BaseFunction {
   typecheckSub(params, env) {
     if (!Types.isNumeric(params[0].type) ||
       !Types.isNumeric(params[1].type)) {
-      throw new errors.Type(`Cannot do arithmetic (${this.parsed.func}) on ` +
+      throw new errors.Type(`Cannot do arithmetic (${this.name}) on ` +
         `${params[0].type} and ${params[1].type}`);
     }
     return NumberType.singleton;
@@ -259,6 +305,8 @@ let functions = [
   new ContainsFunction(),
   new EmptyFunction(),
   new FullFunction(),
+  new AndFunction(),
+  new OrFunction(),
 ];
 
 class Apply extends Expression {
@@ -283,7 +331,10 @@ class Apply extends Expression {
   }
 
   evaluate() {
-    let args = this.params.map((param) => param.evaluate());
+    let args = this.params;
+    if (this.fn.shortCircuit !== true) {
+      args = this.params.map((param) => param.evaluate());
+    }
     return this.fn.evaluate(args, this.env);
   }
 
