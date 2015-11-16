@@ -107,3 +107,13 @@ rule wake for person in people {
         Riding => { /* do nothing */ },
     }
 }
+
+rule board for person in people {
+    match person {
+        Sleeping => { /* do nothing */ },
+        Waiting as w => {
+            person = Riding { elevator: 1, destination: w.destination };
+        },
+        Riding => { /* do nothing */ },
+    }
+}

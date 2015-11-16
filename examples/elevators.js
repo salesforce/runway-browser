@@ -202,17 +202,21 @@ class Person {
 
   update() {
     let pvar = this.getVar();
-    pvar.match({
+    let bbox = pvar.match({
       Sleeping: s => {
         this.mainElem.node.innerHTML = 'z';
+        return debugBBox(this.snap, layout.person(s.floor, this.id));
       },
       Waiting: w => {
         this.mainElem.node.innerHTML = 'w';
+        return debugBBox(this.snap, layout.person(w.floor, this.id));
       },
       Riding: r => {
         this.mainElem.node.innerHTML = 'r';
+        return debugBBox(this.snap, layout.elevator(1, r.elevator.value));
       },
     });
+    this.mainElem.attr({x: bbox.x, y: bbox.y2});
   }
 }
 
