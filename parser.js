@@ -115,7 +115,6 @@ let keywords = {};
   'if',
   'in',
   'match',
-  'matches',
   'node',
   'param',
   'print',
@@ -204,17 +203,6 @@ let expr = call(function() {
       })).source(),
       expr0));
 
-  let expr2 = lazy(() => alt(
-      seqMap(expr1,
-        keywords.matches,
-        id,
-        (expr, _, id) => ({
-            kind: 'matches',
-            expr: expr,
-            variant: id
-        })).source(),
-      expr1));
-
   // Order of parsers in this table defines precedence.
   let binop = [
     times,
@@ -246,7 +234,7 @@ let expr = call(function() {
   let expr3 = binop.reduce((exprprev, ops) => {
     let exprcurr = lazy(() => makeBinopParser(exprprev, ops, exprcurr));
     return exprcurr;
-  }, expr2);
+  }, expr1);
 
   return expr3.desc('expression');
 });

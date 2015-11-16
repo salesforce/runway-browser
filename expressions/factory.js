@@ -11,7 +11,6 @@ let expressions = new Map([
   ['id', require('./id.js')],
   ['index', require('./index.js')],
   ['lookup', require('./lookup.js')],
-  ['matches', require('./matches.js')],
   ['number', require('./number.js')],
   ['recordvalue', require('./recordvalue.js')],
 ]);
