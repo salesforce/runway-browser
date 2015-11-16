@@ -11,8 +11,6 @@ if exists("b:current_syntax")
 endif
 
 syntax case ignore
-
-syn keyword modelStructure      Array
 syn keyword modelConditional    as
 syn keyword modelStatement      distribution
 syn keyword modelStructure      either
@@ -26,8 +24,6 @@ syn keyword modelStatement      print
 syn keyword modelStructure      record
 syn keyword modelStatement      return
 syn keyword modelStatement      rule
-syn keyword modelBoolean        False
-syn keyword modelBoolean        True
 syn keyword modelStatement      type
 syn keyword modelStatement      var
 
@@ -36,6 +32,12 @@ syn keyword modelTodo contained todo
 syn keyword modelTodo contained xxx
 
 syntax case match
+
+" These are case-sensitive:
+syn keyword modelStructure      Array
+syn keyword modelBoolean        False
+syn keyword modelBoolean        True
+
 
 " Integers.
 syn match modelNumber "\<\d\+\>"
