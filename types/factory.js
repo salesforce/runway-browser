@@ -9,6 +9,7 @@ let ArrayType = require('./array.js');
 let Either = require('./either.js');
 let Range = require('./range.js');
 let RecordType = require('./record.js');
+let OrderedSet = require('./orderedset.js');
 
 let make = function(decl, env, name) {
   if (decl.kind == 'range') {
@@ -26,6 +27,8 @@ let make = function(decl, env, name) {
   } else if (decl.kind == 'generic') {
     if (decl.base.value == 'Array') {
       return new ArrayType.Type(decl, env, name);
+    } else if (decl.base.value == 'OrderedSet') {
+      return new OrderedSet.Type(decl, env, name);
     } else {
       throw new errors.Unimplemented(`Unknown type '${decl.base.value}'`);
     }

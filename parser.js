@@ -575,7 +575,11 @@ let statement = Parsimmon.alt(
   rule,
   rulefor,
   returnStmt,
-  vardecl).source();
+  vardecl,
+  expr.skip(semicolon).map(v => ({
+    kind: 'do',
+    expr: v,
+  }))).source();
 
 
 ////////// Main parser (entry point) //////////

@@ -8,6 +8,7 @@ module.exports = factory;
 
 let statements = new Map([
   ['assign', require('./assign.js')],
+  ['do', require('./do.js')],
   ['foreach', require('./foreach.js')],
   ['ifelse', require('./ifelse.js')],
   ['match', require('./match.js')],

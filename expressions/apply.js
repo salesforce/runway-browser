@@ -2,6 +2,7 @@
 
 let errors = require('../errors.js');
 let Expression = require('./expression.js');
+let OrderedSet = require('../types/orderedset.js');
 let Types = require('../types/types.js');
 let NumberType = require('../types/number.js').Type;
 let makeExpression = require('./factory.js');
@@ -10,6 +11,7 @@ class BaseFunction {
   constructor(name, numargs) {
     this.name = name;
     this.numargs = numargs;
+    this.pure = true;
   }
   typecheck(params, env) {
     if (params.length != this.numargs) {
@@ -131,6 +133,78 @@ class ArithmeticFunction extends BaseFunction {
   }
 }
 
+class PushFunction extends BaseFunction {
+  constructor() {
+    super('push', 2);
+    this.pure = false;
+  }
+  typecheckSub(params, env) {
+    if (!(params[0].type instanceof OrderedSet.Type)) {
+      throw new errors.Type(`Cannot call push() on ${params[0].type}`);
+    }
+    if (!Types.subtypeOf(params[1].type, params[0].type.valuetype)) {
+      throw new errors.Type(`Cannot call push() on ${params[0].type} ` +
+        `with ${params[1].type}`);
+    }
+    return env.getType('Boolean'); // TODO: unit
+  }
+  evaluateSub(args, env) {
+    args[0].push(args[1]);
+    return env.getVar('True'); // TODO: unit
+  }
+}
+
+class PopFunction extends BaseFunction {
+  constructor() {
+    super('pop', 1);
+    this.pure = false;
+  }
+  typecheckSub(params, env) {
+    if (!(params[0].type instanceof OrderedSet.Type)) {
+      throw new errors.Type(`Cannot call pop() on ${params[0].type}`);
+    }
+    return params[0].type.valuetype;
+  }
+  evaluateSub(args, env) {
+    return args[0].pop();
+  }
+}
+
+class ContainsFunction extends BaseFunction {
+  constructor() {
+    super('contains', 2);
+  }
+  typecheckSub(params, env) {
+    if (!(params[0].type instanceof OrderedSet.Type)) {
+      throw new errors.Type(`Cannot call contains() on ${params[0].type}`);
+    }
+    if (!Types.subtypeOf(params[1].type, params[0].type.valuetype)) {
+      throw new errors.Type(`Cannot call contains() on ${params[0].type} ` +
+        `with ${params[1].type}`);
+    }
+    return env.getType('Boolean');
+  }
+  evaluateSub(args, env) {
+    return env.getVar(args[0].contains(args[1]) ? 'True' : 'False');
+  }
+}
+
+class EmptyFunction extends BaseFunction {
+  constructor() {
+    super('empty', 1);
+  }
+  typecheckSub(params, env) {
+    if (!(params[0].type instanceof OrderedSet.Type)) {
+      throw new errors.Type(`Cannot call empty() on ${params[0].type}`);
+    }
+    return env.getType('Boolean');
+  }
+  evaluateSub(args, env) {
+    return env.getVar(args[0].empty() ? 'True' : 'False');
+  }
+}
+
+
 let functions = [
   new NegateFunction(),
   new EqualsFunction(),
@@ -143,42 +217,36 @@ let functions = [
   new ArithmeticFunction('-', (x, y) => (x - y)),
   new ArithmeticFunction('*', (x, y) => (x * y)),
   new ArithmeticFunction('pow', (x, y) => Math.pow(x, y)),
+  new PushFunction(),
+  new PopFunction(),
+  new ContainsFunction(),
+  new EmptyFunction(),
 ];
 
 class Apply extends Expression {
   constructor(parsed, env) {
     super(parsed, env);
     this.params = this.parsed.args.map((a) => makeExpression.make(a, this.env));
-  }
-
-  typecheck() {
-    let done = false;
+    this.fn = undefined;
     functions.forEach((fn) => {
       if (fn.name == this.parsed.func.value) {
-        this.type = fn.typecheck(this.params, this.env);
-        done = true;
+        this.fn = fn;
       }
     });
-    if (!done) {
+    if (this.fn === undefined) {
       throw new errors.Unimplemented(`The function ` +
         `${this.parsed.func.value} is not implemented. ` +
         `Called at ${this.parsed.source}`);
     }
   }
 
+  typecheck() {
+    this.type = this.fn.typecheck(this.params, this.env);
+  }
+
   evaluate() {
     let args = this.params.map((param) => param.evaluate());
-    let value = null;
-    functions.forEach((fn) => {
-      if (fn.name == this.parsed.func.value) {
-        value = fn.evaluate(args, this.env);
-      }
-    });
-    if (value === null) {
-      throw new errors.Unimplemented(`The function ` +
-        `${this.parsed.func.value} is not implemented`);
-    }
-    return value;
+    return this.fn.evaluate(args, this.env);
   }
 
   toString(indent) {
