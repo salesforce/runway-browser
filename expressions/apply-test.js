@@ -101,5 +101,12 @@ describe('expressions/apply.js', function() {
       assert.equal(module.env.getVar('f').toString(), 'False');
     });
 
+    it('function', function() {
+      let module = testing.run(`
+        var x : 1..1024 = pow(2, 3);
+      `);
+      assert.equal(module.env.getVar('x').toString(), '8');
+    });
+
   });
 });

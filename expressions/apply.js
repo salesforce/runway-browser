@@ -142,6 +142,7 @@ let functions = [
   new ArithmeticFunction('+', (x, y) => (x + y)),
   new ArithmeticFunction('-', (x, y) => (x - y)),
   new ArithmeticFunction('*', (x, y) => (x * y)),
+  new ArithmeticFunction('pow', (x, y) => Math.pow(x, y)),
 ];
 
 class Apply extends Expression {
@@ -153,14 +154,15 @@ class Apply extends Expression {
   typecheck() {
     let done = false;
     functions.forEach((fn) => {
-      if (fn.name == this.parsed.func) {
+      if (fn.name == this.parsed.func.value) {
         this.type = fn.typecheck(this.params, this.env);
         done = true;
       }
     });
     if (!done) {
-      throw new errors.Unimplemented(`The function ${this.parsed.func} ` +
-        `is not implemented. Called at ${this.parsed.source}`);
+      throw new errors.Unimplemented(`The function `
+        `${this.parsed.func.value} is not implemented. ` +
+        `Called at ${this.parsed.source}`);
     }
   }
 
@@ -168,20 +170,20 @@ class Apply extends Expression {
     let args = this.params.map((param) => param.evaluate());
     let value = null;
     functions.forEach((fn) => {
-      if (fn.name == this.parsed.func) {
+      if (fn.name == this.parsed.func.value) {
         value = fn.evaluate(args, this.env);
       }
     });
     if (value === null) {
-      throw new errors.Unimplemented(`The function ${this.parsed.func} is ` +
-        `not implemented`);
+      throw new errors.Unimplemented(`The function ` +
+        `${this.parsed.func.value} is not implemented`);
     }
     return value;
   }
 
   toString(indent) {
     let inner = this.params.map((param) => param.toString()).join(', ');
-    return `${this.parsed.func}(${inner})`
+    return `${this.parsed.func.value}(${inner})`
   }
 }
 

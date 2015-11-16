@@ -193,12 +193,23 @@ let expr = call(function() {
       number,
       recordvalue,
       group,
+      seqMap(id,
+        lparen,
+        sepBy(expr, comma),
+        rparen,
+        (func, _, params, _2) => ({
+          kind: 'apply',
+          func: func,
+          args: params,
+        })),
       lhs));
 
   let expr1 = lazy(() => alt(
-      bang.then(expr0).map((v) => ({
+      seqMap(bang.mark(),
+        expr0,
+        (bang, v) => ({
           kind: 'apply',
-          func: '!',
+          func: bang,
           args: [v]
       })).source(),
       expr0));
@@ -216,7 +227,7 @@ let expr = call(function() {
   let makeBinopParser = (exprprev, ops, exprcurr) => seqMap(
       exprprev,
       seqMap(
-        ops,
+        ops.mark(),
         exprcurr,
         (op, right) => ((left) => ({
               kind: 'apply',

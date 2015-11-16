@@ -796,7 +796,11 @@
                   "kind": "ifelse",
                   "condition": {
                     "kind": "apply",
-                    "func": "<",
+                    "func": {
+                      "start": 592,
+                      "value": "<",
+                      "end": 594
+                    },
                     "args": [
                       {
                         "kind": "id",
@@ -847,7 +851,11 @@
                         },
                         "rhs": {
                           "kind": "apply",
-                          "func": "+",
+                          "func": {
+                            "start": 620,
+                            "value": "+",
+                            "end": 622
+                          },
                           "args": [
                             {
                               "kind": "id",

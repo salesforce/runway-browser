@@ -93,7 +93,11 @@
         },
         "high": {
           "kind": "apply",
-          "func": "*",
+          "func": {
+            "start": 57,
+            "value": "*",
+            "end": 58
+          },
           "args": [
             {
               "kind": "id",
