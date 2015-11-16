@@ -198,9 +198,9 @@ let expr = call(function() {
         sepBy(expr, comma),
         rparen,
         (func, _, params, _2) => ({
-          kind: 'apply',
-          func: func,
-          args: params,
+            kind: 'apply',
+            func: func,
+            args: params,
         })),
       lhs));
 
@@ -208,10 +208,10 @@ let expr = call(function() {
       seqMap(bang.mark(),
         expr0,
         (bang, v) => ({
-          kind: 'apply',
-          func: bang,
-          args: [v]
-      })).source(),
+            kind: 'apply',
+            func: bang,
+            args: [v]
+        })).source(),
       expr0));
 
   // Order of parsers in this table defines precedence.
@@ -577,8 +577,8 @@ let statement = Parsimmon.alt(
   returnStmt,
   vardecl,
   expr.skip(semicolon).map(v => ({
-    kind: 'do',
-    expr: v,
+      kind: 'do',
+      expr: v,
   }))).source();
 
 

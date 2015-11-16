@@ -216,7 +216,10 @@ class Person {
         return debugBBox(this.snap, layout.elevator(1, r.elevator.value));
       },
     });
-    this.mainElem.attr({x: bbox.x, y: bbox.y2});
+    this.mainElem.attr({
+      x: bbox.x,
+      y: bbox.y2
+    });
   }
 }
 
