@@ -12,6 +12,8 @@ endif
 
 syntax case ignore
 syn keyword modelConditional    as
+syn keyword modelRepeat         break
+syn keyword modelRepeat         continue
 syn keyword modelStatement      distribution
 syn keyword modelStructure      either
 syn keyword modelConditional    else
@@ -37,13 +39,20 @@ syntax case match
 syn keyword modelStructure      Array
 syn keyword modelBoolean        False
 syn keyword modelBoolean        True
+syn keyword modelFunction       contains
+syn keyword modelFunction       empty
+syn keyword modelFunction       full
+syn keyword modelFunction       pop
+syn keyword modelFunction       pow
+syn keyword modelFunction       push
+syn keyword modelFunction       remove
 
 
 " Integers.
 syn match modelNumber "\<\d\+\>"
 
 " Operators and special characters
-syn match modelOperator "[:\+\-\*=<>]"
+syn match modelOperator "[:\+\-\*=<>&|]"
 syn match modelDelimiter "[\.,:]"
 syn match modelSpecial "[{}\(\)\[\]]"
 
