@@ -51,7 +51,13 @@ class ForEach extends Statement {
         if (this.parsed.index !== undefined) {
           this.codeEnv.vars.set(this.parsed.index.value, i);
         }
-        this.code.execute();
+        try {
+          this.code.execute();
+        } catch ( e ) {
+          if (!(e instanceof errors.Continue)) {
+            throw e;
+          }
+        }
       });
     } catch ( e ) {
       if (!(e instanceof errors.Break)) {

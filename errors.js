@@ -65,10 +65,19 @@ class Break extends Runtime {
   }
 }
 
+class Continue extends Runtime {
+  constructor(message) {
+    super(message);
+    this.name = prefix + 'ContinueError';
+  }
+}
+
+
 module.exports = {
   Base: Base,
   Break: Break,
   Bounds: Bounds,
+  Continue: Continue,
   Internal: Internal,
   Lookup: Lookup,
   Parse: Parse,

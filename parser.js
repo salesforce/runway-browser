@@ -111,6 +111,7 @@ let keywords = {};
 [
   'as',
   'break',
+  'continue',
   'distribution',
   'either',
   'else',
@@ -574,6 +575,12 @@ let breakStmt = seqMap(keywords.break,
       kind: 'break',
   })).source();
 
+let continueStmt = seqMap(keywords.continue,
+  semicolon,
+  () => ({
+      kind: 'continue',
+  })).source();
+
 let statement = Parsimmon.alt(
   param,
   typedecl,
@@ -588,6 +595,7 @@ let statement = Parsimmon.alt(
   returnStmt,
   vardecl,
   breakStmt,
+  continueStmt,
   expr.skip(semicolon).map(v => ({
       kind: 'do',
       expr: v,

@@ -11,12 +11,12 @@ class Do extends Statement {
   }
 
   typecheck() {
+    this.expr.typecheck();
     if (this.parsed.expr.kind != 'apply' ||
       this.expr.fn.pure !== false) {
       throw new errors.Type(`Statement has no effect ` +
         `at ${this.parsed.source}`);
     }
-    this.expr.typecheck();
   }
 
   execute() {
