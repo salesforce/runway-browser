@@ -58,8 +58,16 @@ class Bounds extends Runtime {
   }
 }
 
+class Break extends Runtime {
+  constructor(message) {
+    super(message);
+    this.name = prefix + 'BreakError';
+  }
+}
+
 module.exports = {
   Base: Base,
+  Break: Break,
   Bounds: Bounds,
   Internal: Internal,
   Lookup: Lookup,

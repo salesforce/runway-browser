@@ -30,7 +30,7 @@ class RangeValue extends Value {
   equals(other) {
     if (typeof other == 'number') {
       return this.value == other;
-    } else if (other instanceof RangeValue) {
+    } else if (other instanceof RangeValue || other instanceof NumberValue) {
       return this.value == other.value;
     } else {
       throw new errors.Internal(`Trying to compare ${other.type} to range ${this.type.getName()}: ${this.type.low}..${this.type.high};`);

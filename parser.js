@@ -108,6 +108,7 @@ let times = lexeme(istring('*'));
 let keywords = {};
 [
   'as',
+  'break',
   'distribution',
   'either',
   'else',
@@ -563,6 +564,12 @@ let rulefor = seqMap(keywords.rule,
       code: block,
   }));
 
+let breakStmt = seqMap(keywords.break,
+  semicolon,
+  () => ({
+      kind: 'break',
+  })).source();
+
 let statement = Parsimmon.alt(
   param,
   typedecl,
@@ -576,6 +583,7 @@ let statement = Parsimmon.alt(
   rulefor,
   returnStmt,
   vardecl,
+  breakStmt,
   expr.skip(semicolon).map(v => ({
       kind: 'do',
       expr: v,

@@ -43,15 +43,21 @@ class ForEach extends Statement {
         this.codeEnv.vars.set(this.parsed.index.value, dummyIndex);
       };
     }
-    this.expr.evaluate().forEach((v, i) => {
-      // This is a little dangerous in that it assumes that no one ever does a
-      // getVar and holds onto it.
-      this.codeEnv.vars.set(this.parsed.value.value, v);
-      if (this.parsed.index !== undefined) {
-        this.codeEnv.vars.set(this.parsed.index.value, i);
+    try {
+      this.expr.evaluate().forEach((v, i) => {
+        // This is a little dangerous in that it assumes that no one ever does a
+        // getVar and holds onto it.
+        this.codeEnv.vars.set(this.parsed.value.value, v);
+        if (this.parsed.index !== undefined) {
+          this.codeEnv.vars.set(this.parsed.index.value, i);
+        }
+        this.code.execute();
+      });
+    } catch ( e ) {
+      if (!(e instanceof errors.Break)) {
+        throw e;
       }
-      this.code.execute();
-    });
+    }
     restoreIndex();
     restoreValue();
   }
