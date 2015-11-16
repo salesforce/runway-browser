@@ -195,6 +195,25 @@ class Person {
     let bbox = debugBBox(this.snap, layout.person(1, id));
     this.mainElem = this.snap.text(bbox.x, bbox.y2, 'z');
   }
+
+  getVar() {
+    return this.module.env.getVar('people').index(this.id);
+  }
+
+  update() {
+    let pvar = this.getVar();
+    pvar.match({
+      Sleeping: s => {
+        this.mainElem.node.innerHTML = 'z';
+      },
+      Waiting: w => {
+        this.mainElem.node.innerHTML = 'w';
+      },
+      Riding: r => {
+        this.mainElem.node.innerHTML = 'r';
+      },
+    });
+  }
 }
 
 
@@ -206,7 +225,7 @@ class View {
 
     this.createFloors(this.snap);
     this.elevators = this.createElevators(this.snap);
-    this.peopleElems = this.createPeople(this.snap);
+    this.people = this.createPeople(this.snap);
   }
 
   createFloors(snap) {
@@ -254,6 +273,7 @@ class View {
 
   update() {
     this.elevators.forEach(elevator => elevator.update());
+    this.people.forEach(person => person.update());
   }
 }
 

@@ -94,3 +94,16 @@ rule changeDirection for elevator in elevators {
         Between as b => { /* no turning here */ },
     }
 }
+
+// one person decides he/she wants to move floors and presses the up/down
+// button (Sleeping to Waiting)
+rule wake for person in people {
+    match person {
+        Sleeping as s => {
+          person = Waiting { floor: s.floor, destination: 2 };
+          floorControls[s.floor].upActive = True;
+        },
+        Waiting => { /* do nothing */ },
+        Riding => { /* do nothing */ },
+    }
+}
