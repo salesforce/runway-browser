@@ -1,5 +1,18 @@
 "use strict";
 
+let jQuery = require('./node_modules/jquery/dist/jquery.js');
+window.jQuery = jQuery;
+
+require('bootstrap-webpack');
+let BootstrapMenu = require('bootstrap-menu');
+
+let menu = new BootstrapMenu('#view', {
+  menuEvent: 'click',
+  actions: [
+    {name: 'test', onClick: () => console.log('test clicked')},
+  ],
+});
+
 let compiler = require('./compiler.js');
 window.compiler = compiler;
 let simulator = require('./simulator.js');
@@ -7,9 +20,6 @@ let GlobalEnvironment = require('./environment.js').GlobalEnvironment;
 let Input = require('./input.js');
 
 let preludeText = require('./prelude.model');
-
-let jQuery = require('./node_modules/jquery/dist/jquery.js');
-window.jQuery = jQuery;
 
 let Snap = require('./node_modules/snapsvg/dist/snap.svg.js');
 

@@ -4,15 +4,28 @@
   "description": "Requires node >=v4.x, bower, npm.",
   "main": "main.js",
   "dependencies": {
+    "bootstrap": "^3.3.5",
+    "bootstrap-menu": "^1.0.8",
+    "bootstrap-webpack": "0.0.5",
     "imports-loader": "^0.6.5",
     "jquery": "^2.1.4",
+    "jquery-ui": "^1.10.5",
     "snapsvg": "^0.4.0"
   },
   "devDependencies": {
+    "css-loader": "^0.23.0",
     "eslint": "^1.7.3",
+    "exports-loader": "^0.6.2",
+    "extract-text-webpack-plugin": "^0.9.1",
+    "file-loader": "^0.8.4",
+    "imports-loader": "^0.6.5",
     "jsfmt": "^0.5.2",
+    "less": "^2.5.3",
+    "less-loader": "^2.2.1",
     "mocha": "^2.3.3",
     "raw-loader": "^0.5.1",
+    "style-loader": "^0.13.0",
+    "url-loader": "^0.5.6",
     "webpack": "^1.12.2"
   },
   "scripts": {
