@@ -85,9 +85,32 @@ class Elevator {
     this.snap = snap.group()
       .attr({
         id: `elevator-${id}`
-      });
+      })
+      .addClass('clickable');
     this.module = module;
     this.id = id;
+
+    new BootstrapMenu(`#elevator-${id}`, {
+      menuEvent: 'click',
+      actions: [
+        {
+          name: 'move',
+          onClick: () => {
+            console.log('move', this.id);
+            this.module.env.getRule('move').fire(this.id);
+            this.controller.stateChanged();
+          },
+        },
+        {
+          name: 'change direction',
+          onClick: () => {
+            console.log('change direction', this.id);
+            this.module.env.getRule('changeDirection').fire(this.id);
+            this.controller.stateChanged();
+          },
+        },
+      ],
+    });
 
     this.mainElem = this.snap.rect()
       .attr({
@@ -98,12 +121,6 @@ class Elevator {
       .attr({
         stroke: 'green',
         style: 'marker-end: url(#greentriangle)',
-      })
-      .addClass('clickable')
-      .click(() => {
-        console.log('move', this.id);
-        this.module.env.getRule('move').fire(this.id);
-        this.controller.stateChanged();
       });
     this.update();
   }

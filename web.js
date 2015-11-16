@@ -6,13 +6,6 @@ window.jQuery = jQuery;
 require('bootstrap-webpack');
 let BootstrapMenu = require('bootstrap-menu');
 
-let menu = new BootstrapMenu('#view', {
-  menuEvent: 'click',
-  actions: [
-    {name: 'test', onClick: () => console.log('test clicked')},
-  ],
-});
-
 let compiler = require('./compiler.js');
 window.compiler = compiler;
 let simulator = require('./simulator.js');
