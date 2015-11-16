@@ -49,7 +49,7 @@ class OrderedSetValue extends Value {
     return `{${inner}}`;
   }
   push(v) {
-    if (this.used == this.type.indextype.high - this.type.indextype.low + 1) {
+    if (this.full()) {
       throw new errors.Bounds(`Cannot push onto ${this}`);
     }
     this.items[this.used] = v;
@@ -63,6 +63,16 @@ class OrderedSetValue extends Value {
     this.items.push(this.type.valuetype.makeDefaultValue());
     return this.items.shift();
   }
+  remove(v) {
+    let index = this.usedItems().findIndex(item => item.equals(v));
+    if (index >= 0) {
+      this.items = this.items.slice(0, index)
+        .concat(this.items.slice(index + 1))
+        .concat([this.type.valuetype.makeDefaultValue()]);
+      return true;
+    }
+    return false;
+  }
   contains(v) {
     let ret = false;
     this.forEach(x => {
@@ -74,6 +84,9 @@ class OrderedSetValue extends Value {
   }
   empty() {
     return this.used == 0;
+  }
+  full() {
+    return this.used == this.type.indextype.high - this.type.indextype.low + 1;
   }
 }
 

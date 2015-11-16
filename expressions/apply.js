@@ -170,6 +170,27 @@ class PopFunction extends BaseFunction {
   }
 }
 
+class RemoveFunction extends BaseFunction {
+  constructor() {
+    super('remove', 2);
+    this.pure = false;
+  }
+  typecheckSub(params, env) {
+    if (!(params[0].type instanceof OrderedSet.Type)) {
+      throw new errors.Type(`Cannot call remove() on ${params[0].type}`);
+    }
+    if (!Types.subtypeOf(params[1].type, params[0].type.valuetype)) {
+      throw new errors.Type(`Cannot call remove() on ${params[0].type} ` +
+        `with ${params[1].type}`);
+    }
+    return env.getType('Boolean');
+  }
+  evaluateSub(args, env) {
+    return env.getVar(args[0].remove(args[1]) ? 'True' : 'False');
+  }
+}
+
+
 class ContainsFunction extends BaseFunction {
   constructor() {
     super('contains', 2);
@@ -204,6 +225,21 @@ class EmptyFunction extends BaseFunction {
   }
 }
 
+class FullFunction extends BaseFunction {
+  constructor() {
+    super('full', 1);
+  }
+  typecheckSub(params, env) {
+    if (!(params[0].type instanceof OrderedSet.Type)) {
+      throw new errors.Type(`Cannot call empty() on ${params[0].type}`);
+    }
+    return env.getType('Boolean');
+  }
+  evaluateSub(args, env) {
+    return env.getVar(args[0].full() ? 'True' : 'False');
+  }
+}
+
 
 let functions = [
   new NegateFunction(),
@@ -219,8 +255,10 @@ let functions = [
   new ArithmeticFunction('pow', (x, y) => Math.pow(x, y)),
   new PushFunction(),
   new PopFunction(),
+  new RemoveFunction(),
   new ContainsFunction(),
   new EmptyFunction(),
+  new FullFunction(),
 ];
 
 class Apply extends Expression {

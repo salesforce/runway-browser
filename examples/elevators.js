@@ -79,6 +79,14 @@ let layout = {
   },
 };
 
+let elevatorFloor = (evar) => evar.lookup('location').match({
+  AtFloor: a => a.at.value,
+  Between: b => evar.lookup('direction').match({
+      'Up': () => b.next.value - 0.5,
+      'Down': () => b.next.value + 0.5,
+    }),
+});
+
 class Elevator {
   constructor(controller, snap, module, id) {
     this.controller = controller;
@@ -131,13 +139,7 @@ class Elevator {
 
   update() {
     let evar = this.getVar();
-    let floor = evar.lookup('location').match({
-      AtFloor: a => a.at.value,
-      Between: b => evar.lookup('direction').match({
-          'Up': () => b.next.value - 0.5,
-          'Down': () => b.next.value + 0.5,
-        }),
-    });
+    let floor = elevatorFloor(evar);
     let bbox = debugBBox(this.snap, layout.elevator(floor, this.id));
     this.mainElem.attr({
       x: bbox.x,
@@ -188,9 +190,40 @@ class Person {
     this.snap = snap.group()
       .attr({
         id: `person-${id}`
-      });
+      })
+      .addClass('clickable');
     this.module = module;
     this.id = id;
+
+    new BootstrapMenu(`#person-${id}`, {
+      menuEvent: 'click',
+      actions: [
+        {
+          name: 'wake',
+          onClick: () => {
+            console.log('wake', this.id);
+            this.module.env.getRule('wake').fire(this.id);
+            this.controller.stateChanged();
+          },
+        },
+        {
+          name: 'board',
+          onClick: () => {
+            console.log('board', this.id);
+            this.module.env.getRule('board').fire(this.id);
+            this.controller.stateChanged();
+          },
+        },
+        {
+          name: 'leave',
+          onClick: () => {
+            console.log('leave', this.id);
+            this.module.env.getRule('leave').fire(this.id);
+            this.controller.stateChanged();
+          },
+        },
+      ],
+    });
 
     let bbox = debugBBox(this.snap, layout.person(1, id));
     this.mainElem = this.snap.text(bbox.x, bbox.y2, 'z');
@@ -213,13 +246,13 @@ class Person {
       },
       Riding: r => {
         this.mainElem.node.innerHTML = 'r';
-        return debugBBox(this.snap, layout.elevator(1, r.elevator.value));
+        let evar = this.module.env.getVar('elevators').index(r.elevator);
+        return debugBBox(this.snap,
+          layout.elevator(elevatorFloor(evar),
+          r.elevator.value));
       },
     });
-    this.mainElem.attr({
-      x: bbox.x,
-      y: bbox.y2
-    });
+    this.mainElem.attr({x: bbox.x, y: bbox.y2});
   }
 }
 

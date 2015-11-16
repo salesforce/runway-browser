@@ -41,7 +41,7 @@ class Match extends Statement {
     let value = this.expr.evaluate();
     let variant = this.variants.get(value.varianttype.name);
     if (variant === undefined) {
-      throw errors.Internal(`Bad variant: ${value.varianttype.name}`);
+      throw new errors.Internal(`Bad variant: ${value.varianttype.name}`);
     }
     if (variant.id !== undefined) {
       variant.env.getVar(variant.id.value).assign(value);
