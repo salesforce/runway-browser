@@ -160,7 +160,7 @@ class Apply extends Expression {
       }
     });
     if (!done) {
-      throw new errors.Unimplemented(`The function `
+      throw new errors.Unimplemented(`The function ` +
         `${this.parsed.func.value} is not implemented. ` +
         `Called at ${this.parsed.source}`);
     }
