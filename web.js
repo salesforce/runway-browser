@@ -91,9 +91,14 @@ Promise.all([
   let input = results[0];
   jQuery('#code').text(input.getText());
   let env = new GlobalEnvironment(prelude.env);
-  let module = compiler.load(input, env);
-  module.ast.execute();
-  window.module = module;
+  try {
+    let module = compiler.load(input, env);
+    window.module = module;
+    module.ast.execute();
+  } catch (e) {
+    jQuery('#error').text(e);
+    return;
+  }
   let controller = new Controller();
   controller.views.push(
     new DefaultView(controller, jQuery('#state'), module));
@@ -105,7 +110,12 @@ Promise.all([
   jQuery('#simulate').click(() => {
     if (simulateId === undefined) {
       let step = () => {
-        simulator(module);
+        try {
+          simulator(module);
+        } catch (e) {
+          jQuery('#error').text(e);
+          return;
+        }
         controller.stateChanged();
       };
       step();
