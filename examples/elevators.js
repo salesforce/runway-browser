@@ -80,12 +80,12 @@ let layout = {
 };
 
 let elevatorFloor = (evar) => evar.lookup('location').match({
-  AtFloor: a => a.at.value,
-  Between: b => evar.lookup('direction').match({
-      'Up': () => b.next.value - 0.5,
-      'Down': () => b.next.value + 0.5,
-    }),
-});
+    AtFloor: a => a.at.value,
+    Between: b => evar.lookup('direction').match({
+        'Up': () => b.next.value - 0.5,
+        'Down': () => b.next.value + 0.5,
+      }),
+  });
 
 class Elevator {
   constructor(controller, snap, module, id) {
@@ -249,10 +249,13 @@ class Person {
         let evar = this.module.env.getVar('elevators').index(r.elevator);
         return debugBBox(this.snap,
           layout.elevator(elevatorFloor(evar),
-          r.elevator.value));
+            r.elevator.value));
       },
     });
-    this.mainElem.attr({x: bbox.x, y: bbox.y2});
+    this.mainElem.attr({
+      x: bbox.x,
+      y: bbox.y2
+    });
   }
 }
 
