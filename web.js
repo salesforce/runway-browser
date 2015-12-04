@@ -95,7 +95,7 @@ Promise.all([
     let module = compiler.load(input, env);
     window.module = module;
     module.ast.execute();
-  } catch (e) {
+  } catch ( e ) {
     jQuery('#error').text(e);
     return;
   }
@@ -112,7 +112,7 @@ Promise.all([
       let step = () => {
         try {
           simulator(module);
-        } catch (e) {
+        } catch ( e ) {
           jQuery('#error').text(e);
           return;
         }
