@@ -22,10 +22,9 @@ let shuffle = (array) => {
 };
 
 let stateString = (module) => {
-  let vars = module.env.vars;
-  let output = Array.from(vars).map((kv) => `${kv[0]}: ${kv[1]}`)
-    .join('\n');
-  return output;
+  let o = [];
+  let vars = module.env.vars.forEachLocal((v, k) => o.push(`${k}: ${v}`));
+  return o.join('\n');
 };
 
 let simulate = (module) => {

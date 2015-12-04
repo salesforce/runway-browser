@@ -63,7 +63,8 @@ class DefaultView {
   }
 
   update() {
-    let output = Array.from(this.module.env.vars)
+    let output = Array.from(this.module.env.vars.list())
+      .map(k => [k, this.module.env.vars.get(k)])
       .filter(kv => kv[1].isConstant !== true)
       .map(kv => `${kv[0]}: ${kv[1]}`)
       .join('\n');

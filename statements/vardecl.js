@@ -15,7 +15,7 @@ class VarDecl extends Statement {
     super(parsed, env);
     let type = makeType.make(this.parsed.type, this.env);
     this.value = type.makeDefaultValue();
-    this.env.assignVar(this.parsed.id.value, this.value);
+    this.env.vars.set(this.parsed.id.value, this.value, this.parsed.source);
     if (this.parsed.default === undefined) {
       this.defaultExpr = null;
     } else {

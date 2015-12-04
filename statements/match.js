@@ -31,7 +31,7 @@ class Match extends Statement {
     this.variants.forEach((variant, tag) => {
       if (variant.id !== undefined) {
         let value = this.expr.type.getVariant(tag).makeDefaultValue();
-        variant.env.vars.set(variant.id.value, value);
+        variant.env.vars.set(variant.id.value, value, variant.id.source);
       }
       variant.code.typecheck();
     });

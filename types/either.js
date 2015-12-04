@@ -102,7 +102,7 @@ class EitherVariant extends Type {
       this.recordtype = null;
       let constant = new EitherValue(this, this.parenttype, this);
       constant.isConstant = true;
-      this.env.assignVar(this.name, constant);
+      this.env.vars.set(this.name, constant, this.decl.id.source);
     } else {
       this.recordtype = makeType.make(decl.type, this.env, this.name);
       this.env.assignType(this.name, this);

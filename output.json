@@ -357,7 +357,7 @@
         "statements": [
           {
             "kind": "returnstmt",
-            "value": {
+            "expr": {
               "kind": "numberWithUnit",
               "number": "3",
               "unit": "s",
@@ -417,7 +417,7 @@
         "statements": [
           {
             "kind": "returnstmt",
-            "value": {
+            "expr": {
               "kind": "numberWithUnit",
               "number": "1",
               "unit": "s",
@@ -483,6 +483,13 @@
               "startchar": 370,
               "endchar": 375
             }
+          },
+          "source": {
+            "input": {
+              "filename": "input.model"
+            },
+            "startchar": 363,
+            "endchar": 375
           }
         }
       ],
@@ -502,7 +509,7 @@
         "statements": [
           {
             "kind": "returnstmt",
-            "value": {
+            "expr": {
               "kind": "id",
               "value": "start",
               "source": {

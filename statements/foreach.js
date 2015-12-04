@@ -22,10 +22,10 @@ class ForEach extends Statement {
         `at ${this.expr.source}`);
     }
     let dummyValue = this.expr.type.valuetype.makeDefaultValue();
-    this.codeEnv.assignVar(this.parsed.value.value, dummyValue);
+    this.codeEnv.vars.set(this.parsed.value.value, dummyValue);
     if (this.parsed.index !== undefined) {
       let dummyIndex = this.expr.type.indextype.makeDefaultValue();
-      this.codeEnv.assignVar(this.parsed.index.value, dummyIndex);
+      this.codeEnv.vars.set(this.parsed.index.value, dummyIndex);
     }
     this.code.typecheck();
   }
@@ -33,23 +33,23 @@ class ForEach extends Statement {
   execute() {
     let dummyValue = this.codeEnv.getVar(this.parsed.value.value);
     let restoreValue = () => {
-      this.codeEnv.vars.set(this.parsed.value.value, dummyValue);
+      this.codeEnv.vars.shadow(this.parsed.value.value, dummyValue);
     };
     let restoreIndex = () => {
     };
     if (this.parsed.index !== undefined) {
       let dummyIndex = this.codeEnv.getVar(this.parsed.index.value);
       restoreIndex = () => {
-        this.codeEnv.vars.set(this.parsed.index.value, dummyIndex);
+        this.codeEnv.vars.shadow(this.parsed.index.value, dummyIndex);
       };
     }
     try {
       this.expr.evaluate().forEach((v, i) => {
         // This is a little dangerous in that it assumes that no one ever does a
         // getVar and holds onto it.
-        this.codeEnv.vars.set(this.parsed.value.value, v);
+        this.codeEnv.vars.shadow(this.parsed.value.value, v);
         if (this.parsed.index !== undefined) {
-          this.codeEnv.vars.set(this.parsed.index.value, i);
+          this.codeEnv.vars.shadow(this.parsed.index.value, i);
         }
         try {
           this.code.execute();

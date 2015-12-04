@@ -207,6 +207,16 @@ let expr = call(function() {
             func: func,
             args: args,
         })),
+      seqMap(generic,
+        lparen,
+        sepBy(expr, comma),
+        rparen,
+        (generic, _, args, _2) => ({
+            kind: 'apply',
+            func: generic.base,
+            genericargs: generic.args,
+            args: args,
+        })),
       lhs));
 
   let expr1 = lazy(() => alt(
@@ -425,21 +435,21 @@ let block = lazy(() => {
 });
 
 let distribution = call(function() {
-  let arg = seqMap(id,
+  let param = seqMap(id,
     colon,
     type,
     (id, _, type) => ({
         id: id,
         type: type,
-    }));
+    })).source();
 
-  let arglist = lparen
-    .then(sepBy(arg, comma))
+  let paramlist = lparen
+    .then(sepBy(param, comma))
     .skip(rparen);
 
   return seqMap(keywords.distribution,
     id,
-    arglist,
+    paramlist,
     arrow,
     type,
     block,
@@ -453,9 +463,9 @@ let distribution = call(function() {
 });
 
 let returnStmt = keywords.return
-  .then(expr).map((v) => ({
+  .then(expr).map((expr) => ({
     kind: 'returnstmt',
-    value: v,
+    expr: expr,
 }))
   .skip(semicolon);
 

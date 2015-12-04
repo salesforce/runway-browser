@@ -95,12 +95,24 @@ rule changeDirection for elevator in elevators {
     }
 }
 
+distribution makeDestination(start: Floor) -> Floor {
+    while (True) {
+        var f : Floor = urandom<Floor>();
+        if f != start {
+            return f;
+        }
+    }
+}
+
 // one person decides he/she wants to move floors and presses the up/down
 // button (Sleeping to Waiting)
 rule wake for person in people {
     match person {
         Sleeping as s => {
-          person = Waiting { floor: s.floor, destination: 2 };
+          person = Waiting {
+              floor: s.floor,
+              destination: makeDestination(s.floor),
+          };
           floorControls[s.floor].upActive = True;
         },
         Waiting => { /* do nothing */ },

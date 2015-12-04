@@ -22,10 +22,10 @@ class RuleFor extends Statement {
         `at ${this.expr.source}`);
     }
     let dummyValue = this.expr.type.valuetype.makeDefaultValue();
-    this.innerEnv.assignVar(this.parsed.value.value, dummyValue);
+    this.innerEnv.vars.set(this.parsed.value.value, dummyValue, this.parsed.value.source);
     if (this.parsed.index !== undefined) {
       let dummyIndex = this.expr.type.indextype.makeDefaultValue();
-      this.innerEnv.assignVar(this.parsed.index.value, dummyIndex);
+      this.innerEnv.vars.set(this.parsed.index.value, dummyIndex, this.parsed.value.source);
     }
     this.inner.typecheck();
   }
@@ -46,14 +46,14 @@ class RuleFor extends Statement {
 
     let dummyValue = this.innerEnv.getVar(this.parsed.value.value);
     let restoreValue = () => {
-      this.innerEnv.vars.set(this.parsed.value.value, dummyValue);
+      this.innerEnv.vars.shadow(this.parsed.value.value, dummyValue);
     };
     let restoreIndex = () => {
     };
     if (this.parsed.index !== undefined) {
       let dummyIndex = this.innerEnv.getVar(this.parsed.index.value);
       restoreIndex = () => {
-        this.innerEnv.vars.set(this.parsed.index.value, dummyIndex);
+        this.innerEnv.vars.shadow(this.parsed.index.value, dummyIndex);
       };
     }
 
@@ -61,9 +61,9 @@ class RuleFor extends Statement {
     let value = array.index(index);
     // This is a little dangerous in that it assumes that no one ever does a
     // getVar and holds onto it.
-    this.innerEnv.vars.set(this.parsed.value.value, value);
+    this.innerEnv.vars.shadow(this.parsed.value.value, value);
     if (this.parsed.index !== undefined) {
-      this.innerEnv.vars.set(this.parsed.index.value, index);
+      this.innerEnv.vars.shadow(this.parsed.index.value, index);
     }
     this.inner.execute();
 

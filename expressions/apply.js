@@ -5,15 +5,25 @@ let Expression = require('./expression.js');
 let OrderedSet = require('../types/orderedset.js');
 let Types = require('../types/types.js');
 let NumberType = require('../types/number.js').Type;
+let RangeType = require('../types/range.js').Type;
 let makeExpression = require('./factory.js');
+let makeType = require('../types/factory.js');
 
 class BaseFunction {
-  constructor(name, numargs) {
+  constructor(name, numargs, numgargs) {
     this.name = name;
     this.numargs = numargs;
+    if (numgargs === undefined) {
+      this.numgargs = 0;
+    } else {
+      this.numgargs = numgargs;
+    }
     this.pure = true;
   }
-  typecheck(params, env) {
+  typecheck(params, env, gargs) {
+    if (gargs.length != this.numgargs) {
+      throw new errors.Type(`${this.name} takes exactly ${this.numgargs} generic arguments`);
+    }
     if (params.length != this.numargs) {
       throw new errors.Type(`${this.name} takes exactly ${this.numargs} arguments`);
     }
@@ -23,19 +33,19 @@ class BaseFunction {
       throw new errors.Unimplemented(`The function ${this.name} ` +
         `has not implemented typecheckSub()`);
     }
-    let type = this.typecheckSub(params, env);
+    let type = this.typecheckSub(params, env, gargs);
     if (type === undefined) {
       throw new errors.Internal(`The function ${this.name} ` +
         `returned nothing in typecheckSub()`);
     }
     return type;
   }
-  evaluate(args, env) {
+  evaluate(args, env, gargs) {
     if (typeof this.evaluateSub !== 'function') {
       throw new errors.Unimplemented(`The function ${this.name} ` +
         `has not implemented evaluateSub()`);
     }
-    let value = this.evaluateSub(args, env);
+    let value = this.evaluateSub(args, env, gargs);
     if (value === undefined) {
       throw new errors.Internal(`The function ${this.name} ` +
         `returned nothing in evaluateSub()`);
@@ -60,7 +70,6 @@ class NegateFunction extends BaseFunction {
     return env.getVar(isFalse ? 'True' : 'False');
   }
 }
-;
 
 class EqualityFunction extends BaseFunction {
   typecheckSub(params, env) {
@@ -286,6 +295,25 @@ class FullFunction extends BaseFunction {
   }
 }
 
+class URandomFunction extends BaseFunction {
+  constructor() {
+    super('urandom', 0, 1);
+  }
+  typecheckSub(params, env, gargs) {
+    if (!(gargs[0] instanceof RangeType)) {
+      throw new errors.type(`Need RangeType as generic argument to urandom`);
+    }
+    return gargs[0];
+  }
+  evaluateSub(args, env, gargs) {
+    let range = gargs[0];
+    let number = range.low + Math.floor(Math.random() *
+      (range.high - range.low + 1));
+    let value = gargs[0].makeDefaultValue();
+    value.assign(number);
+    return value;
+  }
+}
 
 let functions = [
   new NegateFunction(),
@@ -307,27 +335,36 @@ let functions = [
   new FullFunction(),
   new AndFunction(),
   new OrFunction(),
+  new URandomFunction(),
 ];
 
 class Apply extends Expression {
   constructor(parsed, env) {
     super(parsed, env);
+    if (this.parsed.genericargs === undefined) {
+      this.gargs = [];
+    } else {
+      this.gargs = this.parsed.genericargs.map((a) => makeType.make(a, this.env));
+    }
     this.args = this.parsed.args.map((a) => makeExpression.make(a, this.env));
     this.fn = undefined;
+  }
+
+  typecheck() {
     functions.forEach((fn) => {
       if (fn.name == this.parsed.func.value) {
         this.fn = fn;
       }
     });
     if (this.fn === undefined) {
+      this.fn = this.env.functions.get(this.parsed.func.value);
+    }
+    if (this.fn === undefined) {
       throw new errors.Unimplemented(`The function ` +
         `${this.parsed.func.value} is not implemented. ` +
         `Called at ${this.parsed.source}`);
     }
-  }
-
-  typecheck() {
-    this.type = this.fn.typecheck(this.args, this.env);
+    this.type = this.fn.typecheck(this.args, this.env, this.gargs);
   }
 
   evaluate() {
@@ -335,7 +372,7 @@ class Apply extends Expression {
     if (this.fn.shortCircuit !== true) {
       args = this.args.map((arg) => arg.evaluate());
     }
-    return this.fn.evaluate(args, this.env);
+    return this.fn.evaluate(args, this.env, this.gargs);
   }
 
   toString(indent) {

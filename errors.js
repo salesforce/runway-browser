@@ -72,6 +72,13 @@ class Continue extends Runtime {
   }
 }
 
+class Return extends Runtime {
+  constructor(message) {
+    super(message);
+    this.name = prefix + 'ReturnError';
+  }
+}
+
 
 module.exports = {
   Base: Base,
@@ -81,6 +88,7 @@ module.exports = {
   Internal: Internal,
   Lookup: Lookup,
   Parse: Parse,
+  Return: Return,
   Runtime: Runtime,
   Type: Type,
   Unimplemented: Unimplemented,

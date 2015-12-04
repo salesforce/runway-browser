@@ -3,75 +3,98 @@
 let errors = require('./errors.js');
 let util = require('util');
 
+class EnvironmentMap {
+  constructor(enclosing, kind) {
+    this.enclosing = enclosing;
+    this.kind = kind;
+    this.entries = new Map();
+  }
+
+  forEachLocal(cb) {
+    return this.entries.forEach((vs, name) => cb(vs.value, name));
+  }
+
+  getValueSource(id) {
+    let vs = this.entries.get(id);
+    if (vs != undefined) {
+      return vs;
+    }
+    if (this.enclosing != null) {
+      return this.enclosing.getValueSource(id);
+    }
+    return undefined;
+  }
+
+  get(id) {
+    let vs = this.getValueSource(id);
+    if (vs === undefined) {
+      return undefined;
+    } else {
+      return vs.value;
+    }
+  }
+
+  list() {
+    let here = Array.from(this.entries.keys());
+    if (this.enclosing != null) {
+      return this.enclosing.list().concat(here);
+    } else {
+      return here;
+    }
+  }
+
+  shadow(id, value, source) {
+    this.entries.set(id, {value: value, source: source});
+  }
+
+  set(id, value, source) {
+    let vs = this.getValueSource(id);
+    if (vs != undefined) {
+      throw new errors.Type(`Cannot shadow ${this.kind} ${id} ` +
+        `(${vs.value} from ${vs.source}) with ${value} at ${source}`);
+    }
+    this.entries.set(id, {value: value, source: source});
+  }
+}
+
 class Environment {
   constructor(enclosing) {
     if (enclosing == undefined) {
       this.enclosing = null;
+      this.types = new EnvironmentMap(null, 'type');
+      this.vars = new EnvironmentMap(null, 'variable');
+      this.functions = new EnvironmentMap(null, 'function');
     } else {
       this.enclosing = enclosing;
-    }
-    this.types = new Map();
-    this.vars = new Map();
-  }
-
-  assignType(id, decl) {
-    let v = this.getType(id);
-    if (v != undefined) {
-      throw new errors.Type(`Cannot shadow type ${id} (${v}) with ${decl}`);
-    }
-    this.types.set(id, decl);
-  }
-
-  getType(id) {
-    let v = this.types.get(id);
-    if (v != undefined) {
-      return v;
-    }
-    if (this.enclosing != null) {
-      return this.enclosing.getType(id);
-    }
-    return undefined;
-  }
-
-  getTypeNames() {
-    let here = Array.from(this.types.keys());
-    if (this.enclosing != null) {
-      return this.enclosing.getTypeNames().concat(here);
-    } else {
-      return here;
-    }
-  }
-
-  assignVar(id, decl) {
-    let v = this.getVar(id);
-    if (v != undefined) {
-      throw new errors.Type(`Cannot shadow variable ${id} (${v}) with ${decl}`);
-    }
-    this.vars.set(id, decl);
-  }
-
-  getVar(id) {
-    let v = this.vars.get(id);
-    if (v != undefined) {
-      return v;
-    }
-    if (this.enclosing != null) {
-      return this.enclosing.getVar(id);
-    }
-    return undefined;
-  }
-
-  getVarNames() {
-    let here = Array.from(this.vars.keys());
-    if (this.enclosing != null) {
-      return this.enclosing.getVarNames().concat(here);
-    } else {
-      return here;
+      this.types = new EnvironmentMap(this.enclosing.types, 'type');
+      this.vars = new EnvironmentMap(this.enclosing.vars, 'variable');
+      this.functions = new EnvironmentMap(this.enclosing.functions, 'function');
     }
   }
 
   toString() {
     return util.inspect(this);
+  }
+
+  // The following are deprectated.
+  // Use env.types, env.vars, env.functions directly.
+  assignType(id, decl) {
+    return this.types.set(id, decl, 'none');
+  }
+  getType(id) {
+    return this.types.get(id);
+  }
+  getTypeNames() {
+    return this.types.list();
+  }
+  assignVar(id, decl, source) {
+    return this.vars.set(id, decl, 'none');
+  }
+  getVar(id) {
+    return this.vars.get(id);
+  }
+  getVarNames() {
+    return this.vars.list();
   }
 }
 
