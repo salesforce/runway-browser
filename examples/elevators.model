@@ -26,7 +26,7 @@ var floorControls: Array<FloorControl>[Floor];
 
 
 type Elevator: record {
-//    destinations: Set<Floor>,
+    destinations: Set<Floor>[Floor],
     riders: OrderedSet<PersonId>[PersonId],
     direction: either {
         Up,
@@ -54,6 +54,7 @@ rule move for elevator in elevators {
     match elevator.location {
         Between as b => {
             elevator.location = AtFloor { at: b.next, doors: Closed };
+            remove(elevator.destinations, b.next);
         },
         AtFloor as f => {
             if f.doors == Closed {
@@ -76,22 +77,24 @@ rule move for elevator in elevators {
 }
 
 rule changeDirection for elevator in elevators {
-    match elevator.location {
-        AtFloor as f => {
-            match elevator.direction {
-                Up => {
-                    if f.at > 1 {
-                        elevator.direction = Down;
-                    }
-                },
-                Down => {
-                    if f.at < 6 {
-                        elevator.direction = Up;
-                    }
-                },
-            }
-        },
-        Between as b => { /* no turning here */ },
+    if empty(elevator.riders) {
+        match elevator.location {
+            AtFloor as f => {
+                match elevator.direction {
+                    Up => {
+                        if f.at > 1 {
+                            elevator.direction = Down;
+                        }
+                    },
+                    Down => {
+                        if f.at < 6 {
+                            elevator.direction = Up;
+                        }
+                    },
+                }
+            },
+            Between as b => { /* no turning here */ },
+        }
     }
 }
 
@@ -133,6 +136,7 @@ rule board for pid, person in people {
                                 destination: w.destination,
                             };
                             push(elevator.riders, pid);
+                            push(elevator.destinations, w.destination);
                             break;
                         }
                     },
