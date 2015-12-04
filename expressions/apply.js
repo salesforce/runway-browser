@@ -2,7 +2,6 @@
 
 let errors = require('../errors.js');
 let Expression = require('./expression.js');
-let OrderedSet = require('../types/orderedset.js');
 let Types = require('../types/types.js');
 let NumberType = require('../types/number.js').Type;
 let RangeType = require('../types/range.js').Type;
@@ -194,7 +193,7 @@ class PushFunction extends BaseFunction {
     this.pure = false;
   }
   typecheckSub(params, env) {
-    if (!(params[0].type instanceof OrderedSet.Type)) {
+    if (!Types.implementsSet(params[0].type)) {
       throw new errors.Type(`Cannot call push() on ${params[0].type}`);
     }
     if (!Types.subtypeOf(params[1].type, params[0].type.valuetype)) {
@@ -215,7 +214,7 @@ class PopFunction extends BaseFunction {
     this.pure = false;
   }
   typecheckSub(params, env) {
-    if (!(params[0].type instanceof OrderedSet.Type)) {
+    if (!Types.implementsSet(params[0].type)) {
       throw new errors.Type(`Cannot call pop() on ${params[0].type}`);
     }
     return params[0].type.valuetype;
@@ -231,7 +230,7 @@ class RemoveFunction extends BaseFunction {
     this.pure = false;
   }
   typecheckSub(params, env) {
-    if (!(params[0].type instanceof OrderedSet.Type)) {
+    if (!Types.implementsSet(params[0].type)) {
       throw new errors.Type(`Cannot call remove() on ${params[0].type}`);
     }
     if (!Types.subtypeOf(params[1].type, params[0].type.valuetype)) {
@@ -251,7 +250,7 @@ class ContainsFunction extends BaseFunction {
     super('contains', 2);
   }
   typecheckSub(params, env) {
-    if (!(params[0].type instanceof OrderedSet.Type)) {
+    if (!Types.implementsSet(params[0].type)) {
       throw new errors.Type(`Cannot call contains() on ${params[0].type}`);
     }
     if (!Types.subtypeOf(params[1].type, params[0].type.valuetype)) {
@@ -270,7 +269,7 @@ class EmptyFunction extends BaseFunction {
     super('empty', 1);
   }
   typecheckSub(params, env) {
-    if (!(params[0].type instanceof OrderedSet.Type)) {
+    if (!Types.implementsSet(params[0].type)) {
       throw new errors.Type(`Cannot call empty() on ${params[0].type}`);
     }
     return env.getType('Boolean');
@@ -285,7 +284,7 @@ class FullFunction extends BaseFunction {
     super('full', 1);
   }
   typecheckSub(params, env) {
-    if (!(params[0].type instanceof OrderedSet.Type)) {
+    if (!Types.implementsSet(params[0].type)) {
       throw new errors.Type(`Cannot call empty() on ${params[0].type}`);
     }
     return env.getType('Boolean');

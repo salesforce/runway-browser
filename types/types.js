@@ -5,6 +5,8 @@ let Either = require('./either.js');
 let NumberType = require('./number.js').Type;
 let RangeType = require('./range.js').Type;
 let RecordType = require('./record.js');
+let OrderedSetType = require('./orderedset.js');
+let SetType = require('./set.js');
 
 
 let subtypeOf = function(sub, par) {
@@ -52,9 +54,14 @@ let haveOrdering = function(left, right) {
   return isNumeric(left) && isNumeric(right);
 };
 
+let implementsSet = function(t) {
+  return t instanceof SetType.Type || t instanceof OrderedSetType.Type;
+}
+
 module.exports = {
   subtypeOf: subtypeOf,
   haveEquality: haveEquality,
   haveOrdering: haveOrdering,
   isNumeric: isNumeric,
+  implementsSet: implementsSet,
 };
