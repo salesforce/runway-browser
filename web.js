@@ -91,8 +91,9 @@ Promise.all([
   let input = results[0];
   jQuery('#code').text(input.getText());
   let env = new GlobalEnvironment(prelude.env);
+  let module;
   try {
-    let module = compiler.load(input, env);
+    module = compiler.load(input, env);
     window.module = module;
     module.ast.execute();
   } catch ( e ) {
