@@ -49,7 +49,7 @@ class SetValue extends Value {
   full() {
     return this.ordered.full();
   }
-  
+
   toString() {
     let inner = this.ordered.usedItems().map((v) => `${v}`).sort().join(', ');
     return `{${inner}}`;

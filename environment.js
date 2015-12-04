@@ -44,7 +44,10 @@ class EnvironmentMap {
   }
 
   shadow(id, value, source) {
-    this.entries.set(id, {value: value, source: source});
+    this.entries.set(id, {
+      value: value,
+      source: source
+    });
   }
 
   set(id, value, source) {
@@ -53,7 +56,10 @@ class EnvironmentMap {
       throw new errors.Type(`Cannot shadow ${this.kind} ${id} ` +
         `(${vs.value} from ${vs.source}) with ${value} at ${source}`);
     }
-    this.entries.set(id, {value: value, source: source});
+    this.entries.set(id, {
+      value: value,
+      source: source
+    });
   }
 }
 

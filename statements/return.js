@@ -12,7 +12,7 @@ class Return extends Statement {
 
   typecheck() {
     this.expr.typecheck();
-    // TODO: return value should be subtype of containing function's return type
+  // TODO: return value should be subtype of containing function's return type
   }
 
   execute() {

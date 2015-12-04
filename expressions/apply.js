@@ -307,7 +307,7 @@ class URandomFunction extends BaseFunction {
   evaluateSub(args, env, gargs) {
     let range = gargs[0];
     let number = range.low + Math.floor(Math.random() *
-      (range.high - range.low + 1));
+        (range.high - range.low + 1));
     let value = gargs[0].makeDefaultValue();
     value.assign(number);
     return value;

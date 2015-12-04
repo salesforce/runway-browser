@@ -13,9 +13,9 @@ class Distribution extends Statement {
     this.codeEnv = new Environment(this.env);
     this.code = makeStatement.make(this.parsed.code, this.codeEnv);
     this.params = this.parsed.params.map((param) => ({
-      id: param.id.value,
-      type: makeType.make(param.type, this.env),
-      decl: param,
+        id: param.id.value,
+        type: makeType.make(param.type, this.env),
+        decl: param,
     }));
     this.params.forEach((param) => {
       this.codeEnv.vars.set(param.id,
@@ -30,8 +30,7 @@ class Distribution extends Statement {
     return this.returntype;
   }
 
-  execute() {
-  }
+  execute() {}
 
   evaluate(args) {
     this.params.forEach((param, i) => {
