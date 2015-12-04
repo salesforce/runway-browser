@@ -21,6 +21,7 @@ let statements = new Map([
   ['sequence', require('./sequence.js')],
   ['typedecl', require('./typedecl.js')],
   ['vardecl', require('./vardecl.js')],
+  ['while', require('./while.js')],
 ]);
 
 let make = function(parsed, env) {

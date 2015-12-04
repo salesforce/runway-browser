@@ -127,6 +127,7 @@ let keywords = {};
   'rule',
   'type',
   'var',
+  'while',
 ].forEach((keyword) => {
   keywords[keyword] = lexeme(istring(keyword));
 });
@@ -523,6 +524,15 @@ let foreachLoop = seqMap(keywords.for,
       code: block,
   }));
 
+let whileLoop = seqMap(keywords.while,
+  expr,
+  block,
+  (_, expr, block) => ({
+      kind: 'while',
+      expr: expr,
+      code: block,
+  }));
+
 let ifElse = seqMap(keywords.if,
   expr,
   block,
@@ -596,6 +606,7 @@ let statement = Parsimmon.alt(
   vardecl,
   breakStmt,
   continueStmt,
+  whileLoop,
   expr.skip(semicolon).map(v => ({
       kind: 'do',
       expr: v,
