@@ -49,6 +49,9 @@ class OrderedSetValue extends Value {
     return `{${inner}}`;
   }
   push(v) {
+    if (this.contains(v)) {
+      return;
+    }
     if (this.full()) {
       throw new errors.Bounds(`Cannot push onto ${this}`);
     }
