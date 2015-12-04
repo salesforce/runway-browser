@@ -202,10 +202,10 @@ let expr = call(function() {
         lparen,
         sepBy(expr, comma),
         rparen,
-        (func, _, params, _2) => ({
+        (func, _, args, _2) => ({
             kind: 'apply',
             func: func,
-            args: params,
+            args: args,
         })),
       lhs));
 
@@ -443,10 +443,10 @@ let distribution = call(function() {
     arrow,
     type,
     block,
-    (_, id, args, _2, returntype, block) => ({
-        kind: 'distributiondecl',
+    (_, id, params, _2, returntype, block) => ({
+        kind: 'distribution',
         id: id,
-        args: args,
+        params: params,
         returntype: returntype,
         code: block
     }));

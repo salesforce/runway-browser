@@ -312,7 +312,7 @@ let functions = [
 class Apply extends Expression {
   constructor(parsed, env) {
     super(parsed, env);
-    this.params = this.parsed.args.map((a) => makeExpression.make(a, this.env));
+    this.args = this.parsed.args.map((a) => makeExpression.make(a, this.env));
     this.fn = undefined;
     functions.forEach((fn) => {
       if (fn.name == this.parsed.func.value) {
@@ -327,19 +327,19 @@ class Apply extends Expression {
   }
 
   typecheck() {
-    this.type = this.fn.typecheck(this.params, this.env);
+    this.type = this.fn.typecheck(this.args, this.env);
   }
 
   evaluate() {
-    let args = this.params;
+    let args = this.args;
     if (this.fn.shortCircuit !== true) {
-      args = this.params.map((param) => param.evaluate());
+      args = this.args.map((arg) => arg.evaluate());
     }
     return this.fn.evaluate(args, this.env);
   }
 
   toString(indent) {
-    let inner = this.params.map((param) => param.toString()).join(', ');
+    let inner = this.args.map((arg) => arg.toString()).join(', ');
     return `${this.parsed.func.value}(${inner})`
   }
 }

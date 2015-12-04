@@ -328,7 +328,7 @@
       }
     },
     {
-      "kind": "distributiondecl",
+      "kind": "distribution",
       "id": {
         "kind": "id",
         "value": "openTime",
@@ -340,7 +340,7 @@
           "endchar": 207
         }
       },
-      "args": [],
+      "params": [],
       "returntype": {
         "kind": "alias",
         "value": "Time",
@@ -388,7 +388,7 @@
       }
     },
     {
-      "kind": "distributiondecl",
+      "kind": "distribution",
       "id": {
         "kind": "id",
         "value": "doorTime",
@@ -400,7 +400,7 @@
           "endchar": 303
         }
       },
-      "args": [],
+      "params": [],
       "returntype": {
         "kind": "alias",
         "value": "Time",
@@ -448,7 +448,7 @@
       }
     },
     {
-      "kind": "distributiondecl",
+      "kind": "distribution",
       "id": {
         "kind": "id",
         "value": "makeDestination",
@@ -460,7 +460,7 @@
           "endchar": 362
         }
       },
-      "args": [
+      "params": [
         {
           "id": {
             "kind": "id",
