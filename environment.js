@@ -101,23 +101,20 @@ class Environment {
 class GlobalEnvironment extends Environment {
   constructor(enclosing) {
     super(enclosing);
-    this.rules = new Map();
+    this.rules = new EnvironmentMap(null, 'rule');
+    this.invariants = new EnvironmentMap(null, 'invariant');
   }
 
+  // The following are deprectated.
+  // Use env.rules, env.invariants directly.
   getRule(id) {
     return this.rules.get(id);
   }
-
   assignRule(id, decl) {
-    let v = this.rules.get(id);
-    if (v != undefined) {
-      throw new errors.Type(`Cannot shadow rule ${id} (${v}) with ${decl}`);
-    }
-    this.rules.set(id, decl);
+    return this.rules.set(id, decl, 'none');
   }
-
   listRules() {
-    return Array.from(this.rules.keys());
+    return this.rules.list();
   }
 }
 

@@ -50,6 +50,32 @@ type Elevator: record {
 }
 var elevators: Array<Elevator>[ElevatorId];
 
+invariant elevatorRidersCorrect {
+    for pid, person in people {
+        match person {
+            Sleeping => {
+                for elevator in elevators {
+                    assert !contains(elevator.riders, pid);
+                }
+            },
+            Waiting => {
+                for elevator in elevators {
+                    assert !contains(elevator.riders, pid);
+                }
+            },
+            Riding as r => {
+                for eid, elevator in elevators {
+                    if r.elevator == eid {
+                        assert contains(elevator.riders, pid);
+                    } else {
+                        assert !contains(elevator.riders, pid);
+                    }
+                }
+            },
+        }
+    }
+}
+
 rule move for elevator in elevators {
     match elevator.location {
         Between as b => {

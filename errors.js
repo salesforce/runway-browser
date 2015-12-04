@@ -79,8 +79,15 @@ class Return extends Runtime {
   }
 }
 
+class Assertion extends Runtime {
+  constructor(message) {
+    super(message);
+    this.name = prefix + 'AssertionError';
+  }
+}
 
 module.exports = {
+  Assertion: Assertion,
   Base: Base,
   Break: Break,
   Bounds: Bounds,

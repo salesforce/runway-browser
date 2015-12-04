@@ -110,6 +110,7 @@ let times = lexeme(istring('*'));
 let keywords = {};
 [
   'as',
+  'assert',
   'break',
   'continue',
   'distribution',
@@ -118,6 +119,7 @@ let keywords = {};
   'for',
   'if',
   'in',
+  'invariant',
   'match',
   'node',
   'param',
@@ -520,6 +522,15 @@ let print = seqMap(
       expr: expr,
   }));
 
+let assert = seqMap(
+  keywords.assert,
+  expr.source(),
+  semicolon,
+  (_, expr, _2) => ({
+      kind: 'assert',
+      expr: expr,
+  })).source();
+
 let foreachLoop = seqMap(keywords.for,
   id.skip(comma).times(0, 1),
   id,
@@ -561,6 +572,15 @@ let ifElse = seqMap(keywords.if,
       condition: condition,
       thenblock: thenblock,
       elseblock: elseblock,
+  }));
+
+let invariant = seqMap(keywords.invariant,
+  id,
+  block,
+  (_, id, block) => ({
+      kind: 'invariant',
+      id: id,
+      code: block,
   }));
 
 let rule = seqMap(keywords.rule,
@@ -606,10 +626,12 @@ let statement = Parsimmon.alt(
   typedecl,
   distribution,
   ifElse,
+  invariant,
   foreachLoop,
   match,
   assignment,
   print,
+  assert,
   rule,
   rulefor,
   returnStmt,

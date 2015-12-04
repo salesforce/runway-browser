@@ -28,6 +28,12 @@ let stateString = (module) => {
 };
 
 let simulate = (module) => {
+  let checkInvariants = () => {
+    module.env.invariants.list().forEach(name => {
+      module.env.invariants.get(name).check();
+    });
+  };
+  checkInvariants();
   let rules = module.env.listRules();
   let simpleRules = [];
   rules.forEach((name) => {
@@ -58,6 +64,7 @@ let simulate = (module) => {
     let now = stateString(module);
     if (start !== now) {
       console.log(name);
+      checkInvariants();
       return;
     }
   }

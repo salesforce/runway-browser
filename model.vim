@@ -12,6 +12,7 @@ endif
 
 syntax case ignore
 syn keyword modelConditional    as
+syn keyword modelStatement      assert
 syn keyword modelRepeat         break
 syn keyword modelRepeat         continue
 syn keyword modelStatement      distribution
@@ -20,6 +21,7 @@ syn keyword modelConditional    else
 syn keyword modelRepeat         for
 syn keyword modelConditional    if
 syn keyword modelRepeat         in
+syn keyword modelStatement      invariant
 syn keyword modelConditional    match
 syn keyword modelStatement      param
 syn keyword modelStatement      print
