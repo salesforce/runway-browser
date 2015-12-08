@@ -95,6 +95,7 @@ rule move for elevator in elevators {
                           elevator.location = Between { next: f.at - 1 };
                         }
                     },
+                    // XXX- 'Neutral' isn't defined, should be compile error
                     Neutral => { /* do nothing: not moving */ },
                 }
             }
@@ -103,24 +104,22 @@ rule move for elevator in elevators {
 }
 
 rule changeDirection for elevator in elevators {
-    if empty(elevator.riders) {
-        match elevator.location {
-            AtFloor as f => {
-                match elevator.direction {
-                    Up => {
-                        if f.at > 1 {
-                            elevator.direction = Down;
-                        }
-                    },
-                    Down => {
-                        if f.at < 6 {
-                            elevator.direction = Up;
-                        }
-                    },
-                }
-            },
-            Between as b => { /* no turning here */ },
-        }
+    match elevator.location {
+        AtFloor as f => {
+            match elevator.direction {
+                Up => {
+                    if f.at > 1 {
+                        elevator.direction = Down;
+                    }
+                },
+                Down => {
+                    if f.at < 6 {
+                        elevator.direction = Up;
+                    }
+                },
+            }
+        },
+        Between as b => { /* no turning here */ },
     }
 }
 
