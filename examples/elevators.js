@@ -16,6 +16,26 @@ let fillBBox = (bbox) => {
   return bbox;
 };
 
+let setupTooltip = (elem, makeHTML) => {
+  let tooltipElem = jQuery('#tooltip');
+  let show = () => {
+    jQuery('.tooltip-inner', tooltipElem).html(makeHTML());
+    tooltipElem.show();
+    let bbox = elem.getBBox();
+    let matrix = elem.node.getScreenCTM().translate(bbox.cx, bbox.y);
+    let s = {
+      opacity: 1,
+      left: Math.max(0, matrix.e + window.scrollX - tooltipElem.width() / 2) + 'px',
+      top: Math.max(0, matrix.f + window.scrollY - tooltipElem.height()) + 'px',
+    };
+    tooltipElem.css(s);
+  };
+  let hide = () => {
+    tooltipElem.hide();
+  };
+  return elem.hover(show, hide);
+};
+
 let layout = {
   floor: floorId => {
     return fillBBox({
@@ -131,6 +151,8 @@ class Elevator {
         style: 'marker-end: url(#greentriangle)',
       });
     this.update();
+
+    setupTooltip(this.mainElem, () => this.controller.toHTMLString(this.getVar()));
   }
 
   getVar() {
@@ -227,6 +249,7 @@ class Person {
 
     let bbox = debugBBox(this.snap, layout.person(1, id));
     this.mainElem = this.snap.text(bbox.x, bbox.y2, 'z');
+    setupTooltip(this.mainElem, () => this.controller.toHTMLString(this.getVar()));
   }
 
   getVar() {
