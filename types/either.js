@@ -88,6 +88,17 @@ class EitherValue extends Value {
       return `${this.varianttype.name}`;
     }
   }
+
+  toJSON() {
+    if (this.fields !== undefined) {
+      let o = {};
+      o.tag = this.varianttype.name;
+      o.fields = this.fields.toJSON();
+      return o;
+    } else {
+      return this.varianttype.name;
+    }
+  }
 }
 
 // In:

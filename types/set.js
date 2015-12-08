@@ -54,6 +54,10 @@ class SetValue extends Value {
     let inner = this.ordered.usedItems().map((v) => `${v}`).sort().join(', ');
     return `{${inner}}`;
   }
+
+  toJSON() {
+    return this.ordered.usedItems().map((v) => v.toJSON()).sort();
+  }
 }
 
 class SetType extends Type {

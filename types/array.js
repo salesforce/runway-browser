@@ -44,6 +44,10 @@ class ArrayValue extends Value {
     }).join(', ');
     return `[${inner}]`;
   }
+
+  toJSON() {
+    return this.items.map((v, i) => [this.type.indextype.low + i, v.toJSON()]);
+  }
 }
 
 class ArrayType extends Type {

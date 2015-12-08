@@ -14,6 +14,10 @@ class Value {
   equals(other) {
     throw new errors.Type(`equals() not implemented for ${this.type} values`);
   }
+
+  toJSON() {
+    throw new errors.Type(`toJSON() not implemented for ${this.type} values`);
+  }
 }
 
 module.exports = Value;

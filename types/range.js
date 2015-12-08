@@ -44,6 +44,10 @@ class RangeValue extends Value {
   toString() {
     return `${this.value}`;
   }
+
+  toJSON() {
+    return this.value;
+  }
 }
 
 class RangeType extends Type {

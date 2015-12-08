@@ -91,6 +91,9 @@ class OrderedSetValue extends Value {
   full() {
     return this.used == this.type.indextype.high - this.type.indextype.low + 1;
   }
+  toJSON() {
+    return this.usedItems().map((v) => v.toJSON());
+  }
 }
 
 class OrderedSetType extends Type {

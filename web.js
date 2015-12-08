@@ -72,6 +72,85 @@ class DefaultView {
   }
 }
 
+class HTMLStateView {
+  constructor(controller, elem, module) {
+    this.controller = controller;
+    this.elem = elem;
+    this.module = module;
+    this.update();
+  }
+
+  toHTML(value, outer, horizontal, depth) {
+    let $ = jQuery;
+    let colors = [ // from colorbrewer2.org
+      '#8c510a',
+      '#d8b365',
+      '#f6e8c3',
+      '#f5f5f5',
+      '#c7eae5',
+      '#5ab4ac',
+      '#01665e',
+    ];
+    let color = colors[depth % colors.length];
+    let style = table => table
+        .css('border', '1px solid black')
+        .css('margin', '5px')
+        .css('background', color);
+    if (value instanceof Array) {
+      let table = style($('<table></table>'));
+      if (horizontal) {
+        let row = $('<tr></tr>');
+        value.forEach(v => row
+            .append(this.toHTML(v, $('<td></td>'), false, depth + 1)));
+        table.append(row);
+      } else {
+        value.forEach(v => table
+            .append($('<tr></tr>')
+              .append(this.toHTML(v, $('<td></td>'), true, depth + 1))));
+      }
+      outer.append(table);
+    } else if (typeof value == 'object' && 'tag' in value) {
+      let table = style($('<table></table>'));
+      table.append($('<tr></tr>')
+        .append($('<th></th>')
+          .attr('colspan', 2)
+          .text(value.tag)));
+      for (let field in value.fields) {
+        table.append($('<tr></tr>')
+          .append($('<td></td>').text(field))
+          .append(this.toHTML(value.fields[field], $('<td></td>'), true, depth + 1)));
+      }
+      outer.append(table);
+    } else if (typeof value == 'object') {
+      let table = style($('<table></table>'));
+      for (let field in value) {
+        table.append($('<tr></tr>')
+          .append($('<td></td>').text(field))
+          .append(this.toHTML(value[field], $('<td></td>'), true, depth + 1)));
+      }
+      outer.append(table);
+    } else if (typeof value == 'string') {
+      outer.text(value);
+    } else {
+      outer.text(JSON.stringify(value, null, 2));
+    }
+    return outer;
+  }
+
+  update() {
+    let $ = jQuery;
+    let output = Array.from(this.module.env.vars.list())
+      .map(k => [k, this.module.env.vars.get(k)])
+      .filter(kv => kv[1].isConstant !== true)
+      .map(kv => {
+        let rhs = this.toHTML(kv[1].toJSON(), $('<div></div>'), true, 0).html();
+        return `${kv[0]}: ${rhs}`;
+      })
+      .join('\n');
+    this.elem.html(output);
+  }
+}
+
 let pageLoaded = new Promise((resolve, reject) => {
   jQuery(window).load(resolve);
 });
@@ -104,6 +183,8 @@ Promise.all([
   let controller = new Controller();
   controller.views.push(
     new DefaultView(controller, jQuery('#state'), module));
+  controller.views.push(
+    new HTMLStateView(controller, jQuery('#state2'), module));
 
   let userView = results[1];
   controller.views.push(

@@ -66,6 +66,14 @@ class RecordValue extends Value {
     }).join(', ');
     return `${name} { ${fields} }`;
   }
+
+  toJSON() {
+    let o = {};
+    this.type.decl.fields.forEach((v) => {
+      o[v.id.value] = this[v.id.value].toJSON();
+    })
+    return o;
+  }
 }
 
 
