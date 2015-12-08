@@ -72,6 +72,7 @@ class OrderedSetValue extends Value {
       this.items = this.items.slice(0, index)
         .concat(this.items.slice(index + 1))
         .concat([this.type.valuetype.makeDefaultValue()]);
+      this.used -= 1;
       return true;
     }
     return false;
