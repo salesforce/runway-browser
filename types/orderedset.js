@@ -78,10 +78,13 @@ class OrderedSetValue extends Value {
     return false;
   }
   contains(v) {
-    let ret = false;
-    this.forEach(x => {
+    return this.indexOf(v) !== null;
+  }
+  indexOf(v) {
+    let ret = null;
+    this.forEach((x, i) => {
       if (x.equals(v)) {
-        ret = true;
+        ret = this.type.indextype.low + i;
       }
     });
     return ret;

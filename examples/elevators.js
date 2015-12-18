@@ -258,26 +258,27 @@ class Person {
 
   update() {
     let pvar = this.getVar();
-    let bbox = pvar.match({
+    let bbox = debugBBox(this.snap, pvar.match({
       Sleeping: s => {
         this.mainElem.node.innerHTML = 'z';
-        return debugBBox(this.snap, layout.person(s.floor, this.id));
+        return layout.person(s.floor, this.id);
       },
       Waiting: w => {
         this.mainElem.node.innerHTML = 'w';
-        return debugBBox(this.snap, layout.person(w.floor, this.id));
+        return layout.person(w.floor, this.id);
       },
       Riding: r => {
         this.mainElem.node.innerHTML = 'r';
         let evar = this.module.env.getVar('elevators').index(r.elevator);
-        return debugBBox(this.snap,
-          layout.elevator(elevatorFloor(evar),
-            r.elevator.value));
+        let bbox = layout.elevator(elevatorFloor(evar),
+            r.elevator.value);
+        bbox.x += 3 * (evar.lookup('riders').indexOf(this.id) - 2);
+        return bbox;
       },
-    });
+    }));
     this.mainElem.attr({
       x: bbox.x,
-      y: bbox.y2
+      y: bbox.y2,
     });
   }
 }
