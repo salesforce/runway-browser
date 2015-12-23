@@ -18,6 +18,11 @@ let Snap = require('./node_modules/snapsvg/dist/snap.svg.js');
 
 let queryString = require('querystring');
 
+let React = require('react');
+let ReactDOM = require('react-dom');
+
+let babel = require('babel-standalone');
+
 let prelude = compiler.loadPrelude(preludeText);
 
 let meval = (text) => {
@@ -41,6 +46,19 @@ let fetchRemoteModule = function(filename) {
       let load = eval(`(function load(module) { ${input.getText()} })`);
       let module = {};
       load(module);
+      return module.exports;
+    });
+};
+
+let fetchRemoteJSX = function(filename) {
+  return fetchRemoteFile(filename)
+    .then((input) => {
+      let code = babel.transform(input.getText(), {
+        presets: ['react'],
+      }).code;
+      let load = eval(`(function load(module, React, ReactDOM) { ${code} })`);
+      let module = {};
+      load(module, React, ReactDOM);
       return module.exports;
     });
 };
@@ -113,6 +131,7 @@ class Controller {
     this.views = [];
     this.toHTML = toHTML;
     this.toHTMLString = toHTMLString;
+    this.React = React;
   }
   stateChanged() {
     this.views.forEach((view) => view.update());
@@ -173,7 +192,7 @@ if ('model' in getParams) {
 
 Promise.all([
   fetchRemoteFile(basename + '.model'),
-  fetchRemoteModule(basename + '.js'),
+  fetchRemoteJSX(basename + '.jsx'),
   pageLoaded,
 ]).then((results) => {
   let input = results[0];

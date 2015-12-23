@@ -4,12 +4,15 @@
   "description": "Requires node >=v4.x, bower, npm.",
   "main": "main.js",
   "dependencies": {
+    "babel-standalone": "^1.0.0",
     "bootstrap": "^3.3.5",
     "bootstrap-menu": "^1.0.8",
     "bootstrap-webpack": "0.0.5",
     "imports-loader": "^0.6.5",
     "jquery": "^2.1.4",
     "jquery-ui": "^1.10.5",
+    "react": "^0.14.3",
+    "react-dom": "^0.14.3",
     "snapsvg": "^0.4.0"
   },
   "devDependencies": {
