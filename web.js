@@ -14,8 +14,6 @@ let Input = require('./input.js');
 
 let preludeText = require('./prelude.model');
 
-let Snap = require('./node_modules/snapsvg/dist/snap.svg.js');
-
 let queryString = require('querystring');
 
 let React = require('react');
@@ -215,7 +213,7 @@ Promise.all([
 
   let userView = results[1];
   controller.views.push(
-    new userView(controller, Snap('#view'), module));
+    new userView(controller, jQuery('#view #user')[0], module));
 
   jQuery('#simulate').click(() => {
     if (simulateId === undefined) {

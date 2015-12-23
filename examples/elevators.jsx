@@ -344,7 +344,7 @@ let makeElevatorView = function(model) {
 };
 
 class View {
-  constructor(controller, snap, module) {
+  constructor(controller, svg, module) {
     this.controller = controller;
     this.module = module;
     this.tooltip = new Tooltip(jQuery('#tooltip'));
@@ -352,7 +352,7 @@ class View {
     let ElevatorView = makeElevatorView(this.module.env);
     this.reactComponent = ReactDOM.render(
       <ElevatorView controller={this.controller} tooltip={this.tooltip} />,
-      snap.group().node);
+      svg);
   }
 
   update() {
