@@ -1,6 +1,7 @@
 "use strict";
 
 let jQuery = require('jquery');
+let StateDump = require('./statedump.js');
 
 class Tooltip {
   constructor(elem) {
@@ -8,6 +9,17 @@ class Tooltip {
     this.tooltipInner = jQuery('.tooltip-inner', this.tooltipElem);
     this.node = undefined;
     this.makeHTML = undefined;
+    let self = this;
+    this.Mixin = {
+      tooltipMouseOver: function(evt) {
+        self.set(evt.target, () => {
+          return StateDump.toHTMLString(this.getVar());
+        });
+      },
+      tooltipMouseOut: function(evt) {
+        self.clear();
+      },
+    };
   }
   update() {
     if (this.node === undefined) {

@@ -4,7 +4,6 @@ let React = require('React');
 let ReactDOM = require('ReactDOM');
 let BootstrapMenu = require('bootstrap-menu');
 let jQuery = require('jquery');
-let StateDump = require('StateDump');
 let Tooltip = require('Tooltip');
 let Util = require('Util');
 
@@ -91,6 +90,8 @@ let elevatorFloor = (evar) => evar.lookup('location').match({
   });
 
 let Elevator = React.createClass({
+  mixins: [tooltip.Mixin],
+
   componentDidMount: function() {
     let id = this.props.elevatorId;
     this.menu = new BootstrapMenu(`#elevator-${id}`, {
@@ -120,22 +121,15 @@ let Elevator = React.createClass({
     this.menu.destroy();
   },
 
-  onMouseOver: function(evt) {
-    tooltip.set(evt.target, () => {
-      let id = this.props.elevatorId;
-      let evar = model.getVar('elevators').index(id);
-      return StateDump.toHTMLString(evar);
-    });
-  },
-
-  onMouseOut: function(evt) {
-    tooltip.clear();
+  getVar: function() {
+    let id = this.props.elevatorId;
+    return model.getVar('elevators').index(id);
   },
 
   render: function() {
     let layout = this.props.layout;
     let id = this.props.elevatorId;
-    let evar = model.getVar('elevators').index(id);
+    let evar = this.getVar();
     let floor = elevatorFloor(evar);
     let bbox = layout.elevator(floor, id);
     let arrow = evar.lookup('direction').match({
@@ -155,8 +149,8 @@ let Elevator = React.createClass({
     return <g
       id={'elevator-' + id}
       className="clickable"
-      onMouseOver={this.onMouseOver}
-      onMouseOut={this.onMouseOut}
+      onMouseOver={this.tooltipMouseOver}
+      onMouseOut={this.tooltipMouseOut}
       >
       <rect
         style={{fill: 'white', stroke: 'black'}}
@@ -173,7 +167,9 @@ let Elevator = React.createClass({
   },
 });
 
+console.log(Tooltip.Mixin);
 let Person = React.createClass({
+  mixins: [tooltip.Mixin],
 
   componentDidMount: function() {
     let id = this.props.personId;
@@ -212,22 +208,15 @@ let Person = React.createClass({
     this.menu.destroy();
   },
 
-  onMouseOver: function(evt) {
-    tooltip.set(evt.target, () => {
-      let id = this.props.personId;
-      let pvar = model.getVar('people').index(id);
-      return StateDump.toHTMLString(pvar);
-    });
-  },
-
-  onMouseOut: function(evt) {
-    tooltip.clear();
+  getVar: function() {
+    let id = this.props.personId;
+    return model.getVar('people').index(id);
   },
 
   render: function() {
     let layout = this.props.layout;
     let id = this.props.personId;
-    let pvar = model.getVar('people').index(id);
+    let pvar = this.getVar();
     let text;
     let bbox = pvar.match({
       Sleeping: s => {
@@ -250,8 +239,8 @@ let Person = React.createClass({
 
     return <g id={'person-' + id}
       className='clickable'
-      onMouseOver={this.onMouseOver}
-      onMouseOut={this.onMouseOut}>
+      onMouseOver={this.tooltipMouseOver}
+      onMouseOut={this.tooltipMouseOut}>
         <text x={bbox.x} y={bbox.y2} style={{fontSize: Util.fontSize(bbox)}}>{text}</text>
     </g>;
   },
