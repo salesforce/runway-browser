@@ -234,4 +234,26 @@ Promise.all([
     }
     return false;
   });
+
+
+  let viewWrapper = jQuery('#viewwrapper');
+  let viewElem = jQuery('#view');
+  viewWrapper.mouseup(() => {
+    let width = viewWrapper.width();
+    let height = viewWrapper.height();
+    console.log(`resize to ${width}, ${height}`);
+    viewElem.width(width);
+    viewElem.height(height);
+    if (width < height) {
+      height = height / width * 100;
+      width = 100;
+    } else {
+      width = width / height * 100;
+      height = 100;
+    }
+    // viewElem.attr('viewBox', ...) sets viewbox (lowercase) instead
+    viewElem[0].setAttribute('viewBox',
+      `0 0 ${width} ${height}`);
+    controller.stateChanged();
+  });
 });

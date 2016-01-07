@@ -51,67 +51,69 @@ let fillBBox = (bbox) => {
   return bbox;
 };
 
-let layout = {
-  floor: floorId => {
+let Layout = (width, height) => {
+  let layout = {};
+  layout.floor = floorId => {
     return fillBBox({
-      x: 2,
-      y: 5 + 15 * (numFloors - floorId),
-      w: 96,
-      h: 15,
+      x: width * .02,
+      y: height * (.05 + .15 * (numFloors - floorId)),
+      w: width * .96,
+      h: height * .15,
     });
-  },
+  };
 
-  label: floorId => {
+  layout.label = floorId => {
     let floor = layout.floor(floorId);
     return fillBBox({
-      x: 5,
-      y: floor.y + 2,
-      w: 8,
-      h: floor.h - 4,
+      x: width * .05,
+      y: floor.y + height * .02,
+      w: width * .08,
+      h: floor.h - height * .04,
     });
-  },
+  };
 
-  elevators: floorId => {
+  layout.elevators = floorId => {
     let floor = layout.floor(floorId);
     let label = layout.label(floorId);
     return fillBBox({
       x: label.x2,
-      y: floor.y + 2,
-      w: numElevators * 15,
-      h: floor.h - 4,
+      y: floor.y + height * .02,
+      w: width * numElevators * .15,
+      h: floor.h - height * .04,
     });
-  },
+  };
 
-  elevator: (floorId, id) => {
+  layout.elevator = (floorId, id) => {
     let elevators = layout.elevators(floorId);
     return fillBBox({
-      x: elevators.x + 2.5 + (id - 1) * 15,
+      x: elevators.x + width * (.025 + (id - 1) * .15),
       y: elevators.y,
-      w: 10,
+      w: width * .10,
       h: elevators.h,
     });
-  },
+  };
 
-  people: floorId => {
+  layout.people = floorId => {
     let floor = layout.floor(floorId);
     let elevators = layout.elevators(floorId);
     return fillBBox({
       x: elevators.x2,
-      y: floor.y + 2,
+      y: floor.y + height * .02,
       w: floor.x2 - elevators.x2,
-      h: floor.h - 4,
+      h: floor.h - height * .04,
     });
-  },
+  };
 
-  person: (floorId, count) => {
+  layout.person = (floorId, count) => {
     let people = layout.people(floorId);
     return fillBBox({
-      x: people.x + (count - 1) * 8,
+      x: people.x + width * (count - 1) * .08,
       y: people.y,
-      w: 8,
+      w: width * .08,
       h: people.h,
     });
-  },
+  };
+  return layout;
 };
 
 let elevatorFloor = (evar) => evar.lookup('location').match({
@@ -166,6 +168,7 @@ let Elevator = React.createClass({
   },
 
   render: function() {
+    let layout = this.props.layout;
     let id = this.props.elevatorId;
     let evar = this.props.model.getVar('elevators').index(id);
     let floor = elevatorFloor(evar);
@@ -204,6 +207,12 @@ let Elevator = React.createClass({
     </g>;
   },
 });
+
+let fontSize = bbox => {
+  return Math.min(
+    bbox.x2 - bbox.x,
+    bbox.y2 - bbox.y);
+};
 
 let Person = React.createClass({
 
@@ -257,6 +266,7 @@ let Person = React.createClass({
   },
 
   render: function() {
+    let layout = this.props.layout;
     let id = this.props.personId;
     let pvar = this.props.model.getVar('people').index(id);
     let text;
@@ -283,13 +293,14 @@ let Person = React.createClass({
       className='clickable'
       onMouseOver={this.onMouseOver}
       onMouseOut={this.onMouseOut}>
-        <text x={bbox.x} y={bbox.y2}>{text}</text>
+        <text x={bbox.x} y={bbox.y2} style={{fontSize: fontSize(bbox)}}>{text}</text>
     </g>;
   },
 });
 
 let Background = React.createClass({
   render: function() {
+    let layout = this.props.layout;
     let lowerLine = (id) => {
       let bbox = layout.floor(id);
       return <line key={id}
@@ -301,7 +312,7 @@ let Background = React.createClass({
     let labels = range(this.props.floors).map(i => {
       let id = i + 1;
       let bbox = layout.label(id);
-      return <text key={id} x={bbox.x} y={bbox.y2}>
+      return <text key={id} x={bbox.x} y={bbox.y2} style={{fontSize: fontSize(bbox)}}>
           {id}
         </text>;
     });
@@ -312,7 +323,7 @@ let Background = React.createClass({
   },
 });
 
-let makeElevatorView = function(model) {
+let makeElevatorView = function(model, outerSVG) {
   let ElevatorView = React.createClass({
     getInitialState: function() {
       return {
@@ -321,20 +332,24 @@ let makeElevatorView = function(model) {
     },
 
     render: function() {
+      let box = outerSVG.viewBox.baseVal;
+      let layout = Layout(box.width, box.height);
       let elevators = range(numElevators).map(i => (
         <Elevator key={i + 1} elevatorId={i + 1}
           controller={this.props.controller}
           model={this.state.model} 
-          tooltip={this.props.tooltip} />
+          tooltip={this.props.tooltip}
+          layout={layout} />
       ));
       let people = range(numPeople).map(i => (
         <Person key={i + 1} personId={i + 1}
           controller={this.props.controller}
           model={this.state.model}
-          tooltip={this.props.tooltip} />
+          tooltip={this.props.tooltip}
+          layout={layout} />
       ));
       return <g>
-        <Background floors={numFloors} />
+        <Background layout={layout} floors={numFloors} />
         <g id="elevators">{elevators}</g>
         <g id="people">{people}</g>
       </g>;
@@ -349,7 +364,7 @@ class View {
     this.module = module;
     this.tooltip = new Tooltip(jQuery('#tooltip'));
 
-    let ElevatorView = makeElevatorView(this.module.env);
+    let ElevatorView = makeElevatorView(this.module.env, svg.parentElement);
     this.reactComponent = ReactDOM.render(
       <ElevatorView controller={this.controller} tooltip={this.tooltip} />,
       svg);
