@@ -3,62 +3,18 @@
 let React = require('React');
 let ReactDOM = require('ReactDOM');
 let BootstrapMenu = require('bootstrap-menu');
+let jQuery = require('jquery');
+let Tooltip = require('Tooltip');
+let Util = require('Util');
 
 let numFloors = 6;
 let numElevators = 3;
 let numPeople = 5;
 
-let range = (b) => Array.from({
-    length: b
-  }, (v, i) => i);
-
-class Tooltip {
-  constructor(elem) {
-    this.tooltipElem = elem;
-    this.tooltipInner = jQuery('.tooltip-inner', this.tooltipElem);
-    this.node = undefined;
-    this.makeHTML = undefined;
-  }
-  update() {
-    if (this.node === undefined) {
-      return;
-    }
-    this.tooltipInner.html(this.makeHTML());
-    let bbox = this.node.getBBox();
-    let matrix = this.node.getScreenCTM().translate(bbox.x + bbox.width/2, bbox.y);
-    let s = {
-      opacity: 1,
-      left: Math.max(0, matrix.e + window.scrollX - this.tooltipElem.width() / 2) + 'px',
-      top: Math.max(0, matrix.f + window.scrollY - this.tooltipElem.height()) + 'px',
-    };
-    this.tooltipElem.css(s);
-  }
-  set(node, makeHTML) {
-    this.node = node;
-    this.makeHTML = makeHTML;
-    this.tooltipElem.show();
-    this.update();
-  }
-  clear() {
-    this.node = undefined;
-    this.makeHTML = undefined;
-    this.tooltipInner.html('');
-    this.tooltipElem.hide();
-  }
-}
-
-let fillBBox = (bbox) => {
-  bbox.x2 = bbox.x + bbox.w;
-  bbox.y2 = bbox.y + bbox.h;
-  bbox.cx = bbox.x + bbox.w / 2;
-  bbox.cy = bbox.y + bbox.h / 2;
-  return bbox;
-};
-
 let Layout = (width, height) => {
   let layout = {};
   layout.floor = floorId => {
-    return fillBBox({
+    return Util.fillBBox({
       x: width * .02,
       y: height * (.05 + .15 * (numFloors - floorId)),
       w: width * .96,
@@ -68,7 +24,7 @@ let Layout = (width, height) => {
 
   layout.label = floorId => {
     let floor = layout.floor(floorId);
-    return fillBBox({
+    return Util.fillBBox({
       x: width * .05,
       y: floor.y + height * .02,
       w: width * .08,
@@ -79,7 +35,7 @@ let Layout = (width, height) => {
   layout.elevators = floorId => {
     let floor = layout.floor(floorId);
     let label = layout.label(floorId);
-    return fillBBox({
+    return Util.fillBBox({
       x: label.x2,
       y: floor.y + height * .02,
       w: width * numElevators * .15,
@@ -89,7 +45,7 @@ let Layout = (width, height) => {
 
   layout.elevator = (floorId, id) => {
     let elevators = layout.elevators(floorId);
-    return fillBBox({
+    return Util.fillBBox({
       x: elevators.x + width * (.025 + (id - 1) * .15),
       y: elevators.y,
       w: width * .10,
@@ -100,7 +56,7 @@ let Layout = (width, height) => {
   layout.people = floorId => {
     let floor = layout.floor(floorId);
     let elevators = layout.elevators(floorId);
-    return fillBBox({
+    return Util.fillBBox({
       x: elevators.x2,
       y: floor.y + height * .02,
       w: floor.x2 - elevators.x2,
@@ -110,7 +66,7 @@ let Layout = (width, height) => {
 
   layout.person = (floorId, count) => {
     let people = layout.people(floorId);
-    return fillBBox({
+    return Util.fillBBox({
       x: people.x + width * (count - 1) * .08,
       y: people.y,
       w: width * .08,
@@ -212,12 +168,6 @@ let Elevator = React.createClass({
   },
 });
 
-let fontSize = bbox => {
-  return Math.min(
-    bbox.x2 - bbox.x,
-    bbox.y2 - bbox.y);
-};
-
 let Person = React.createClass({
 
   componentDidMount: function() {
@@ -297,7 +247,7 @@ let Person = React.createClass({
       className='clickable'
       onMouseOver={this.onMouseOver}
       onMouseOut={this.onMouseOut}>
-        <text x={bbox.x} y={bbox.y2} style={{fontSize: fontSize(bbox)}}>{text}</text>
+        <text x={bbox.x} y={bbox.y2} style={{fontSize: Util.fontSize(bbox)}}>{text}</text>
     </g>;
   },
 });
@@ -312,11 +262,11 @@ let Background = React.createClass({
         x2={bbox.x2} y2={bbox.y2}
         style={{stroke: 'gray'}} />;
     };
-    let lines = range(this.props.floors + 1).map(i => lowerLine(i + 1));
-    let labels = range(this.props.floors).map(i => {
+    let lines = Util.range(this.props.floors + 1).map(i => lowerLine(i + 1));
+    let labels = Util.range(this.props.floors).map(i => {
       let id = i + 1;
       let bbox = layout.label(id);
-      return <text key={id} x={bbox.x} y={bbox.y2} style={{fontSize: fontSize(bbox)}}>
+      return <text key={id} x={bbox.x} y={bbox.y2} style={{fontSize: Util.fontSize(bbox)}}>
           {id}
         </text>;
     });
@@ -338,14 +288,14 @@ let makeElevatorView = function(model, outerSVG) {
     render: function() {
       let box = outerSVG.viewBox.baseVal;
       let layout = Layout(box.width, box.height);
-      let elevators = range(numElevators).map(i => (
+      let elevators = Util.range(numElevators).map(i => (
         <Elevator key={i + 1} elevatorId={i + 1}
           controller={this.props.controller}
           model={this.state.model} 
           tooltip={this.props.tooltip}
           layout={layout} />
       ));
-      let people = range(numPeople).map(i => (
+      let people = Util.range(numPeople).map(i => (
         <Person key={i + 1} personId={i + 1}
           controller={this.props.controller}
           model={this.state.model}

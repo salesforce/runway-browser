@@ -1,6 +1,6 @@
 "use strict";
 
-let jQuery = require('./node_modules/jquery/dist/jquery.js');
+let jQuery = require('jquery');
 window.jQuery = jQuery;
 
 require('bootstrap-webpack');
@@ -11,6 +11,9 @@ window.compiler = compiler;
 let simulator = require('./simulator.js');
 let GlobalEnvironment = require('./environment.js').GlobalEnvironment;
 let Input = require('./input.js');
+
+let Tooltip = require('./web/tooltip.js');
+let Util = require('./web/util.js');
 
 let preludeText = require('./prelude.model');
 
@@ -41,8 +44,11 @@ let fetchRemoteFile = (filename) => new Promise((resolve, reject) => {
 // exported to modules loaded at runtime
 let requireModules = {
   'bootstrap-menu': BootstrapMenu,
+  jquery: jQuery,
   React: React,
   ReactDOM: ReactDOM,
+  Tooltip: Tooltip,
+  Util: Util,
 };
 let pseudoRequire = function(module) {
   if (module in requireModules) {
