@@ -4,6 +4,7 @@ let React = require('React');
 let ReactDOM = require('ReactDOM');
 let BootstrapMenu = require('bootstrap-menu');
 let jQuery = require('jquery');
+let StateDump = require('StateDump');
 let Tooltip = require('Tooltip');
 let Util = require('Util');
 
@@ -119,7 +120,7 @@ let Elevator = React.createClass({
     this.props.tooltip.set(evt.target, () => {
       let id = this.props.elevatorId;
       let evar = this.props.model.getVar('elevators').index(id);
-      return this.props.controller.toHTMLString(evar);
+      return StateDump.toHTMLString(evar);
     });
   },
 
@@ -211,7 +212,7 @@ let Person = React.createClass({
     this.props.tooltip.set(evt.target, () => {
       let id = this.props.personId;
       let pvar = this.props.model.getVar('people').index(id);
-      return this.props.controller.toHTMLString(pvar);
+      return StateDump.toHTMLString(pvar);
     });
   },
 
