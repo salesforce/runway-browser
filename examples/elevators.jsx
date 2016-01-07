@@ -8,6 +8,11 @@ let StateDump = require('StateDump');
 let Tooltip = require('Tooltip');
 let Util = require('Util');
 
+let View = function(controller, svg, module) {
+
+let model = module.env;
+let tooltip = new Tooltip(jQuery('#tooltip'));
+
 let numFloors = 6;
 let numElevators = 3;
 let numPeople = 5;
@@ -86,7 +91,6 @@ let elevatorFloor = (evar) => evar.lookup('location').match({
   });
 
 let Elevator = React.createClass({
-
   componentDidMount: function() {
     let id = this.props.elevatorId;
     this.menu = new BootstrapMenu(`#elevator-${id}`, {
@@ -96,16 +100,16 @@ let Elevator = React.createClass({
           name: 'move',
           onClick: () => {
             console.log('move', id);
-            this.props.model.getRule('move').fire(id);
-            this.props.controller.stateChanged();
+            model.getRule('move').fire(id);
+            controller.stateChanged();
           },
         },
         {
           name: 'change direction',
           onClick: () => {
             console.log('change direction', id);
-            this.props.model.getRule('changeDirection').fire(id);
-            this.props.controller.stateChanged();
+            model.getRule('changeDirection').fire(id);
+            controller.stateChanged();
           },
         },
       ],
@@ -117,21 +121,21 @@ let Elevator = React.createClass({
   },
 
   onMouseOver: function(evt) {
-    this.props.tooltip.set(evt.target, () => {
+    tooltip.set(evt.target, () => {
       let id = this.props.elevatorId;
-      let evar = this.props.model.getVar('elevators').index(id);
+      let evar = model.getVar('elevators').index(id);
       return StateDump.toHTMLString(evar);
     });
   },
 
   onMouseOut: function(evt) {
-    this.props.tooltip.clear();
+    tooltip.clear();
   },
 
   render: function() {
     let layout = this.props.layout;
     let id = this.props.elevatorId;
-    let evar = this.props.model.getVar('elevators').index(id);
+    let evar = model.getVar('elevators').index(id);
     let floor = elevatorFloor(evar);
     let bbox = layout.elevator(floor, id);
     let arrow = evar.lookup('direction').match({
@@ -180,24 +184,24 @@ let Person = React.createClass({
           name: 'wake',
           onClick: () => {
             console.log('wake', id);
-            this.props.model.getRule('wake').fire(id);
-            this.props.controller.stateChanged();
+            model.getRule('wake').fire(id);
+            controller.stateChanged();
           },
         },
         {
           name: 'board',
           onClick: () => {
             console.log('board', id);
-            this.props.model.getRule('board').fire(id);
-            this.props.controller.stateChanged();
+            model.getRule('board').fire(id);
+            controller.stateChanged();
           },
         },
         {
           name: 'leave',
           onClick: () => {
             console.log('leave', id);
-            this.props.model.getRule('leave').fire(id);
-            this.props.controller.stateChanged();
+            model.getRule('leave').fire(id);
+            controller.stateChanged();
           },
         },
       ],
@@ -209,21 +213,21 @@ let Person = React.createClass({
   },
 
   onMouseOver: function(evt) {
-    this.props.tooltip.set(evt.target, () => {
+    tooltip.set(evt.target, () => {
       let id = this.props.personId;
-      let pvar = this.props.model.getVar('people').index(id);
+      let pvar = model.getVar('people').index(id);
       return StateDump.toHTMLString(pvar);
     });
   },
 
   onMouseOut: function(evt) {
-    this.props.tooltip.clear();
+    tooltip.clear();
   },
 
   render: function() {
     let layout = this.props.layout;
     let id = this.props.personId;
-    let pvar = this.props.model.getVar('people').index(id);
+    let pvar = model.getVar('people').index(id);
     let text;
     let bbox = pvar.match({
       Sleeping: s => {
@@ -236,7 +240,7 @@ let Person = React.createClass({
       },
       Riding: r => {
         text = 'r';
-        let evar = this.props.model.getVar('elevators').index(r.elevator);
+        let evar = model.getVar('elevators').index(r.elevator);
         let bbox = layout.elevator(elevatorFloor(evar),
             r.elevator.value);
         bbox.x += 3 * (evar.lookup('riders').indexOf(id) - 2);
@@ -278,60 +282,39 @@ let Background = React.createClass({
   },
 });
 
-let makeElevatorView = function(model, outerSVG) {
-  let ElevatorView = React.createClass({
-    getInitialState: function() {
-      return {
-        model: model,
-      };
-    },
+let ElevatorView = React.createClass({
+  render: function() {
+    let outerSVG = svg.parentElement;
+    let box = outerSVG.viewBox.baseVal;
+    let layout = Layout(box.width, box.height);
+    let elevators = Util.range(numElevators).map(i => (
+      <Elevator key={i + 1} elevatorId={i + 1}
+        layout={layout} />
+    ));
+    let people = Util.range(numPeople).map(i => (
+      <Person key={i + 1} personId={i + 1}
+        layout={layout} />
+    ));
+    return <g>
+      <Background layout={layout} floors={numFloors} />
+      <g id="elevators">{elevators}</g>
+      <g id="people">{people}</g>
+    </g>;
+  },
+});
 
-    render: function() {
-      let box = outerSVG.viewBox.baseVal;
-      let layout = Layout(box.width, box.height);
-      let elevators = Util.range(numElevators).map(i => (
-        <Elevator key={i + 1} elevatorId={i + 1}
-          controller={this.props.controller}
-          model={this.state.model} 
-          tooltip={this.props.tooltip}
-          layout={layout} />
-      ));
-      let people = Util.range(numPeople).map(i => (
-        <Person key={i + 1} personId={i + 1}
-          controller={this.props.controller}
-          model={this.state.model}
-          tooltip={this.props.tooltip}
-          layout={layout} />
-      ));
-      return <g>
-        <Background layout={layout} floors={numFloors} />
-        <g id="elevators">{elevators}</g>
-        <g id="people">{people}</g>
-      </g>;
-    },
-  });
-  return ElevatorView;
-};
+let reactComponent = ReactDOM.render(<ElevatorView />, svg);
 
-class View {
-  constructor(controller, svg, module) {
-    this.controller = controller;
-    this.module = module;
-    this.tooltip = new Tooltip(jQuery('#tooltip'));
-
-    let ElevatorView = makeElevatorView(this.module.env, svg.parentElement);
-    this.reactComponent = ReactDOM.render(
-      <ElevatorView controller={this.controller} tooltip={this.tooltip} />,
-      svg);
-  }
-
-  update() {
+return {
+  update: function() {
     // trigger a render
-    this.reactComponent.setState({}, () => {
-      this.tooltip.update();
+    reactComponent.setState({}, () => {
+      tooltip.update();
       console.log('rendered');
     });
   }
-}
+};
+
+}; // View
 
 module.exports = View;
