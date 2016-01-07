@@ -94,27 +94,10 @@ let Elevator = React.createClass({
 
   componentDidMount: function() {
     let id = this.props.elevatorId;
-    this.menu = new BootstrapMenu(`#elevator-${id}`, {
-      menuEvent: 'click',
-      actions: [
-        {
-          name: 'move',
-          onClick: () => {
-            console.log('move', id);
-            model.getRule('move').fire(id);
-            controller.stateChanged();
-          },
-        },
-        {
-          name: 'change direction',
-          onClick: () => {
-            console.log('change direction', id);
-            model.getRule('changeDirection').fire(id);
-            controller.stateChanged();
-          },
-        },
-      ],
-    });
+    this.menu = ruleMenu(`#elevator-${id}`, [
+      ['move', id],
+      ['changeDirection', id],
+    ]);
   },
 
   componentWillUnmount: function() {
@@ -167,41 +150,29 @@ let Elevator = React.createClass({
   },
 });
 
+let ruleMenu = (selector, rules) => new BootstrapMenu(selector, {
+  menuEvent: 'click',
+  actions: rules.map(rule => ({
+      name: rule[0],
+      onClick: () => {
+        console.log(rule);
+        model.getRule(rule[0]).fire(rule[1]);
+        controller.stateChanged();
+      },
+  })),
+});
+
 console.log(Tooltip.Mixin);
 let Person = React.createClass({
   mixins: [tooltip.Mixin],
 
   componentDidMount: function() {
     let id = this.props.personId;
-    this.menu = new BootstrapMenu(`#person-${id}`, {
-      menuEvent: 'click',
-      actions: [
-        {
-          name: 'wake',
-          onClick: () => {
-            console.log('wake', id);
-            model.getRule('wake').fire(id);
-            controller.stateChanged();
-          },
-        },
-        {
-          name: 'board',
-          onClick: () => {
-            console.log('board', id);
-            model.getRule('board').fire(id);
-            controller.stateChanged();
-          },
-        },
-        {
-          name: 'leave',
-          onClick: () => {
-            console.log('leave', id);
-            model.getRule('leave').fire(id);
-            controller.stateChanged();
-          },
-        },
-      ],
-    });
+    this.menu = ruleMenu(`#person-${id}`, [
+      ['wake', id],
+      ['board', id],
+      ['leave', id],
+    ]);
   },
 
   componentWillUnmount: function() {
