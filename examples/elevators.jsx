@@ -1,5 +1,9 @@
 "use strict";
 
+let React = require('React');
+let ReactDOM = require('ReactDOM');
+let BootstrapMenu = require('bootstrap-menu');
+
 let numFloors = 6;
 let numElevators = 3;
 let numPeople = 5;

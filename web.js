@@ -38,12 +38,26 @@ let fetchRemoteFile = (filename) => new Promise((resolve, reject) => {
     });
   });
 
+// exported to modules loaded at runtime
+let requireModules = {
+  'bootstrap-menu': BootstrapMenu,
+  React: React,
+  ReactDOM: ReactDOM,
+};
+let pseudoRequire = function(module) {
+  if (module in requireModules) {
+    return requireModules[module];
+  } else {
+    throw Error(`Unknown module: ${module}`);
+  }
+};
+
 let fetchRemoteModule = function(filename) {
   return fetchRemoteFile(filename)
     .then((input) => {
-      let load = eval(`(function load(module) { ${input.getText()} })`);
+      let load = new Function('module', 'require', input.getText());
       let module = {};
-      load(module);
+      load(module, pseudoRequire);
       return module.exports;
     });
 };
@@ -54,9 +68,9 @@ let fetchRemoteJSX = function(filename) {
       let code = babel.transform(input.getText(), {
         presets: ['react'],
       }).code;
-      let load = eval(`(function load(module, React, ReactDOM) { ${code} })`);
+      let load = new Function('module', 'require', code);
       let module = {};
-      load(module, React, ReactDOM);
+      load(module, pseudoRequire);
       return module.exports;
     });
 };
@@ -129,7 +143,6 @@ class Controller {
     this.views = [];
     this.toHTML = toHTML;
     this.toHTMLString = toHTMLString;
-    this.React = React;
   }
   stateChanged() {
     this.views.forEach((view) => view.update());
