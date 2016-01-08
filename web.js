@@ -5,6 +5,8 @@ window.jQuery = jQuery;
 
 require('bootstrap-webpack');
 let BootstrapMenu = require('bootstrap-menu');
+require('bootstrap-switch');
+require('bootstrap-switch/dist/css/bootstrap2/bootstrap-switch.css');
 
 let compiler = require('./compiler.js');
 window.compiler = compiler;
@@ -170,24 +172,26 @@ Promise.all([
   controller.views.push(
     new userView(controller, jQuery('#view #user')[0], module));
 
-  jQuery('#simulate').click(() => {
-    if (simulateId === undefined) {
-      let step = () => {
-        try {
-          simulator(module);
-        } catch ( e ) {
-          jQuery('#error').text(e);
-          return;
-        }
-        controller.stateChanged();
-      };
-      step();
-      simulateId = setInterval(step, 2000);
-    } else {
-      window.clearTimeout(simulateId);
-      simulateId = undefined;
-    }
-    return false;
+  let simulateButton = jQuery('#simulate');
+  simulateButton.bootstrapSwitch({
+    onSwitchChange: () => {
+      if (simulateId === undefined) {
+        let step = () => {
+          try {
+            simulator(module);
+          } catch ( e ) {
+            jQuery('#error').text(e);
+            return;
+          }
+          controller.stateChanged();
+        };
+        step();
+        simulateId = setInterval(step, 1000);
+      } else {
+        window.clearTimeout(simulateId);
+        simulateId = undefined;
+      }
+    },
   });
 
 

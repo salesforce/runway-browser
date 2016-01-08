@@ -7,6 +7,7 @@
     "babel-standalone": "^1.0.0",
     "bootstrap": "^3.3.5",
     "bootstrap-menu": "^1.0.8",
+    "bootstrap-switch": "^3.3.2",
     "bootstrap-webpack": "0.0.5",
     "imports-loader": "^0.6.5",
     "jquery": "^2.1.4",

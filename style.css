@@ -13,3 +13,9 @@
 .clickable:hover {
   cursor: pointer;
 }
+
+.bootstrap-switch-fix .bootstrap-switch .bootstrap-switch-handle-on,
+.bootstrap-switch-fix .bootstrap-switch .bootstrap-switch-handle-off,
+.bootstrap-switch-fix .bootstrap-switch .bootstrap-switch-label {
+  height: auto;
+}
