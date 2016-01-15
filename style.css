@@ -19,3 +19,12 @@
 .bootstrap-switch-fix .bootstrap-switch .bootstrap-switch-label {
   height: auto;
 }
+
+table.statedump {
+  border: 1px solid black;
+  margin: 5px;
+}
+
+table.statedump tr td {
+  border: 1px solid black;
+}

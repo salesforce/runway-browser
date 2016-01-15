@@ -117,6 +117,7 @@ let keywords = {};
   'either',
   'else',
   'for',
+  'function',
   'if',
   'in',
   'invariant',
@@ -449,19 +450,31 @@ let distribution = call(function() {
     .then(sepBy(param, comma))
     .skip(rparen);
 
-  return seqMap(keywords.distribution,
+  return seqMap(alt(keywords.distribution, keywords['function']),
     id,
     paramlist,
     arrow,
     type,
     block,
-    (_, id, params, _2, returntype, block) => ({
+    (subkind, id, params, _2, returntype, block) => ({
         kind: 'distribution',
+        subkind: subkind,
         id: id,
         params: params,
         returntype: returntype,
         code: block
-    }));
+    })).or(seqMap(keywords['function'],
+    id,
+    paramlist,
+    block,
+    (subkind, id, params, block) => ({
+        kind: 'distribution',
+        subkind: 'function',
+        id: id,
+        params: params,
+        returntype: null,
+        code: block
+    })));
 });
 
 let returnStmt = keywords.return

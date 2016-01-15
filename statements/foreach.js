@@ -5,7 +5,7 @@ let Environment = require('../environment.js').Environment;
 let makeExpression = require('../expressions/factory.js');
 let makeStatement = require('./factory.js');
 let Statement = require('./statement.js');
-let ArrayType = require('../types/array.js');
+let Types = require('../types/types.js');
 
 class ForEach extends Statement {
   constructor(parsed, env) {
@@ -17,8 +17,8 @@ class ForEach extends Statement {
 
   typecheck() {
     this.expr.typecheck();
-    if (!(this.expr.type instanceof ArrayType.Type)) {
-      throw new errors.Type(`Cannot iterate on a ${this.expr.type.getName()} ` +
+    if (!Types.implementsIterable(this.expr.type)) {
+      throw new errors.Type(`Cannot iterate on a ${this.expr.type} ` +
         `at ${this.expr.source}`);
     }
     let dummyValue = this.expr.type.valuetype.makeDefaultValue();

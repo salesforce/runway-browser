@@ -30,7 +30,9 @@ let stateString = (module) => {
 let simulate = (module) => {
   let checkInvariants = () => {
     module.env.invariants.list().forEach(name => {
+//console.log(name, 'start');
       module.env.invariants.get(name).check();
+//console.log(name, 'done');
     });
   };
   checkInvariants();
@@ -60,7 +62,9 @@ let simulate = (module) => {
   for (nf of simpleRules) {
     let name = nf[0];
     let fire = nf[1];
+//console.log(name, 'start');
     fire();
+//console.log(name, 'done');
     let now = stateString(module);
     if (start !== now) {
       console.log(name);

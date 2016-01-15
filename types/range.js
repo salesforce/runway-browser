@@ -23,7 +23,11 @@ class RangeValue extends Value {
     } else if (newValue instanceof RangeValue) {
       return this.assign(newValue.value);
     } else {
-      throw new errors.Internal(`Trying to assign ${newValue.type.toString()} to range ${this.type.getName()}: ${this.type.low}..${this.type.high};`);
+      let t = 'undefined';
+      if (newValue !== undefined) {
+         t = `${newValue.type}`;
+      }
+      throw new errors.Internal(`Trying to assign ${t} to range ${this.type.getName()}: ${this.type.low}..${this.type.high};`);
     }
   }
 

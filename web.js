@@ -172,24 +172,31 @@ Promise.all([
   controller.views.push(
     new userView(controller, jQuery('#view #user')[0], module));
 
+  window.simulateSpeed = 500;
   let simulateButton = jQuery('#simulate');
   simulateButton.bootstrapSwitch({
     onSwitchChange: () => {
+      let stop = () => {
+        window.clearTimeout(simulateId);
+        simulateId = undefined;
+      };
       if (simulateId === undefined) {
         let step = () => {
           try {
             simulator(module);
           } catch ( e ) {
+            console.log(e);
             jQuery('#error').text(e);
+            stop();
+            throw e;
             return;
           }
           controller.stateChanged();
         };
         step();
-        simulateId = setInterval(step, 1000);
+        simulateId = setInterval(step, window.simulateSpeed);
       } else {
-        window.clearTimeout(simulateId);
-        simulateId = undefined;
+        stop();
       }
     },
   });

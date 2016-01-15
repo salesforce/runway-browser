@@ -58,6 +58,19 @@ class SetValue extends Value {
   toJSON() {
     return this.ordered.usedItems().map((v) => v.toJSON()).sort();
   }
+
+  assign(other) {
+    this.ordered.assign(other.ordered);
+  }
+  equals(other) {
+    this.ordered.equals(other.ordered);
+  }
+  size() {
+    return this.ordered.size();
+  }
+  capacity() {
+    return this.ordered.capacity();
+  }
 }
 
 class SetType extends Type {

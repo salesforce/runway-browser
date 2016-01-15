@@ -9,7 +9,11 @@ let Statement = require('./statement.js');
 class Distribution extends Statement {
   constructor(parsed, env) {
     super(parsed, env);
-    this.returntype = makeType.make(parsed.returntype, this.env);
+    if (parsed.returntype) {
+      this.returntype = makeType.make(parsed.returntype, this.env);
+    } else {
+      this.returntype = null;
+    }
     this.codeEnv = new Environment(this.env);
     this.code = makeStatement.make(this.parsed.code, this.codeEnv);
     this.params = this.parsed.params.map((param) => ({
@@ -22,6 +26,9 @@ class Distribution extends Statement {
         param.type.makeDefaultValue(),
         param.decl.source);
     });
+    if (this.parsed.subkind == 'function') {
+      this.pure = false;
+    }
     this.env.functions.set(parsed.id.value, this, this.parsed.source);
   }
 
@@ -45,7 +52,9 @@ class Distribution extends Statement {
       }
       return e.value;
     }
-    throw new errors.Internal(`No value returned from ${this.parsed.id.value}`);
+    if (this.returntype !== null) {
+      throw new errors.Internal(`No value returned from ${this.parsed.id.value}`);
+    }
   }
 }
 

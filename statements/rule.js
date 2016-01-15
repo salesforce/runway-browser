@@ -3,6 +3,7 @@
 let Environment = require('../environment.js').Environment;
 let Statement = require('./statement.js');
 let makeStatement = require('./factory.js');
+let errors = require('../errors.js');
 
 class Rule extends Statement {
   constructor(parsed, env) {
@@ -21,7 +22,13 @@ class Rule extends Statement {
   }
 
   fire() {
-    this.inner.execute();
+    try {
+      this.inner.execute();
+    } catch ( e ) {
+      if (!(e instanceof errors.Return)) {
+        throw e;
+      }
+    }
   }
 
   toString(indent) {

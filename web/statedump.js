@@ -17,19 +17,23 @@ let toHTML = function(value, outer) {
     ];
     let color = colors[depth % colors.length];
     let style = table => table
-        .css('border', '1px solid black')
-        .css('padding', '5px')
+        .addClass('statedump')
         .css('background', color);
     if (value instanceof Array) {
       let table = style($('<table></table>'));
       if (horizontal) {
         let row = $('<tr></tr>');
+        value.forEach((v, i) => row
+            .append($('<td></td>').text(i)));
+        table.append(row);
+        row = $('<tr></tr>');
         value.forEach(v => row
             .append(helper(v, $('<td></td>'), false, depth + 1)));
         table.append(row);
       } else {
-        value.forEach(v => table
+        value.forEach((v, i) => table
             .append($('<tr></tr>')
+              .append($('<td></td>').text(i))
               .append(helper(v, $('<td></td>'), true, depth + 1))));
       }
       outer.append(table);
