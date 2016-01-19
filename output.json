@@ -329,6 +329,7 @@
     },
     {
       "kind": "distribution",
+      "subkind": "distribution",
       "id": {
         "kind": "id",
         "value": "openTime",
@@ -389,6 +390,7 @@
     },
     {
       "kind": "distribution",
+      "subkind": "distribution",
       "id": {
         "kind": "id",
         "value": "doorTime",
@@ -449,6 +451,7 @@
     },
     {
       "kind": "distribution",
+      "subkind": "distribution",
       "id": {
         "kind": "id",
         "value": "makeDestination",

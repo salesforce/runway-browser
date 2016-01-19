@@ -78,7 +78,7 @@ class ArrayType extends Type {
     return new ArrayValue(this);
   }
   toString() {
-    return `Array<${this.valueType}>[${this.indexType}]`;
+    return `Array<${this.valuetype}>[${this.indextype}]`;
   }
 }
 
