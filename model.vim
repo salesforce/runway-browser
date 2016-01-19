@@ -41,6 +41,7 @@ syntax case match
 
 " These are case-sensitive:
 syn keyword modelStructure      Array
+syn keyword modelStructure      Boolean
 syn keyword modelBoolean        False
 syn keyword modelBoolean        True
 syn keyword modelFunction       capacity

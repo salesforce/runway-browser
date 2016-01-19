@@ -97,6 +97,7 @@ let lbracket = lexeme(istring('['));
 let leq = lexeme(istring('<='));
 let lparen = lexeme(istring('('));
 let minus = lexeme(istring('-'));
+let percent = lexeme(istring('%'));
 let neq = lexeme(istring('!='));
 let plus = lexeme(istring('+'));
 let rangle = lexeme(istring('>'));
@@ -105,7 +106,8 @@ let rbracket = lexeme(istring(']'));
 let req = lexeme(istring('>='));
 let rparen = lexeme(istring(')'));
 let semicolon = lexeme(istring(';'));
-let times = lexeme(istring('*'));
+let slash = lexeme(istring('/'));
+let star = lexeme(istring('*'));
 
 let keywords = {};
 [
@@ -234,7 +236,7 @@ let expr = call(function() {
 
   // Order of parsers in this table defines precedence.
   let binop = [
-    times,
+    alt(star, slash, percent),
     alt(plus, minus),
     alt(leq, req, langle, rangle),
     alt(neq, doubleEquals),

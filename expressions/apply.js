@@ -359,6 +359,8 @@ let functions = [
   new ArithmeticFunction('+', (x, y) => (x + y)),
   new ArithmeticFunction('-', (x, y) => (x - y)),
   new ArithmeticFunction('*', (x, y) => (x * y)),
+  new ArithmeticFunction('/', (x, y) => Math.floor(x / y)),
+  new ArithmeticFunction('%', (x, y) => (x % y)),
   new ArithmeticFunction('pow', (x, y) => Math.pow(x, y)),
   new ArithmeticFunction('urandomRange', randomRange),
   new PushFunction(),
