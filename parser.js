@@ -433,8 +433,11 @@ let param = seqMap(keywords.param,
 let block = lazy(() => {
   return lbrace
     .then(statement.many()).map((statements) => ({
-      kind: 'sequence',
-      statements: statements,
+      kind: 'block',
+      code: {
+        kind: 'sequence',
+        statements: statements,
+      },
   }))
     .skip(rbrace);
 });

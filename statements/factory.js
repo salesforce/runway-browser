@@ -9,6 +9,7 @@ module.exports = factory;
 let statements = new Map([
   ['assign', require('./assign.js')],
   ['assert', require('./assert.js')],
+  ['block', require('./block.js')],
   ['break', require('./break.js')],
   ['continue', require('./continue.js')],
   ['distribution', require('./distribution.js')],

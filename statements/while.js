@@ -11,8 +11,7 @@ class While extends Statement {
   constructor(parsed, env) {
     super(parsed, env);
     this.expr = makeExpression.make(this.parsed.expr, this.env);
-    this.codeEnv = new Environment(this.env);
-    this.code = makeStatement.make(this.parsed.code, this.codeEnv);
+    this.code = makeStatement.make(this.parsed.code, this.env);
   }
 
   typecheck() {

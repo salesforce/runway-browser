@@ -5,11 +5,11 @@ let Statement = require('./statement.js');
 let makeStatement = require('./factory.js');
 let errors = require('../errors.js');
 
-class Rule extends Statement {
+class Block extends Statement {
   constructor(parsed, env) {
     super(parsed, env);
-    this.inner = makeStatement.make(this.parsed.code, this.env);
-    this.env.assignRule(this.parsed.id.value, this);
+    this.innerEnv = new Environment(this.env);
+    this.inner = makeStatement.make(this.parsed.code, this.innerEnv);
   }
 
   typecheck() {
@@ -17,24 +17,15 @@ class Rule extends Statement {
   }
 
   execute() {
-    // do nothing
-  }
-
-  fire() {
-    try {
-      this.inner.execute();
-    } catch ( e ) {
-      if (!(e instanceof errors.Return)) {
-        throw e;
-      }
-    }
+    this.innerEnv.vars.forEachLocal(v => v.assign(v.type.makeDefaultValue()));
+    this.inner.execute();
   }
 
   toString(indent) {
-    return `${indent}rule ${this.parsed.id.value} {
+    return `${indent} {
 ${this.inner.toString(indent + '  ')}
 }`;
   }
 }
 
-module.exports = Rule;
+module.exports = Block;

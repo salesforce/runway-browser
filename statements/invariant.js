@@ -7,8 +7,7 @@ let makeStatement = require('./factory.js');
 class Invariant extends Statement {
   constructor(parsed, env) {
     super(parsed, env);
-    this.innerEnv = new Environment(this.env);
-    this.inner = makeStatement.make(this.parsed.code, this.innerEnv);
+    this.inner = makeStatement.make(this.parsed.code, this.env);
     this.env.invariants.set(this.parsed.id.value, this, this.parsed.source);
   }
 
