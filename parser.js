@@ -97,9 +97,12 @@ let lbracket = lexeme(istring('['));
 let leq = lexeme(istring('<='));
 let lparen = lexeme(istring('('));
 let minus = lexeme(istring('-'));
+let minusEquals = lexeme(istring('-='));
 let percent = lexeme(istring('%'));
+let percentEquals = lexeme(istring('%='));
 let neq = lexeme(istring('!='));
 let plus = lexeme(istring('+'));
+let plusEquals = lexeme(istring('+='));
 let rangle = lexeme(istring('>'));
 let rbrace = lexeme(istring('}'));
 let rbracket = lexeme(istring(']'));
@@ -107,7 +110,9 @@ let req = lexeme(istring('>='));
 let rparen = lexeme(istring(')'));
 let semicolon = lexeme(istring(';'));
 let slash = lexeme(istring('/'));
+let slashEquals = lexeme(istring('/='));
 let star = lexeme(istring('*'));
+let starEquals = lexeme(istring('*='));
 
 let keywords = {};
 [
@@ -529,7 +534,23 @@ let assignment = seqMap(
       kind: 'assign',
       lhs: lhs,
       rhs: rhs,
-  }));
+  })).or(seqMap(
+    lhs,
+    alt(plusEquals, minusEquals, starEquals, slashEquals, percentEquals).mark(),
+    expr,
+    semicolon,
+    (lhs, op, rhs, _) => {
+      op.value = op.value[0];
+      return {
+        kind: 'assign',
+        lhs: lhs,
+        rhs: {
+          kind: 'apply',
+          func: op,
+          args: [lhs, rhs],
+        },
+      };
+    }));
 
 let print = seqMap(
   keywords.print,

@@ -103,5 +103,17 @@ describe('compiler.js', function() {
       assert.equal(env.getVar('x').toString(), 'True');
       assert.equal(env.getVar('y'), '2');
     });
+
+    it('+=', function() {
+      let prelude = loadPrelude();
+      let env = new GlobalEnvironment(prelude.env);
+      let code = inline(`
+        var y : 1..3;
+        y += 1;
+      `);
+      let module = compiler.load(code, env);
+      module.ast.execute();
+      assert.equal(env.getVar('y'), '2');
+    });
   });
 });
