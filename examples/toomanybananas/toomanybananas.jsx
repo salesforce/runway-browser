@@ -67,9 +67,16 @@ let TooManyBananasView = React.createClass({
     });
 
     let note = [];
-    if (model.vars.get('notePresent').toString() === 'True') {
-      note = <g transform="translate(15 5) scale(.3)"
-           dangerouslySetInnerHTML={{__html: svgs.note}}></g>;
+    let notePresentVar = model.vars.get('notePresent');
+    if (notePresentVar === undefined) {
+      // probably running broken.model, which doesn't define the notePresent
+      // variable
+    } else {
+      if (notePresentVar.toString() === 'True') {
+        note = <g transform="translate(15 5) scale(.3)"
+          key="note"
+          dangerouslySetInnerHTML={{__html: svgs.note}}></g>;
+      }
     }
 
     let roommates = [];
@@ -95,12 +102,18 @@ let TooManyBananasView = React.createClass({
           numGoing += 1;
         },
         ReturningFromStore: rfs => {
-          x = 20 - numReturning * 12;
+          x = 30 - numReturning * 14;
           y = 60;
           Util.range(rfs.lookup('carrying')).forEach(b => {
+            let bx = x + b*3;
+            let by = y + 10;
+            if (b > 3) {
+              bx = x + (b-4)*3;
+              by = y + 18;
+            }
             roommates.push(<g
               key={`banana-carrying-${id}-${b}`}
-              transform={`translate(${x + b*4}, ${y + 10})`}>
+              transform={`translate(${bx}, ${by}) scale(.8)`}>
                 {bananaCopy}
             </g>);
           });

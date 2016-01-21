@@ -1,0 +1,42 @@
+var bananas : 0..100;
+type Person : either {
+  Happy,
+  Hungry,
+  GoingToStore,
+  ReturningFromStore {
+    carrying: 0..8
+  }
+};
+var roommates: Array<Person>[1..5];
+
+rule step for state in roommates {
+  match state {
+    Happy => {
+      state = Hungry;
+    },
+
+    Hungry => {
+      if bananas == 0 {
+        state = GoingToStore;
+      } else {
+        bananas -= 1;
+        state = Happy;
+      }
+    },
+
+    GoingToStore => {
+      state = ReturningFromStore {
+        carrying: urandomRange(0, 8)
+      };
+    },
+
+    ReturningFromStore as bag => {
+      bananas += bag.carrying;
+      state = Hungry;
+    },
+  }
+}
+
+invariant BananaLimit {
+  assert bananas <= 8;
+}
