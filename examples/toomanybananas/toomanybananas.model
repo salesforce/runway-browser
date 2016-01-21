@@ -29,7 +29,7 @@ rule step for state in roommates {
         state = Happy;
       }
     },
-    
+
     GoingToStore => {
       state = ReturningFromStore {
         carrying: urandomRange(0, 8)
