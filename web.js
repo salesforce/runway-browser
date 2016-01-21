@@ -53,6 +53,7 @@ let requireModules = {
   StateDump: StateDump,
   Tooltip: Tooltip,
   Util: Util,
+  fetchRemoteFile: fetchRemoteFile,
 };
 let pseudoRequire = function(module) {
   if (module in requireModules) {
@@ -169,8 +170,12 @@ Promise.all([
     new HTMLStateView(controller, jQuery('#state2'), module));
 
   let userView = results[1];
-  controller.views.push(
-    new userView(controller, jQuery('#view #user')[0], module));
+  userView = new userView(controller, jQuery('#view #user')[0], module);
+  if (userView instanceof Promise) {
+    userView.then(v => controller.views.push(v));
+  } else {
+    controller.views.push(userView);
+  }
 
   window.simulateSpeed = 500;
   let simulateButton = jQuery('#simulate');
