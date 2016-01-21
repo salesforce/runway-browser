@@ -39,3 +39,16 @@ rule passToken for id, server in servers {
     server.hasToken = False;
   }
 }
+
+invariant tokenAgreement {
+  for id, server in servers {
+    match token {
+      InTransit => {
+        assert !server.hasToken;
+      },
+      AtServer as t => {
+        assert server.hasToken == (t.at == id);
+      }
+    }
+  }
+}
