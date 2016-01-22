@@ -58,13 +58,24 @@ let Layout = (width, height) => {
     });
   };
 
-  layout.people = floorId => {
+  layout.floorControls = floorId => {
     let floor = layout.floor(floorId);
     let elevators = layout.elevators(floorId);
     return Util.fillBBox({
       x: elevators.x2,
       y: floor.y + height * .02,
-      w: floor.x2 - elevators.x2,
+      w: 5,
+      h: floor.h - height * .04,
+    });
+  };
+
+  layout.people = floorId => {
+    let floor = layout.floor(floorId);
+    let elevators = layout.elevators(floorId);
+    return Util.fillBBox({
+      x: elevators.x2 + 5,
+      y: floor.y + height * .02,
+      w: floor.x2 - elevators.x2 - 5,
       h: floor.h - height * .04,
     });
   };
@@ -89,6 +100,11 @@ let elevatorFloor = (evar) => evar.lookup('location').match({
       }),
   });
 
+let elevatorDoors = (evar) => evar.lookup('location').match({
+    AtFloor: a => a.doors,
+    Between: () => model.getVar('Closed'),
+  });
+
 let Elevator = React.createClass({
   mixins: [tooltip.Mixin],
 
@@ -96,7 +112,9 @@ let Elevator = React.createClass({
     let id = this.props.elevatorId;
     this.menu = ruleMenu(`#elevator-${id}`, [
       ['move', id],
+      ['moveDoors', id],
       ['changeDirection', id],
+      ['clearControl', id],
     ]);
   },
 
@@ -129,6 +147,12 @@ let Elevator = React.createClass({
           y2: bbox.y2 + 4,
       }),
     });
+    let doors = elevatorDoors(evar).match({
+      Closed: '#555555',
+      Opening: '#aaaaaa',
+      Open: 'white',
+      Closing: '#aaaaaa',
+    });
     return <g
       id={'elevator-' + id}
       className="clickable"
@@ -136,7 +160,7 @@ let Elevator = React.createClass({
       onMouseOut={this.tooltipMouseOut}
       >
       <rect
-        style={{fill: 'white', stroke: 'black'}}
+        style={{fill: doors, stroke: 'black'}}
         x={bbox.x} y={bbox.y}
         width={bbox.w} height={bbox.h}
         />
@@ -147,6 +171,29 @@ let Elevator = React.createClass({
         x1={arrow.x1} y1={arrow.y1}
         x2={arrow.x2} y2={arrow.y2} />
     </g>;
+  },
+});
+
+let FloorControl = React.createClass({
+  render: function() {
+    let bbox = this.props.layout.floorControls(this.props.floor); 
+    let triangle = active => <path
+      d="M 0,3 L 5,3 2.5,0 z"
+      style={{fill: active ? 'green' : 'white', stroke: 'black'}} />;
+    let controlsVar = model.vars.get('floorControls').index(this.props.floor);
+    let up = <g transform={`translate(${bbox.x-1}, ${bbox.y + 2})`}>
+        {triangle(controlsVar.lookup('upActive').toString() === 'True')}
+      </g>;
+    let down = <g transform={`translate(${bbox.x-1}, ${bbox.y + 2 + bbox.h/2}) rotate(180, 2.5, 1.5)`}>
+        {triangle(controlsVar.lookup('downActive').toString() === 'True')}
+      </g>;
+    if (this.props.floor == 1) {
+      down = [];
+    }
+    if (this.props.floor == 6) {
+      up = [];
+    }
+    return <g>{up}{down}</g>;
   },
 });
 
@@ -195,15 +242,18 @@ let Person = React.createClass({
         return layout.person(s.floor, id);
       },
       Waiting: w => {
-        text = 'w';
+        text = w.lookup('destination').toString();
         return layout.person(w.floor, id);
       },
       Riding: r => {
-        text = 'r';
+        text = r.lookup('destination').toString();
         let evar = model.getVar('elevators').index(r.elevator);
         let bbox = layout.elevator(elevatorFloor(evar),
             r.elevator.value);
-        bbox.x += 3 * (evar.lookup('riders').indexOf(id) - 2);
+        let shift = 3 * (evar.lookup('riders').indexOf(id) - 2);
+        bbox.x += shift;
+        bbox.x2 += shift;
+        bbox.w += shift;
         return bbox;
       },
     });
@@ -247,6 +297,17 @@ let ElevatorView = React.createClass({
     let outerSVG = svg.parentElement;
     let box = outerSVG.viewBox.baseVal;
     let layout = Layout(box.width, box.height);
+    let destinations = [];
+    model.vars.get('elevators').forEach((evar, eid) => {
+      evar.lookup('destinations').forEach(floor => {
+        let bbox = layout.elevator(floor, eid);
+        destinations.push(<circle
+          key={`dest-${eid}-${floor}`}
+          cx={bbox.x + bbox.w/2}
+          cy={bbox.y + bbox.h/2}
+          r={2} />);
+      });
+    });
     let elevators = Util.range(numElevators).map(i => (
       <Elevator key={i + 1} elevatorId={i + 1}
         layout={layout} />
@@ -255,9 +316,15 @@ let ElevatorView = React.createClass({
       <Person key={i + 1} personId={i + 1}
         layout={layout} />
     ));
+    let floorControls = Util.range(numFloors).map(i => (
+      <FloorControl key={i + 1} floor={i + 1}
+        layout={layout} />
+    ));
     return <g>
       <Background layout={layout} floors={numFloors} />
+      <g id="destinations">{destinations}</g>
       <g id="elevators">{elevators}</g>
+      <g id="floorControls">{floorControls}</g>
       <g id="people">{people}</g>
     </g>;
   },
