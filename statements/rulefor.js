@@ -5,6 +5,7 @@ let Environment = require('../environment.js').Environment;
 let Statement = require('./statement.js');
 let ArrayType = require('../types/array.js');
 let makeStatement = require('./factory.js');
+let errors = require('../errors.js');
 
 class RuleFor extends Statement {
   constructor(parsed, env) {
@@ -18,7 +19,7 @@ class RuleFor extends Statement {
   typecheck() {
     this.expr.typecheck();
     if (!(this.expr.type instanceof ArrayType.Type)) {
-      throw new errors.Type(`Cannot iterate on a ${this.expr.type.getName()} ` +
+      throw new errors.Type(`Cannot iterate on a ${this.expr.type} ` +
         `at ${this.expr.source}`);
     }
     let dummyValue = this.expr.type.valuetype.makeDefaultValue();

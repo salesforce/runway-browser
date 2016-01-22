@@ -58,10 +58,26 @@ let implementsSet = function(t) {
   return t instanceof SetType.Type || t instanceof OrderedSetType.Type;
 }
 
+let implementsIterable = function(t) {
+  // t needs .valueType, .indexType
+  // output of evaluating value needs .forEach((v, i) => ...)
+  return (t instanceof ArrayType.Type ||
+    t instanceof SetType.Type ||
+    t instanceof OrderedSetType.Type);
+}
+
+let implementsIndexable = function(t) {
+  return (t instanceof ArrayType.Type ||
+    t instanceof SetType.Type ||
+    t instanceof OrderedSetType.Type);
+}
+
 module.exports = {
   subtypeOf: subtypeOf,
   haveEquality: haveEquality,
   haveOrdering: haveOrdering,
   isNumeric: isNumeric,
   implementsSet: implementsSet,
+  implementsIterable: implementsIterable,
+  implementsIndexable: implementsIndexable,
 };

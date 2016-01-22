@@ -19,6 +19,7 @@ syn keyword modelStatement      distribution
 syn keyword modelStructure      either
 syn keyword modelConditional    else
 syn keyword modelRepeat         for
+syn keyword modelStatement      function
 syn keyword modelConditional    if
 syn keyword modelRepeat         in
 syn keyword modelStatement      invariant
@@ -30,6 +31,7 @@ syn keyword modelStatement      return
 syn keyword modelStatement      rule
 syn keyword modelStatement      type
 syn keyword modelStatement      var
+syn keyword modelRepeat         while
 
 syn keyword modelTodo contained fixme
 syn keyword modelTodo contained todo
@@ -39,8 +41,10 @@ syntax case match
 
 " These are case-sensitive:
 syn keyword modelStructure      Array
+syn keyword modelStructure      Boolean
 syn keyword modelBoolean        False
 syn keyword modelBoolean        True
+syn keyword modelFunction       capacity
 syn keyword modelFunction       contains
 syn keyword modelFunction       empty
 syn keyword modelFunction       full
@@ -48,6 +52,7 @@ syn keyword modelFunction       pop
 syn keyword modelFunction       pow
 syn keyword modelFunction       push
 syn keyword modelFunction       remove
+syn keyword modelFunction       size
 
 
 " Integers.

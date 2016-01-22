@@ -65,7 +65,7 @@ class NegateFunction extends BaseFunction {
     return boolType;
   }
   evaluateSub(args, env) {
-    let isFalse = (args[0] === env.getVar('False'));
+    let isFalse = (args[0].equals(env.getVar('False')));
     return env.getVar(isFalse ? 'True' : 'False');
   }
 }
@@ -164,6 +164,12 @@ class OrderingFunction extends BaseFunction {
   }
 }
 
+let toNumber = v => {
+  let n = NumberType.singleton.makeDefaultValue();
+  n.assign(v);
+  return n;
+};
+
 class ArithmeticFunction extends BaseFunction {
   constructor(name, nativeFn) {
     super(name, 2);
@@ -178,11 +184,6 @@ class ArithmeticFunction extends BaseFunction {
     return NumberType.singleton;
   }
   evaluateSub(args, env) {
-    let toNumber = (v) => {
-      let n = NumberType.singleton.makeDefaultValue();
-      n.assign(v);
-      return n;
-    };
     return toNumber(this.nativeFn(args[0].value, args[1].value));
   }
 }
@@ -294,6 +295,40 @@ class FullFunction extends BaseFunction {
   }
 }
 
+class SizeFunction extends BaseFunction {
+  constructor() {
+    super('size', 1);
+  }
+  typecheckSub(params, env) {
+    if (!Types.implementsIterable(params[0].type)) {
+      throw new errors.Type(`Cannot call size() on ${params[0].type}`);
+    }
+    return NumberType.singleton;
+  }
+  evaluateSub(args, env) {
+    return toNumber(args[0].size());
+  }
+}
+
+class CapacityFunction extends BaseFunction {
+  constructor() {
+    super('capacity', 1);
+  }
+  typecheckSub(params, env) {
+    if (!Types.implementsIterable(params[0].type)) {
+      throw new errors.Type(`Cannot call capacity() on ${params[0].type}`);
+    }
+    return NumberType.singleton;
+  }
+  evaluateSub(args, env) {
+    return toNumber(args[0].capacity());
+  }
+}
+
+let randomRange = (low, high) => {
+  return low + Math.floor(Math.random() * (high - low + 1));
+};
+
 class URandomFunction extends BaseFunction {
   constructor() {
     super('urandom', 0, 1);
@@ -306,8 +341,7 @@ class URandomFunction extends BaseFunction {
   }
   evaluateSub(args, env, gargs) {
     let range = gargs[0];
-    let number = range.low + Math.floor(Math.random() *
-        (range.high - range.low + 1));
+    let number = randomRange(range.low, range.high);
     let value = gargs[0].makeDefaultValue();
     value.assign(number);
     return value;
@@ -325,13 +359,18 @@ let functions = [
   new ArithmeticFunction('+', (x, y) => (x + y)),
   new ArithmeticFunction('-', (x, y) => (x - y)),
   new ArithmeticFunction('*', (x, y) => (x * y)),
+  new ArithmeticFunction('/', (x, y) => Math.floor(x / y)),
+  new ArithmeticFunction('%', (x, y) => (x % y)),
   new ArithmeticFunction('pow', (x, y) => Math.pow(x, y)),
+  new ArithmeticFunction('urandomRange', randomRange),
   new PushFunction(),
   new PopFunction(),
   new RemoveFunction(),
   new ContainsFunction(),
   new EmptyFunction(),
   new FullFunction(),
+  new SizeFunction(),
+  new CapacityFunction(),
   new AndFunction(),
   new OrFunction(),
   new URandomFunction(),
@@ -357,6 +396,10 @@ class Apply extends Expression {
     });
     if (this.fn === undefined) {
       this.fn = this.env.functions.get(this.parsed.func.value);
+      if (this.fn !== undefined) {
+        this.type = this.fn.returntype;
+        return; // don't type-check the declaration again
+      }
     }
     if (this.fn === undefined) {
       throw new errors.Unimplemented(`The function ` +

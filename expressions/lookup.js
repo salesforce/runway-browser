@@ -3,7 +3,7 @@
 let errors = require('../errors.js');
 let Expression = require('./expression.js');
 let RecordType = require('../types/record.js');
-let EitherVariant = require('../types/either.js').Variant;
+let Either = require('../types/either.js');
 let makeExpression = require('./factory.js');
 
 class Lookup extends Expression {
@@ -15,10 +15,10 @@ class Lookup extends Expression {
   typecheck() {
     this.parent.typecheck();
     if (this.parent.type instanceof RecordType ||
-      this.parent.type instanceof EitherVariant) {
+      this.parent.type instanceof Either.Variant) {
     } else {
       let hint = '';
-      if (this.parent.type instanceof EitherType) {
+      if (this.parent.type instanceof Either.Type) {
         hint = ': use a match statement?';
       }
       throw new errors.Type(`Cannot lookup field in ${this.parent} which is a ` +

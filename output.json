@@ -329,6 +329,7 @@
     },
     {
       "kind": "distribution",
+      "subkind": "distribution",
       "id": {
         "kind": "id",
         "value": "openTime",
@@ -353,31 +354,34 @@
         }
       },
       "code": {
-        "kind": "sequence",
-        "statements": [
-          {
-            "kind": "returnstmt",
-            "expr": {
-              "kind": "numberWithUnit",
-              "number": "3",
-              "unit": "s",
+        "kind": "block",
+        "code": {
+          "kind": "sequence",
+          "statements": [
+            {
+              "kind": "returnstmt",
+              "expr": {
+                "kind": "numberWithUnit",
+                "number": "3",
+                "unit": "s",
+                "source": {
+                  "input": {
+                    "filename": "input.model"
+                  },
+                  "startchar": 231,
+                  "endchar": 233
+                }
+              },
               "source": {
                 "input": {
                   "filename": "input.model"
                 },
-                "startchar": 231,
-                "endchar": 233
+                "startchar": 224,
+                "endchar": 235
               }
-            },
-            "source": {
-              "input": {
-                "filename": "input.model"
-              },
-              "startchar": 224,
-              "endchar": 235
             }
-          }
-        ]
+          ]
+        }
       },
       "source": {
         "input": {
@@ -389,6 +393,7 @@
     },
     {
       "kind": "distribution",
+      "subkind": "distribution",
       "id": {
         "kind": "id",
         "value": "doorTime",
@@ -413,31 +418,34 @@
         }
       },
       "code": {
-        "kind": "sequence",
-        "statements": [
-          {
-            "kind": "returnstmt",
-            "expr": {
-              "kind": "numberWithUnit",
-              "number": "1",
-              "unit": "s",
+        "kind": "block",
+        "code": {
+          "kind": "sequence",
+          "statements": [
+            {
+              "kind": "returnstmt",
+              "expr": {
+                "kind": "numberWithUnit",
+                "number": "1",
+                "unit": "s",
+                "source": {
+                  "input": {
+                    "filename": "input.model"
+                  },
+                  "startchar": 327,
+                  "endchar": 329
+                }
+              },
               "source": {
                 "input": {
                   "filename": "input.model"
                 },
-                "startchar": 327,
-                "endchar": 329
+                "startchar": 320,
+                "endchar": 331
               }
-            },
-            "source": {
-              "input": {
-                "filename": "input.model"
-              },
-              "startchar": 320,
-              "endchar": 331
             }
-          }
-        ]
+          ]
+        }
       },
       "source": {
         "input": {
@@ -449,6 +457,7 @@
     },
     {
       "kind": "distribution",
+      "subkind": "distribution",
       "id": {
         "kind": "id",
         "value": "makeDestination",
@@ -505,30 +514,33 @@
         }
       },
       "code": {
-        "kind": "sequence",
-        "statements": [
-          {
-            "kind": "returnstmt",
-            "expr": {
-              "kind": "id",
-              "value": "start",
+        "kind": "block",
+        "code": {
+          "kind": "sequence",
+          "statements": [
+            {
+              "kind": "returnstmt",
+              "expr": {
+                "kind": "id",
+                "value": "start",
+                "source": {
+                  "input": {
+                    "filename": "input.model"
+                  },
+                  "startchar": 399,
+                  "endchar": 404
+                }
+              },
               "source": {
                 "input": {
                   "filename": "input.model"
                 },
-                "startchar": 399,
-                "endchar": 404
+                "startchar": 392,
+                "endchar": 406
               }
-            },
-            "source": {
-              "input": {
-                "filename": "input.model"
-              },
-              "startchar": 392,
-              "endchar": 406
             }
-          }
-        ]
+          ]
+        }
       },
       "source": {
         "input": {

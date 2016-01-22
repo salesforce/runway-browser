@@ -48,6 +48,24 @@ class ArrayValue extends Value {
   toJSON() {
     return this.items.map((v, i) => [this.type.indextype.low + i, v.toJSON()]);
   }
+  assign(other) {
+    this.forEach((v, i) => this.index(i).assign(other.index(i)));   
+  }
+  equals(other) {
+    let allEqual = true;
+    this.forEach((v, i) => {
+      if (!v.equals(other.index(i))) {
+        allEqual = false;
+      }
+    });
+    return allEqual;
+  }
+  size() {
+    return this.items.length;
+  }
+  capcacity() {
+    return this.items.length;
+  }
 }
 
 class ArrayType extends Type {
@@ -60,7 +78,7 @@ class ArrayType extends Type {
     return new ArrayValue(this);
   }
   toString() {
-    return `Array<${this.valueType}>[${this.indexType}]`;
+    return `Array<${this.valuetype}>[${this.indextype}]`;
   }
 }
 

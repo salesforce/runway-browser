@@ -39,6 +39,9 @@ class VarDecl extends Statement {
   }
 
   toString(indent) {
+    if (indent === undefined) {
+      indent = '';
+    }
     let defVal = '';
     if (this.defaultExpr !== null) {
       defVal = ` = ${this.defaultExpr}`;

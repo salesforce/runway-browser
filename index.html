@@ -6,18 +6,28 @@
   <body>
     <script type="text/javascript" src="bundle.js" charset="utf-8"></script>
 
-    <a href="#" id="simulate">simulate</a>
+    <div style="min-height: 200px;"></div>
+
+    <div class="bootstrap-switch-fix">
+      Simulation <input type="checkbox" id="simulate"  />
+    </div>
 
     <pre><code id="error" style="color: red"></code></pre>
 
     <h2>State</h2>
     <div>
-      <svg id="view" version="1.1" viewbox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width: 400px; height: 400px">
-        <marker xmlns="http://www.w3.org/2000/svg" id="greentriangle" viewBox="0 0 10 10" refX="0" refY="5" markerUnits="strokeWidth" markerWidth="4" markerHeight="3" orient="auto">
-          <path d="M 0 0 L 10 5 L 0 10 z" style="fill: green" />
-        </marker>
-        <rect x="0" y="0" width="100" height="100" style="fill: #ddddff" />
-      </svg>
+      <div id="viewwrapper" style="width: 120px; height: 120px">
+        <svg id="view" version="1.1" viewbox="0 0 100 100"
+          xmlns="http://www.w3.org/2000/svg"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          style="width: 100px; height: 100px">
+          <marker xmlns="http://www.w3.org/2000/svg" id="greentriangle" viewBox="0 0 10 10" refX="0" refY="5" markerUnits="strokeWidth" markerWidth="4" markerHeight="3" orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10 z" style="fill: green" />
+          </marker>
+          <rect x="0" y="0" width="100%" height="100%" style="fill: #ddddff" />
+          <g id="user"></g>
+        </svg>
+      </div>
       <div id="state2"></div>
       <pre><code id="state"></code></pre>
     </div>

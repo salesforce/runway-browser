@@ -2,7 +2,7 @@
 
 let errors = require('../errors.js');
 let Expression = require('./expression.js');
-let ArrayType = require('../types/array.js');
+let Types = require('../types/types.js');
 let makeExpression = require('./factory.js');
 
 class Index extends Expression {
@@ -15,8 +15,8 @@ class Index extends Expression {
   typecheck() {
     this.container.typecheck();
     this.by.typecheck();
-    if (!(this.container.type instanceof ArrayType.Type)) {
-      throw new errors.Type(`Can only index into Arrays (for now)`);
+    if (!Types.implementsIndexable(this.container.type)) {
+      throw new errors.Type(`Can't index into ${this.container.type}`);
     }
     this.type = this.container.type.valuetype;
   // TODO: more checks

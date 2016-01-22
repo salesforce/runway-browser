@@ -97,15 +97,22 @@ let lbracket = lexeme(istring('['));
 let leq = lexeme(istring('<='));
 let lparen = lexeme(istring('('));
 let minus = lexeme(istring('-'));
+let minusEquals = lexeme(istring('-='));
+let percent = lexeme(istring('%'));
+let percentEquals = lexeme(istring('%='));
 let neq = lexeme(istring('!='));
 let plus = lexeme(istring('+'));
+let plusEquals = lexeme(istring('+='));
 let rangle = lexeme(istring('>'));
 let rbrace = lexeme(istring('}'));
 let rbracket = lexeme(istring(']'));
 let req = lexeme(istring('>='));
 let rparen = lexeme(istring(')'));
 let semicolon = lexeme(istring(';'));
-let times = lexeme(istring('*'));
+let slash = lexeme(istring('/'));
+let slashEquals = lexeme(istring('/='));
+let star = lexeme(istring('*'));
+let starEquals = lexeme(istring('*='));
 
 let keywords = {};
 [
@@ -117,6 +124,7 @@ let keywords = {};
   'either',
   'else',
   'for',
+  'function',
   'if',
   'in',
   'invariant',
@@ -233,7 +241,7 @@ let expr = call(function() {
 
   // Order of parsers in this table defines precedence.
   let binop = [
-    times,
+    alt(star, slash, percent),
     alt(plus, minus),
     alt(leq, req, langle, rangle),
     alt(neq, doubleEquals),
@@ -430,8 +438,11 @@ let param = seqMap(keywords.param,
 let block = lazy(() => {
   return lbrace
     .then(statement.many()).map((statements) => ({
-      kind: 'sequence',
-      statements: statements,
+      kind: 'block',
+      code: {
+        kind: 'sequence',
+        statements: statements,
+      },
   }))
     .skip(rbrace);
 });
@@ -449,19 +460,31 @@ let distribution = call(function() {
     .then(sepBy(param, comma))
     .skip(rparen);
 
-  return seqMap(keywords.distribution,
+  return seqMap(alt(keywords.distribution, keywords['function']),
     id,
     paramlist,
     arrow,
     type,
     block,
-    (_, id, params, _2, returntype, block) => ({
+    (subkind, id, params, _2, returntype, block) => ({
         kind: 'distribution',
+        subkind: subkind,
         id: id,
         params: params,
         returntype: returntype,
         code: block
-    }));
+    })).or(seqMap(keywords['function'],
+    id,
+    paramlist,
+    block,
+    (subkind, id, params, block) => ({
+        kind: 'distribution',
+        subkind: 'function',
+        id: id,
+        params: params,
+        returntype: null,
+        code: block
+    })));
 });
 
 let returnStmt = keywords.return
@@ -511,7 +534,23 @@ let assignment = seqMap(
       kind: 'assign',
       lhs: lhs,
       rhs: rhs,
-  }));
+  })).or(seqMap(
+    lhs,
+    alt(plusEquals, minusEquals, starEquals, slashEquals, percentEquals).mark(),
+    expr,
+    semicolon,
+    (lhs, op, rhs, _) => {
+      op.value = op.value[0];
+      return {
+        kind: 'assign',
+        lhs: lhs,
+        rhs: {
+          kind: 'apply',
+          func: op,
+          args: [lhs, rhs],
+        },
+      };
+    }));
 
 let print = seqMap(
   keywords.print,

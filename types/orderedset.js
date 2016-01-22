@@ -55,7 +55,7 @@ class OrderedSetValue extends Value {
     if (this.full()) {
       throw new errors.Bounds(`Cannot push onto ${this}`);
     }
-    this.items[this.used] = v;
+    this.items[this.used].assign(v);
     this.used += 1;
   }
   pop() {
@@ -98,6 +98,29 @@ class OrderedSetValue extends Value {
   toJSON() {
     return this.usedItems().map((v) => v.toJSON());
   }
+  assign(other) {
+    this.used = 0;
+    other.forEach(v => this.push(v));
+  }
+  equals(other) {
+    if (this.used != other.used) {
+      return false;
+    }
+    let allEqual = true;
+    this.forEach((v, i) => {
+      if (!v.equals(other.index(i))) {
+        allEqual = false;
+      }
+    });
+    return allEqual;
+  }
+  size() {
+    return this.used;
+  }
+  capacity() {
+    return this.items.length;
+  }
+
 }
 
 class OrderedSetType extends Type {

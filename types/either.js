@@ -34,7 +34,11 @@ class EitherValue extends Value {
     if (fn === undefined) {
       return undefined;
     }
-    return fn(this.fields);
+    if (typeof fn === "function") {
+      return fn(this.fields);
+    } else { // maybe it's an expression
+      return fn;
+    }
   }
 
   assign(newValue) {

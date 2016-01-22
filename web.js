@@ -1,10 +1,12 @@
 "use strict";
 
-let jQuery = require('./node_modules/jquery/dist/jquery.js');
+let jQuery = require('jquery');
 window.jQuery = jQuery;
 
 require('bootstrap-webpack');
 let BootstrapMenu = require('bootstrap-menu');
+require('bootstrap-switch');
+require('bootstrap-switch/dist/css/bootstrap2/bootstrap-switch.css');
 
 let compiler = require('./compiler.js');
 window.compiler = compiler;
@@ -12,11 +14,18 @@ let simulator = require('./simulator.js');
 let GlobalEnvironment = require('./environment.js').GlobalEnvironment;
 let Input = require('./input.js');
 
+let Tooltip = require('./web/tooltip.js');
+let Util = require('./web/util.js');
+let StateDump = require('./web/statedump.js');
+
 let preludeText = require('./prelude.model');
 
-let Snap = require('./node_modules/snapsvg/dist/snap.svg.js');
-
 let queryString = require('querystring');
+
+let React = require('react');
+let ReactDOM = require('react-dom');
+
+let babel = require('babel-standalone');
 
 let prelude = compiler.loadPrelude(preludeText);
 
@@ -35,84 +44,51 @@ let fetchRemoteFile = (filename) => new Promise((resolve, reject) => {
     });
   });
 
+// exported to modules loaded at runtime
+let requireModules = {
+  'bootstrap-menu': BootstrapMenu,
+  jquery: jQuery,
+  React: React,
+  ReactDOM: ReactDOM,
+  StateDump: StateDump,
+  Tooltip: Tooltip,
+  Util: Util,
+  fetchRemoteFile: fetchRemoteFile,
+};
+let pseudoRequire = function(module) {
+  if (module in requireModules) {
+    return requireModules[module];
+  } else {
+    throw Error(`Unknown module: ${module}`);
+  }
+};
+
 let fetchRemoteModule = function(filename) {
   return fetchRemoteFile(filename)
     .then((input) => {
-      let load = eval(`(function load(module) { ${input.getText()} })`);
+      let load = new Function('module', 'require', input.getText());
       let module = {};
-      load(module);
+      load(module, pseudoRequire);
       return module.exports;
     });
 };
 
-// Fill an HTML element with a visual representation of a model value.
-let toHTML = function(value, outer) {
-  let helper = function(value, outer, horizontal, depth) {
-    let $ = jQuery;
-    let colors = [ // from colorbrewer2.org
-      //'#8c510a',
-      '#d8b365',
-      '#f6e8c3',
-      '#f5f5f5',
-      '#c7eae5',
-      '#5ab4ac',
-      '#01665e',
-    ];
-    let color = colors[depth % colors.length];
-    let style = table => table
-        .css('border', '1px solid black')
-        .css('padding', '5px')
-        .css('background', color);
-    if (value instanceof Array) {
-      let table = style($('<table></table>'));
-      if (horizontal) {
-        let row = $('<tr></tr>');
-        value.forEach(v => row
-            .append(helper(v, $('<td></td>'), false, depth + 1)));
-        table.append(row);
-      } else {
-        value.forEach(v => table
-            .append($('<tr></tr>')
-              .append(helper(v, $('<td></td>'), true, depth + 1))));
-      }
-      outer.append(table);
-    } else if (typeof value == 'object' && 'tag' in value) {
-      let table = style($('<table></table>'));
-      table.append($('<tr></tr>')
-        .append($('<th></th>')
-          .attr('colspan', 2)
-          .text(value.tag)));
-      for (let field in value.fields) {
-        table.append($('<tr></tr>')
-          .append($('<td></td>').text(field))
-          .append(helper(value.fields[field], $('<td></td>'), true, depth + 1)));
-      }
-      outer.append(table);
-    } else if (typeof value == 'object') {
-      let table = style($('<table></table>'));
-      for (let field in value) {
-        table.append($('<tr></tr>')
-          .append($('<td></td>').text(field))
-          .append(helper(value[field], $('<td></td>'), true, depth + 1)));
-      }
-      outer.append(table);
-    } else if (typeof value == 'string') {
-      outer.text(value);
-    } else {
-      outer.text(JSON.stringify(value, null, 2));
-    }
-    return outer;
-  };
-  return helper(value.toJSON(), outer, true, 0);
+let fetchRemoteJSX = function(filename) {
+  return fetchRemoteFile(filename)
+    .then((input) => {
+      let code = babel.transform(input.getText(), {
+        presets: ['react'],
+      }).code;
+      let load = new Function('module', 'require', code);
+      let module = {};
+      load(module, pseudoRequire);
+      return module.exports;
+    });
 };
-let toHTMLString = value => toHTML(value, jQuery('<div></div>')).html();
-
 
 class Controller {
   constructor() {
     this.views = [];
-    this.toHTML = toHTML;
-    this.toHTMLString = toHTMLString;
   }
   stateChanged() {
     this.views.forEach((view) => view.update());
@@ -145,14 +121,13 @@ class HTMLStateView {
     this.update();
   }
 
-
   update() {
     let $ = jQuery;
     let output = Array.from(this.module.env.vars.list())
       .map(k => [k, this.module.env.vars.get(k)])
       .filter(kv => kv[1].isConstant !== true)
       .map(kv => {
-        return `${kv[0]}: ${toHTMLString(kv[1])}`;
+        return `${kv[0]}: ${StateDump.toHTMLString(kv[1])}`;
       })
       .join('\n');
     this.elem.html(output);
@@ -173,7 +148,7 @@ if ('model' in getParams) {
 
 Promise.all([
   fetchRemoteFile(basename + '.model'),
-  fetchRemoteModule(basename + '.js'),
+  fetchRemoteJSX(basename + '.jsx'),
   pageLoaded,
 ]).then((results) => {
   let input = results[0];
@@ -195,26 +170,61 @@ Promise.all([
     new HTMLStateView(controller, jQuery('#state2'), module));
 
   let userView = results[1];
-  controller.views.push(
-    new userView(controller, Snap('#view'), module));
+  userView = new userView(controller, jQuery('#view #user')[0], module);
+  if (userView instanceof Promise) {
+    userView.then(v => controller.views.push(v));
+  } else {
+    controller.views.push(userView);
+  }
 
-  jQuery('#simulate').click(() => {
-    if (simulateId === undefined) {
-      let step = () => {
-        try {
-          simulator(module);
-        } catch ( e ) {
-          jQuery('#error').text(e);
-          return;
-        }
-        controller.stateChanged();
+  window.simulateSpeed = 500;
+  let simulateButton = jQuery('#simulate');
+  simulateButton.bootstrapSwitch({
+    onSwitchChange: () => {
+      let stop = () => {
+        window.clearTimeout(simulateId);
+        simulateId = undefined;
       };
-      step();
-      simulateId = setInterval(step, 2000);
+      if (simulateId === undefined) {
+        let step = () => {
+          try {
+            simulator(module);
+          } catch ( e ) {
+            console.log(e);
+            jQuery('#error').text(e);
+            stop();
+            throw e;
+            return;
+          }
+          controller.stateChanged();
+        };
+        step();
+        simulateId = setInterval(step, window.simulateSpeed);
+      } else {
+        stop();
+      }
+    },
+  });
+
+
+  let viewWrapper = jQuery('#viewwrapper');
+  let viewElem = jQuery('#view');
+  viewWrapper.mouseup(() => {
+    let width = viewWrapper.width();
+    let height = viewWrapper.height();
+    console.log(`resize to ${width}, ${height}`);
+    viewElem.width(width);
+    viewElem.height(height);
+    if (width < height) {
+      height = height / width * 100;
+      width = 100;
     } else {
-      window.clearTimeout(simulateId);
-      simulateId = undefined;
+      width = width / height * 100;
+      height = 100;
     }
-    return false;
+    // viewElem.attr('viewBox', ...) sets viewbox (lowercase) instead
+    viewElem[0].setAttribute('viewBox',
+      `0 0 ${width} ${height}`);
+    controller.stateChanged();
   });
 });
