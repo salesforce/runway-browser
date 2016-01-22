@@ -3,192 +3,192 @@ type ElevatorId: 1..3;
 type Floor: 1..6;
 
 type Person: either {
-    Sleeping {
-        floor: Floor,
-    },
-    Waiting {
-        floor: Floor,
-        destination: Floor,
-        //assert(floor != destination);
-    },
-    Riding {
-        elevator: ElevatorId,
-        destination: Floor,
-    },
+  Sleeping {
+    floor: Floor,
+  },
+  Waiting {
+    floor: Floor,
+    destination: Floor,
+    //assert(floor != destination);
+  },
+  Riding {
+    elevator: ElevatorId,
+    destination: Floor,
+  },
 }
 var people: Array<Person>[PersonId];
 
 type FloorControl: record {
-    downActive: Boolean,
-    upActive: Boolean,
+  downActive: Boolean,
+  upActive: Boolean,
 }
 var floorControls: Array<FloorControl>[Floor];
 
 
 type Elevator: record {
-    destinations: Set<Floor>[Floor],
-    riders: OrderedSet<PersonId>[PersonId],
-    direction: either {
-        Up,
-        Down,
+  destinations: Set<Floor>[Floor],
+  riders: OrderedSet<PersonId>[PersonId],
+  direction: either {
+    Up,
+    Down,
+  },
+  location: either {
+    AtFloor {
+      at: Floor,
+      doors: either {
+        Closed,
+        Opening,
+        Open,
+        Closing,
+      },
     },
-    location: either {
-        AtFloor {
-            at: Floor,
-            doors: either {
-                Closed,
-                Opening,
-                Open,
-                Closing,
-            },
-        },
-        Between {
-            next: Floor,
-            // doors are closed for safety purposes
-        },
+    Between {
+      next: Floor,
+      // doors are closed for safety purposes
     },
+  },
 }
 var elevators: Array<Elevator>[ElevatorId];
 
 invariant elevatorRidersCorrect {
-    for pid, person in people {
-        match person {
-            Sleeping => {
-                for elevator in elevators {
-                    assert !contains(elevator.riders, pid);
-                }
-            },
-            Waiting => {
-                for elevator in elevators {
-                    assert !contains(elevator.riders, pid);
-                }
-            },
-            Riding as r => {
-                for eid, elevator in elevators {
-                    if r.elevator == eid {
-                        assert contains(elevator.riders, pid);
-                    } else {
-                        assert !contains(elevator.riders, pid);
-                    }
-                }
-            },
+  for pid, person in people {
+    match person {
+      Sleeping => {
+        for elevator in elevators {
+          assert !contains(elevator.riders, pid);
         }
+      },
+      Waiting => {
+        for elevator in elevators {
+          assert !contains(elevator.riders, pid);
+        }
+      },
+      Riding as r => {
+        for eid, elevator in elevators {
+          if r.elevator == eid {
+            assert contains(elevator.riders, pid);
+          } else {
+            assert !contains(elevator.riders, pid);
+          }
+        }
+      },
     }
+  }
 }
 
 rule move for elevator in elevators {
-    match elevator.location {
-        Between as b => {
-            elevator.location = AtFloor { at: b.next, doors: Closed };
-            remove(elevator.destinations, b.next);
-        },
-        AtFloor as f => {
-            if f.doors == Closed {
-                match elevator.direction {
-                    Up => {
-                        if f.at < 6 {
-                          elevator.location = Between { next: f.at + 1 };
-                        }
-                    },
-                    Down => {
-                        if f.at > 1 {
-                          elevator.location = Between { next: f.at - 1 };
-                        }
-                    },
-                    // XXX- 'Neutral' isn't defined, should be compile error
-                    Neutral => { /* do nothing: not moving */ },
-                }
+  match elevator.location {
+    Between as b => {
+      elevator.location = AtFloor { at: b.next, doors: Closed };
+      remove(elevator.destinations, b.next);
+    },
+    AtFloor as f => {
+      if f.doors == Closed {
+        match elevator.direction {
+          Up => {
+            if f.at < 6 {
+              elevator.location = Between { next: f.at + 1 };
             }
-        },
-    }
+          },
+          Down => {
+            if f.at > 1 {
+              elevator.location = Between { next: f.at - 1 };
+            }
+          },
+          // XXX- 'Neutral' isn't defined, should be compile error
+          Neutral => { /* do nothing: not moving */ },
+        }
+      }
+    },
+  }
 }
 
 rule changeDirection for elevator in elevators {
-    match elevator.location {
-        AtFloor as f => {
-            match elevator.direction {
-                Up => {
-                    if f.at > 1 {
-                        elevator.direction = Down;
-                    }
-                },
-                Down => {
-                    if f.at < 6 {
-                        elevator.direction = Up;
-                    }
-                },
-            }
+  match elevator.location {
+    AtFloor as f => {
+      match elevator.direction {
+        Up => {
+          if f.at > 1 {
+            elevator.direction = Down;
+          }
         },
-        Between as b => { /* no turning here */ },
-    }
+        Down => {
+          if f.at < 6 {
+            elevator.direction = Up;
+          }
+        },
+      }
+    },
+    Between as b => { /* no turning here */ },
+  }
 }
 
 distribution makeDestination(start: Floor) -> Floor {
-    while (True) {
-        var f : Floor = urandom<Floor>();
-        if f != start {
-            return f;
-        }
+  while (True) {
+    var f : Floor = urandom<Floor>();
+    if f != start {
+      return f;
     }
+  }
 }
 
 // one person decides he/she wants to move floors and presses the up/down
 // button (Sleeping to Waiting)
 rule wake for person in people {
-    match person {
-        Sleeping as s => {
-          person = Waiting {
-              floor: s.floor,
-              destination: makeDestination(s.floor),
-          };
-          floorControls[s.floor].upActive = True;
-        },
-        Waiting => { /* do nothing */ },
-        Riding => { /* do nothing */ },
-    }
+  match person {
+    Sleeping as s => {
+      person = Waiting {
+        floor: s.floor,
+        destination: makeDestination(s.floor),
+      };
+      floorControls[s.floor].upActive = True;
+    },
+    Waiting => { /* do nothing */ },
+    Riding => { /* do nothing */ },
+  }
 }
 
 rule board for pid, person in people {
-    match person {
-        Sleeping => { /* do nothing */ },
-        Waiting as w => {
-            for eid, elevator in elevators {
-                match elevator.location {
-                    AtFloor as a => {
-                        if a.at == w.floor {
-                            person = Riding {
-                                elevator: eid,
-                                destination: w.destination,
-                            };
-                            push(elevator.riders, pid);
-                            push(elevator.destinations, w.destination);
-                            break;
-                        }
-                    },
-                    Between => { /* do nothing */ },
-                }
+  match person {
+    Sleeping => { /* do nothing */ },
+    Waiting as w => {
+      for eid, elevator in elevators {
+        match elevator.location {
+          AtFloor as a => {
+            if a.at == w.floor {
+              person = Riding {
+                elevator: eid,
+                destination: w.destination,
+              };
+              push(elevator.riders, pid);
+              push(elevator.destinations, w.destination);
+              break;
             }
-        },
-        Riding => { /* do nothing */ },
-    }
+          },
+          Between => { /* do nothing */ },
+        }
+      }
+    },
+    Riding => { /* do nothing */ },
+  }
 }
 
 rule leave for pid, person in people {
-    match person {
-        Sleeping => { /* do nothing */ },
-        Waiting => { /* do nothing */ },
-        Riding as r => {
-            match elevators[r.elevator].location {
-                AtFloor as a => {
-                    if a.at == r.destination {
-                        person = Sleeping {
-                            floor: r.destination,
-                        };
-                        remove(elevators[r.elevator].riders, pid);
-                    }
-                },
-                Between => { /* do nothing */ },
-            }
-        }
+  match person {
+    Sleeping => { /* do nothing */ },
+    Waiting => { /* do nothing */ },
+    Riding as r => {
+      match elevators[r.elevator].location {
+        AtFloor as a => {
+          if a.at == r.destination {
+            person = Sleeping {
+              floor: r.destination,
+            };
+            remove(elevators[r.elevator].riders, pid);
+          }
+        },
+        Between => { /* do nothing */ },
+      }
     }
+  }
 }
