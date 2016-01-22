@@ -175,29 +175,35 @@ Promise.all([
   }
 
   window.simulateSpeed = 500;
-  jQuery('#simulate').on('change', () => {
+  jQuery('#simulate').change(() => {
     let stop = () => {
       window.clearTimeout(simulateId);
       simulateId = undefined;
     };
     if (simulateId === undefined) {
       let step = () => {
+        simulateId = undefined;
         try {
           simulator(module);
         } catch ( e ) {
           console.log(e);
           jQuery('#error').text(e);
-          stop();
           throw e;
           return;
         }
         controller.stateChanged();
+        simulateId = setTimeout(step, window.simulateSpeed);
       };
       step();
-      simulateId = setInterval(step, window.simulateSpeed);
     } else {
       stop();
     }
+  });
+  jQuery('#slower').click(() => {
+    window.simulateSpeed = Math.min(2000, Math.max(window.simulateSpeed * 2, 10));
+  });
+  jQuery('#faster').click(() => {
+    window.simulateSpeed = Math.max(window.simulateSpeed / 2, 5);
   });
 
 
