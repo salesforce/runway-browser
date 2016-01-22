@@ -5,8 +5,6 @@ window.jQuery = jQuery;
 
 require('bootstrap-webpack');
 let BootstrapMenu = require('bootstrap-menu');
-require('bootstrap-switch');
-require('bootstrap-switch/dist/css/bootstrap2/bootstrap-switch.css');
 
 let compiler = require('./compiler.js');
 window.compiler = compiler;
@@ -177,32 +175,29 @@ Promise.all([
   }
 
   window.simulateSpeed = 500;
-  let simulateButton = jQuery('#simulate');
-  simulateButton.bootstrapSwitch({
-    onSwitchChange: () => {
-      let stop = () => {
-        window.clearTimeout(simulateId);
-        simulateId = undefined;
+  jQuery('#simulate').on('change', () => {
+    let stop = () => {
+      window.clearTimeout(simulateId);
+      simulateId = undefined;
+    };
+    if (simulateId === undefined) {
+      let step = () => {
+        try {
+          simulator(module);
+        } catch ( e ) {
+          console.log(e);
+          jQuery('#error').text(e);
+          stop();
+          throw e;
+          return;
+        }
+        controller.stateChanged();
       };
-      if (simulateId === undefined) {
-        let step = () => {
-          try {
-            simulator(module);
-          } catch ( e ) {
-            console.log(e);
-            jQuery('#error').text(e);
-            stop();
-            throw e;
-            return;
-          }
-          controller.stateChanged();
-        };
-        step();
-        simulateId = setInterval(step, window.simulateSpeed);
-      } else {
-        stop();
-      }
-    },
+      step();
+      simulateId = setInterval(step, window.simulateSpeed);
+    } else {
+      stop();
+    }
   });
 
 

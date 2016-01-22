@@ -14,12 +14,6 @@
   cursor: pointer;
 }
 
-.bootstrap-switch-fix .bootstrap-switch .bootstrap-switch-handle-on,
-.bootstrap-switch-fix .bootstrap-switch .bootstrap-switch-handle-off,
-.bootstrap-switch-fix .bootstrap-switch .bootstrap-switch-label {
-  height: auto;
-}
-
 table.statedump {
   border: 1px solid black;
   margin: 5px;
