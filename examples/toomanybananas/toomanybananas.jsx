@@ -46,8 +46,8 @@ let TooManyBananasView = React.createClass({
       let x = 6 + i * 4;
       let y = 28 + i;
       if (i > 3) {
-        x = 6 + (i - 4) * 4;
-        y -= 15;
+        x = 6 + (i % 4) * 4;
+        y -= 15 * Math.floor(i / 4);
       }
       // TODO: I'd like to do the following, but it doesn't seem to display in
       // Chrome until I force the browser to reparse the SVG node. Not sure if
@@ -142,6 +142,14 @@ let TooManyBananasView = React.createClass({
            dangerouslySetInnerHTML={{__html: svgs.hungry}}></g>
       </defs>
       <g id="bg" dangerouslySetInnerHTML={{__html: svgs.bg}}></g>
+      <text x={2} y={40}
+        style={{fontSize: 4, fill: 'white'}}
+        className="clickable" onClick={() => {
+          console.log('spawn banana');
+          model.vars.get('bananas').value += 1;
+          controller.stateChanged();
+          checkInvariants();
+      }}>+</text>
       {note}
       {bananas}
       {roommates}
