@@ -152,7 +152,6 @@ Promise.all([
   pageLoaded,
 ]).then((results) => {
   let input = results[0];
-  jQuery('#code').text(input.getText());
   let env = new GlobalEnvironment(prelude.env);
   let module;
   try {
