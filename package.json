@@ -20,7 +20,6 @@
     "exports-loader": "^0.6.2",
     "extract-text-webpack-plugin": "^0.9.1",
     "file-loader": "^0.8.4",
-    "imports-loader": "^0.6.5",
     "jsfmt": "^0.5.2",
     "less": "^2.5.3",
     "less-loader": "^2.2.1",
