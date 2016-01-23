@@ -139,7 +139,7 @@ let pageLoaded = new Promise((resolve, reject) => {
 let simulateId = undefined;
 
 let getParams = queryString.parse(window.location.search.slice(1));
-let basename = 'examples/tokenring';
+let basename = 'examples/toomanybananas/toomanybananas';
 if ('model' in getParams) {
   basename = 'examples/' + getParams['model'];
 }

@@ -1,31 +1,9 @@
 # modeling-compiler
 
-This is still a really early work in progress. The docs aren't very good yet.
-
-Code
-----
-
-The lexer+parser ([parser.js](parser.js)) is written using the
-[Parsimmon](https://github.com/jneen/parsimmon) library. It outputs a really
-big basically JSON parse tree like what you find in
-[output-tokenring.json](output-tokenring.json). Every object in the
-parse tree has a "kind" field specifying its type and a "source" field
-specifying where it comes from in the input file (for error messages).
-
-After parsing completes, the entire structure is converting into an AST
-(abstract syntax tree). There's mostly a one-to-one mapping between a node in
-the parse tree and a node in the AST, but the AST is actual Javascript objects.
-There are two kinds of nodes in the AST: [statements](statements/) and
-[expressions](expressions/). These refer to [types](types/) and values (value
-classes are defined next to the corresponding type).
-
-After the AST is set up, `typecheck()` is called on it, which is invoked
-through the entire tree (children before parents). Then `execute()` calls the
-top-level initialization statements, if any.
-
-For now, rules can be fired individually by looking them up in the
-[Environment](environment.js) and invoking `fire()`. In the future, there will
-be a way to run a model (in a simulation mode and a model checking mode).
+This project is a work in progress. It's fairly buggy and quirky but can
+provide some value already. The docs aren't very good yet. This project needs a
+name, but also the '-compiler' part of the repo name is a inaccurate, as it's
+only an interpreter for now.
 
 Setup
 -----
@@ -69,43 +47,137 @@ REPL
     > 
 
 
-Token Ring
-----------
+### Running Example in REPL
 
-See [tokenring.model](tokenring.model) code first.
+See [examples/toomanybananas/toomanybananas.model](examples/toomanybananas/toomanybananas.model)
+code to make sense of this.
 
-    $ node main.js tokenring.model 
-    token = InTransit { to: 1 }
-    servers = [1: Server { hasToken: False }, 2: Server { hasToken: False }, 3: Server { hasToken: False }, 4: Server { hasToken: False }, 5: Server { hasToken: False }]
-
-    Executing deliverToken
-    token = AtServer { at: 1 }
-    servers = [1: Server { hasToken: True }, 2: Server { hasToken: False }, 3: Server { hasToken: False }, 4: Server { hasToken: False }, 5: Server { hasToken: False }]
-
-    Executing passToken
-    token = InTransit { to: 2 }
-    servers = [1: Server { hasToken: False }, 2: Server { hasToken: False }, 3: Server { hasToken: False }, 4: Server { hasToken: False }, 5: Server { hasToken: False }]
-
-    > .fire deliverToken
-    token = AtServer { at: 2 }
-    servers = [1: Server { hasToken: False }, 2: Server { hasToken: True }, 3: Server { hasToken: False }, 4: Server { hasToken: False }, 5: Server { hasToken: False }]
-
-    > .fire passToken 2
-    token = InTransit { to: 3 }
-    servers = [1: Server { hasToken: False }, 2: Server { hasToken: False }, 3: Server { hasToken: False }, 4: Server { hasToken: False }, 5: Server { hasToken: False }]
-
-    > .fire deliverToken
-    token = AtServer { at: 3 }
-    servers = [1: Server { hasToken: False }, 2: Server { hasToken: False }, 3: Server { hasToken: True }, 4: Server { hasToken: False }, 5: Server { hasToken: False }]
-
-    > .fire passToken 3
-    token = InTransit { to: 4 }
-    servers = [1: Server { hasToken: False }, 2: Server { hasToken: False }, 3: Server { hasToken: False }, 4: Server { hasToken: False }, 5: Server { hasToken: False }]
-
+    $ node main.js examples/toomanybananas/toomanybananas.model 
+    bananas = 0
+    notePresent = False
+    roommates = [1: Happy, 2: Happy, 3: Happy, 4: Happy, 5: Happy]
+    
+    Executing step
+    bananas = 0
+    notePresent = False
+    roommates = [1: Hungry, 2: Happy, 3: Happy, 4: Happy, 5: Happy]
+    
+    > .fire step 3
+    bananas = 0
+    notePresent = False
+    roommates = [1: Hungry, 2: Happy, 3: Hungry, 4: Happy, 5: Happy]
+    
+    > .fire step 3
+    bananas = 0
+    notePresent = True
+    roommates = [1: Hungry, 2: Happy, 3: GoingToStore, 4: Happy, 5: Happy]
+    
+    > bananas = 7
+    > .fire step 3
+    bananas = 7
+    notePresent = True
+    roommates = [1: Hungry, 2: Happy, 3: ReturningFromStore { carrying: 3 }, 4: Happy, 5: Happy]
+    
+    > .fire step 3
+    bananas = 10
+    notePresent = False
+    roommates = [1: Hungry, 2: Happy, 3: Hungry, 4: Happy, 5: Happy]
+    
     > 
 
-Tests
------
+Note that invariants are not automatically checked.
+
+Browser
+-------
+
+Run `make bundle.js`. This packages up the interpreter along with its
+dependencies into a single JavaScript file using
+[webpack](https://webpack.github.io/). (This is a big gotcha if you're changing
+the internal code, where you forget this step. Use
+`./node_modules/.bin/webpack --watch` for that.)
+
+Set up a web server to serve the top-level directory. For example:
+
+    npm install -g nws
+    nws -o
+
+The `-o` will open `index.html` in a web browser as served through that web server.
+The first thing that'll do is pull down a model and view file for the default model,
+presently [examples/toomanybananas/toomanybananas.model](examples/toomanybananas/toomanybananas.model)
+and [examples/toomanybananas/toomanybananas.jsx](examples/toomanybananas/toomanybananas.jsx).
+By design, the model and view files aren't compiled into `bundle.js` with
+webpack and aren't processed by the web server at all.
+
+You should see the banana visualization come up and you can interact with it
+according to the rules of the model. To see other models, host them underneath
+the `examples/` directory, then pass a `?model=path/to/model`, stripping off
+the `.model` and `.jsx` extensions. For example, navigating to
+<http://localhost:3030/?model=elevators/elevators> will load
+[examples/elevators/elevators.model](examples/elevators/elevators.model) and
+[examples/elevators/elevators.jsx](examples/elevators/elevators.jsx).
+
+
+Writing a Model
+---------------
+
+Coming soon. The most important thing to note is that most things are
+pass-by-value (copy semantics), but for loops are by reference.
+
+Writing a View
+--------------
+
+This can be tedious but isn't particularly difficult once you get the hang of it.
+The nice thing is you've got all of the global state dumped out right below the
+SVG by default, so you can build up the view incrementally.
+
+Start with an existing example for the basic structure. The key things you need
+to understand are:
+
+- [React](https://facebook.github.io/react/docs/why-react.html) with JSX, which
+has some minor extensions to standard JavaScript (you can use ES6 features, by
+the way).
+- [SVG](https://developer.mozilla.org/en-US/docs/Web/SVG). In particular, you
+should familiarize yourself with these common elements:
+[g](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/g),
+[rect](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/rect),
+[circle](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/circle),
+[text](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/text),
+[line](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/line), and
+[path](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/path).
+- Coordinate space: (0, 0) is the top left of the canvas, with Y growing
+downwards. The current canvas is about 100x100, but one of the dimensions can
+be slightly larger depending on how it's resized. We might change this soon, as
+other SVG tools seem to default to canvases that are an order of magnitude or
+so larger.
+- Manually positioning everything is annoying. Hopefully we can find a nicer
+solution in the future. `BBox` in [web/util.js](web/util.js) might help.
+- Don't be afraid to embrace some "globals" in your view. It's a lot easier
+than passing around the model everywhere, for example.
+
+Internals
+---------
+
+### Interpreter
+
+The lexer+parser ([parser.js](parser.js)) is written using the
+[Parsimmon](https://github.com/jneen/parsimmon) library. It outputs a really
+big basically JSON parse tree like what you find in
+[output-tokenring.json](output-tokenring.json). Every object in the
+parse tree has a "kind" field specifying its type and a "source" field
+specifying where it comes from in the input file (for error messages).
+
+After parsing completes, the entire structure is converting into an AST
+(abstract syntax tree). There's mostly a one-to-one mapping between a node in
+the parse tree and a node in the AST, but the AST is actual JavaScript objects.
+There are two kinds of nodes in the AST: [statements](statements/) and
+[expressions](expressions/). These refer to [types](types/) and values (value
+classes are defined next to the corresponding type).
+
+After the AST is set up, `typecheck()` is called on it, which is invoked
+through the entire tree (children before parents). Then `execute()` calls the
+top-level initialization statements, if any.
+
+### Tests
 
 Run `make test`.
 
@@ -117,20 +189,5 @@ The parser is tested by feeding it a couple of files
 ([input.model](input.model) and [tokenring.model](tokenring.model)) and
 automatically checking their parser output (against [output.json](output.json)
 and [output-tokenring.json](output-tokenring.json)). Eventually we'll want more
-targetted tests for the parser, but this has worked pretty well so far at
+targeted tests for the parser, but this has worked pretty well so far at
 making sure there aren't any regressions.
-
-Browser
--------
-
-Run `make bundle.js`.
-
-Set up a web server to serve the top-level directory. For example:
-
-    npm install -g nws
-    nws -o
-
-Then open `index.html` in a web browser as served through that web server (this
-is necessary for your browser to pull down `tokenring.model`). You'll see a
-token ring come up and can interact with it according to the rules of the
-model.
