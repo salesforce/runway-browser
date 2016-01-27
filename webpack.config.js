@@ -30,6 +30,13 @@ module.exports = {
         test: /\.svg$/,
         loader: "file-loader"
       },
+      {
+        test: /\.jsx$/,
+        loader: 'babel-loader',
+        query: {
+          presets: ['react'],
+        },
+      },
     ]
   }
 };
