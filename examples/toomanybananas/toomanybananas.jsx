@@ -12,12 +12,6 @@ let View = function(controller, svg, module) {
 let model = module.env;
 let tooltip = new Tooltip(jQuery('#tooltip'));
 
-let checkInvariants = () => {
-  model.invariants.list().forEach(name => {
-    model.invariants.get(name).check();
-  });
-};
-
 let basename = 'examples/toomanybananas';
 return Promise.all([
   fetchRemoteFile(`${basename}/bg.svg`),
@@ -126,12 +120,10 @@ let TooManyBananasView = React.createClass({
         y={y}
         xlinkHref={happy ? '#happy' : '#hungry'}
         className="clickable"
-        onClick={() => {
-          console.log(`step ${id}`);
-          model.getRule('step').fire(id);
-          controller.stateChanged();
-          checkInvariants();
-        }} />);
+        onClick={() => controller.tryChangeState(() => {
+            console.log(`step ${id}`);
+            model.getRule('step').fire(id);
+        })} />);
     });
 
     return <g>
@@ -144,12 +136,11 @@ let TooManyBananasView = React.createClass({
       <g id="bg" dangerouslySetInnerHTML={{__html: svgs.bg}}></g>
       <text x={2} y={40}
         style={{fontSize: 4, fill: 'white'}}
-        className="clickable" onClick={() => {
+        className="clickable"
+        onClick={() => controller.tryChangeState(() => {
           console.log('spawn banana');
           model.vars.get('bananas').value += 1;
-          controller.stateChanged();
-          checkInvariants();
-      }}>+</text>
+        })}>+</text>
       {note}
       {bananas}
       {roommates}

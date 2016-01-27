@@ -40,11 +40,10 @@ let TokenRingView = React.createClass({
       let serverVar = model.getVar('servers').index(id);
       let hasToken = (serverVar.hasToken.toString() == 'True');
       return <g key={id} className="clickable"
-        onClick={() => {
+        onClick={() => controller.tryStateChange(() => {
           console.log('passToken', id);
           model.getRule('passToken').fire(id);
-          controller.stateChanged();
-        }}>
+        })}>
           <circle cx={point.x} cy={point.y} r={10}
             style={{fill: hasToken ? '#00aa00' : '#aa6666', stroke: 'black'}} />
           <text x={point.x} y={point.y + 4}
@@ -78,11 +77,10 @@ let TokenRingView = React.createClass({
         id="token"
         style={{fill: '#000088'}}
         className="clickable"
-        onClick={() => {
+        onClick={() => controller.tryStateChange(() => {
           console.log('deliverToken');
           model.getRule('deliverToken').fire();
-          controller.stateChanged();
-        }} />;
+        })} />;
     })();
 
 

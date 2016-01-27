@@ -10,18 +10,6 @@ class RuleControls {
     this.module = module;
     this.update();
 
-    let checkInvariants = () => {
-      try {
-        this.module.env.invariants.list().forEach(name => {
-          this.module.env.invariants.get(name).check();
-        });
-      } catch ( e ) {
-        console.log(e);
-        jQuery('#error').text(e);
-        throw e;
-      }
-    };
-
     this.elem.append(this.module.env.rules.list().map(name => {
       let group = [];
       let rule = this.module.env.rules.get(name);
@@ -32,24 +20,16 @@ class RuleControls {
             .addClass('btn')
             .addClass('btn-default')
             .html(`${name}(${i})`)
-            .click(() => {
-              checkInvariants();
-              rule.fire(i);
-              this.controller.stateChanged();
-              checkInvariants();
-            }));
+            .click(() =>
+              this.controller.tryChangeState(() => rule.fire(i))));
         }
       } else {
         group.push(jQuery('<button></button>')
           .addClass('btn')
           .addClass('btn-default')
           .html(name)
-          .click(() => {
-            checkInvariants();
-            rule.fire();
-            this.controller.stateChanged();
-            checkInvariants();
-          }));
+          .click(() =>
+            this.controller.tryChangeState(() => rule.fire())));
       }
       return jQuery('<div></div>')
         .addClass('btn-group')

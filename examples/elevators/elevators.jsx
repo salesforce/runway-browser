@@ -201,11 +201,10 @@ let ruleMenu = (selector, rules) => new BootstrapMenu(selector, {
   menuEvent: 'click',
   actions: rules.map(rule => ({
       name: rule[0],
-      onClick: () => {
+      onClick: () => controller.tryChangeState(() => {
         console.log(rule);
         model.getRule(rule[0]).fire(rule[1]);
-        controller.stateChanged();
-      },
+      }),
   })),
 });
 

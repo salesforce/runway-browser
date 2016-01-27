@@ -88,11 +88,31 @@ let fetchRemoteJSX = function(filename) {
 };
 
 class Controller {
-  constructor() {
+  constructor(module) {
+    this.module = module;
     this.views = [];
   }
-  stateChanged() {
-    this.views.forEach((view) => view.update());
+
+  checkInvariants() {
+    try {
+      this.module.env.invariants.forEachLocal((invariant, name) => {
+        invariant.check();
+      });
+    } catch ( e ) {
+      let msg = `Failed invariant ${name}: ${e}`;
+      console.log(msg);
+      jQuery('#error').text(msg);
+      throw e;
+    }
+  }
+
+  tryChangeState(mutator) {
+    mutator();
+    this.checkInvariants();
+    this.updateViews();
+  }
+  updateViews() {
+    this.views.forEach(view => view.update());
   }
 }
 
@@ -167,7 +187,7 @@ Promise.all([
     jQuery('#error').text(e);
     return;
   }
-  let controller = new Controller();
+  let controller = new Controller(module);
   controller.views.push(
     new DefaultView(controller, jQuery('#state'), module));
   controller.views.push(
@@ -194,15 +214,7 @@ Promise.all([
     if (simulateId === undefined) {
       let step = () => {
         simulateId = undefined;
-        try {
-          simulator(module);
-        } catch ( e ) {
-          console.log(e);
-          jQuery('#error').text(e);
-          throw e;
-          return;
-        }
-        controller.stateChanged();
+        controller.tryChangeState(() => simulator(module));
         simulateId = setTimeout(step, window.simulateSpeed);
       };
       step();
@@ -236,6 +248,6 @@ Promise.all([
     // viewElem.attr('viewBox', ...) sets viewbox (lowercase) instead
     viewElem[0].setAttribute('viewBox',
       `0 0 ${width} ${height}`);
-    controller.stateChanged();
+    controller.updateViews();
   });
 });
