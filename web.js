@@ -127,7 +127,7 @@ class HTMLStateView {
       .map(kv => {
         return `${kv[0]}: ${StateDump.toHTMLString(kv[1])}`;
       })
-      .join('\n');
+      .join('\n<br />\n');
     this.elem.html(output);
   }
 }
