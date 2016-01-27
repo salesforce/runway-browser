@@ -132,11 +132,6 @@ if (require.main === module) {
     let module = compiler.load(new Input(filename, readFile(filename)), env);
     module.ast.execute();
     printEnv(env);
-    env.listRules().forEach((rule) => {
-      console.log('Executing', rule);
-      env.getRule(rule).fire();
-      printEnv(env);
-    });
   }
 
   repl(env);
