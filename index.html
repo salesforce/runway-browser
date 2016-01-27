@@ -6,14 +6,22 @@
   <body>
     <script type="text/javascript" src="bundle.js" charset="utf-8"></script>
 
-    <div style="min-height: 200px;"></div>
+    <div class="container-fluid">
 
-    Simulation <input type="checkbox" id="simulate"  /> <button id="slower">-</button> <button id="faster">+</button>
+      <div style="min-height: 200px;"></div>
 
-    <pre><code id="error" style="color: red"></code></pre>
+      <div>
+        Simulation
+        <input type="checkbox" id="simulate" />
+        <button id="slower" class="btn btn-default">-</button>
+        <button id="faster" class="btn btn-default">+</button>
+      </div>
 
-    <h2>State</h2>
-    <div>
+      <div id="rulecontrols" class="btn-toolbar" style="margin: 10px auto"></div>
+
+      <pre><code id="error" style="color: red"></code></pre>
+
+      <h2>State</h2>
       <div id="viewwrapper" style="width: 120px; height: 120px">
         <svg id="view" version="1.1" viewbox="0 0 100 100"
           xmlns="http://www.w3.org/2000/svg"
@@ -28,7 +36,8 @@
       </div>
       <div id="state2"></div>
       <pre><code id="state"></code></pre>
-    </div>
+
+    </div> <!-- container -->
 
 <div id="tooltip" class="tooltip top" role="tooltip">
   <div class="tooltip-arrow"></div>

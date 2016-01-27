@@ -15,6 +15,7 @@ let Input = require('./input.js');
 let Tooltip = require('./web/tooltip.js');
 let Util = require('./web/util.js');
 let StateDump = require('./web/statedump.js');
+let RuleControls = require('./web/rulecontrols.js');
 
 let preludeText = require('./prelude.model');
 
@@ -165,6 +166,8 @@ Promise.all([
     new DefaultView(controller, jQuery('#state'), module));
   controller.views.push(
     new HTMLStateView(controller, jQuery('#state2'), module));
+  controller.views.push(
+    new RuleControls(controller, jQuery('#rulecontrols'), module));
 
   let userView = results[1];
   userView = new userView(controller, jQuery('#view #user')[0], module);
