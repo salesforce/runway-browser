@@ -38,8 +38,10 @@ window.meval = meval;
 let fetchRemoteFile = (filename) => new Promise((resolve, reject) => {
     jQuery.ajax(filename, {
       dataType: 'text',
-    }).then((text) => {
+    }).done(text => {
       resolve(new Input(filename, text));
+    }).fail((req, st, err) => {
+      reject(err);
     });
   });
 
@@ -147,7 +149,11 @@ if ('model' in getParams) {
 
 Promise.all([
   fetchRemoteFile(basename + '.model'),
-  fetchRemoteJSX(basename + '.jsx'),
+  fetchRemoteJSX(basename + '.jsx')
+    .catch(err => {
+      console.log(`Failed to get view file over HTTP: ${err}`);
+      return null;
+    }),
   pageLoaded,
 ]).then((results) => {
   let input = results[0];
@@ -170,11 +176,13 @@ Promise.all([
     new RuleControls(controller, jQuery('#rulecontrols'), module));
 
   let userView = results[1];
-  userView = new userView(controller, jQuery('#view #user')[0], module);
-  if (userView instanceof Promise) {
-    userView.then(v => controller.views.push(v));
-  } else {
-    controller.views.push(userView);
+  if (userView !== null) {
+    userView = new userView(controller, jQuery('#view #user')[0], module);
+    if (userView instanceof Promise) {
+      userView.then(v => controller.views.push(v));
+    } else {
+      controller.views.push(userView);
+    }
   }
 
   window.simulateSpeed = 500;
