@@ -111,6 +111,18 @@ class Controller {
     this.checkInvariants();
     this.updateViews();
   }
+
+  resetToStartingState() {
+    this.tryChangeState(() => {
+      console.log('reset');
+      jQuery('#error').text('');
+      this.module.env.vars.forEachLocal((mvar, name) => {
+        mvar.assign(mvar.type.makeDefaultValue());
+      });
+      this.module.ast.execute(); // run global initialization code
+    });
+  }
+
   updateViews() {
     this.views.forEach(view => view.update());
   }

@@ -35,6 +35,13 @@ class RuleControls {
         .addClass('btn-group')
         .append(group);
     }));
+    this.elem.append(jQuery('<div></div>')
+        .addClass('btn-group')
+        .append(jQuery('<button></button>')
+          .addClass('btn')
+          .addClass('btn-default')
+          .html('reset')
+          .click(() => this.controller.resetToStartingState())));
   }
 
   update() {
