@@ -127,6 +127,29 @@ A match statement is the only way to get at a Person's heart rate:
     > isResting
     True
 
+The keyword `as` in a match statement makes a copy of the variables.
+As a result, this would be an incorrect way to go to sleep:
+
+    > match p {
+    .   Dead => { /* resting quite well already */ },
+    .   Alive as details => {
+    .     details.asleep = True;
+    .   },
+    . }
+    > p
+    Alive { heartRate: 80, asleep: False }
+
+The correct implementation assigns back to the variable:
+
+    > match p {
+    .   Dead => { /* resting quite well already */ },
+    .   Alive as details => {
+    .     p = Alive { heartRate: 80, asleep: True };
+    .   },
+    . }
+    > p
+    Alive { heartRate: 80, asleep: True }
+
 When you have variables that are only valid sometimes, try to express that
 using either types rather than convention. This will help avoid bugs and reduce
 redundancy in your state variables.
