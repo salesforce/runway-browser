@@ -13,7 +13,7 @@ class NumberValue extends Value {
   assign(newValue) {
     if (typeof newValue == 'number') {
       this.value = newValue;
-    } else if (newValue instanceof RangeValue) {
+    } else if (newValue.value !== undefined && typeof newValue.value == 'number') {
       this.value = newValue.value;
     } else {
       throw new errors.Internal(`Trying to assign ${newValue.type} to Number;`);
