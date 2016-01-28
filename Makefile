@@ -47,8 +47,8 @@ system-test-parser: parser.js input.model
 	git diff -w --exit-code output.json
 
 .PHONY: system-test-parser-tokenring
-system-test-parser-tokenring: parser.js examples/tokenring.model
-	$(NODE) parser-main.js examples/tokenring.model >output-tokenring.json 2>&1 || echo Exit status $$? >>output-tokenring.json
+system-test-parser-tokenring: parser.js examples/tokenring/tokenring.model
+	$(NODE) parser-main.js examples/tokenring/tokenring.model >output-tokenring.json 2>&1 || echo Exit status $$? >>output-tokenring.json
 	git diff -w --exit-code output-tokenring.json
 
 .PHONY: format
