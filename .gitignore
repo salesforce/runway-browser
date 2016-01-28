@@ -1,4 +1,5 @@
 *.bck
+/LANGUAGE-GUIDE.html
 /README.html
 /bower_components/
 /bundle.js

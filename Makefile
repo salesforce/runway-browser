@@ -64,3 +64,6 @@ bundle.js: $(ALLJSFILES)
 
 README.html: README.md
 	markdown $< >$@
+
+LANGUAGE-GUIDE.html: LANGUAGE-GUIDE.md
+	markdown $< >$@
