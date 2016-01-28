@@ -348,6 +348,29 @@ non-deterministic rules).
 Note that after a rule is applied, its stack is gone. Any changes need to be
 saved back to the global variables.
 
+#### Rule-For
+
+Sometimes you'll want to define a rule that applies to each of many variables
+within a container. The `rule-for` syntax combines a rule definition with a for
+loop.
+
+By placing a normal for loop within a rule, the single rule will apply to all
+objects atomically:
+
+    > rule move {
+    .   for elevator in elevators {
+    .     // move elevator
+    .   }
+    . }
+
+Using rule-for declares several rules, one for each object. In this example,
+elevators move at different times (each elevator moves atomically, but they do
+not move as a group atomically).
+
+    > rule move for elevator in elevators {
+    .   // move elevator
+    . }
+
 ### State Invariants
 
 An `invariant` is a named block of code that runs assertions on the global state.
