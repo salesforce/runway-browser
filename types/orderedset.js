@@ -30,7 +30,7 @@ class OrderedSetValue extends Value {
     if (typeof i !== 'number') {
       throw new errors.Internal(`Trying to index array with ${i}`);
     }
-    if (i < this.type.indextype.low || i > this.type.indextype.low + this.used) {
+    if (i < this.type.indextype.low || i > this.type.indextype.low + this.used - 1) {
       throw new errors.Bounds(`Cannot access index ${i} of ${this}`);
     }
     let v = this.items[i - this.type.indextype.low];
