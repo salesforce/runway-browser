@@ -67,3 +67,6 @@ README.html: README.md
 
 LANGUAGE-GUIDE.html: LANGUAGE-GUIDE.md
 	markdown $< >$@
+
+JAVASCRIPT-API.html: JAVASCRIPT-API.md
+	markdown $< >$@
