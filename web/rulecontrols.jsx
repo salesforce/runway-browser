@@ -18,7 +18,10 @@ let RuleControlsView = React.createClass({
           group.push(<button
               className="btn btn-default"
               key={`${name}-${i}`}
-              onClick={() => controller.tryChangeState(() => rule.fire(i))}>
+              onClick={() => controller.tryChangeState(() => {
+                rule.fire(i);
+                return `${name}(${i})`;
+              })}>
                 {`${name}(${i})`}
             </button>);
         }
@@ -26,7 +29,10 @@ let RuleControlsView = React.createClass({
         group.push(<button
             className="btn btn-default"
             key={name}
-            onClick={() => controller.tryChangeState(() => rule.fire())}>
+            onClick={() => controller.tryChangeState(() => {
+              rule.fire();
+              return name;
+            })}>
               {name}
           </button>);
       }

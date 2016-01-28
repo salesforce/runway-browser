@@ -37,7 +37,7 @@ let simulate = (module) => {
     let now = stateString(module);
     if (start !== now) {
       console.log(rule.name);
-      return;
+      return rule.name;
     }
   }
   console.log('deadlock');

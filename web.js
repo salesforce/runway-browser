@@ -16,6 +16,7 @@ let Tooltip = require('./web/tooltip.js');
 let Util = require('./web/util.js');
 let StateDump = require('./web/statedump.js');
 let RuleControls = require('./web/rulecontrols.jsx');
+let ExecutionView = require('./web/executionview.jsx');
 
 let preludeText = require('./prelude.model');
 
@@ -87,10 +88,26 @@ let fetchRemoteJSX = function(filename) {
     });
 };
 
+class SerializedState {
+  constructor(state) {
+    this.state = state;
+  }
+  toJSON() {
+    return this.state;
+  }
+  toString() {
+    return JSON.stringify(this.state, null, 2);
+  }
+  equals(other) {
+    return this.toString() === other.toString();
+  }
+}
+
 class Controller {
   constructor(module) {
     this.module = module;
     this.views = [];
+    this.execution = [];
   }
 
   checkInvariants() {
@@ -106,10 +123,30 @@ class Controller {
     }
   }
 
+  serializeState() {
+    let state = {};
+    this.module.env.vars.forEachLocal((mvar, name) => {
+      if (!mvar.isConstant) {
+        state[name] = mvar.toJSON();
+      }
+    });
+    return new SerializedState(state);
+  }
+
   tryChangeState(mutator) {
-    mutator();
     this.checkInvariants();
-    this.updateViews();
+    let oldState = this.serializeState();
+    let msg = mutator();
+    if (msg === undefined) {
+      msg = 'state changed';
+    }
+    let newState = this.serializeState();
+    if (!oldState.equals(newState)) {
+      console.log(msg);
+      this.execution.push({msg: msg, state: newState});
+      this.checkInvariants();
+      this.updateViews();
+    }
   }
 
   resetToStartingState() {
@@ -120,6 +157,7 @@ class Controller {
         mvar.assign(mvar.type.makeDefaultValue());
       });
       this.module.ast.execute(); // run global initialization code
+      return 'reset';
     });
   }
 
@@ -200,12 +238,15 @@ Promise.all([
     return;
   }
   let controller = new Controller(module);
+  window.controller = controller;
   controller.views.push(
     new DefaultView(controller, jQuery('#state'), module));
   controller.views.push(
     new HTMLStateView(controller, jQuery('#state2'), module));
   controller.views.push(
     new RuleControls(controller, jQuery('#rulecontrols')[0], module));
+  controller.views.push(
+    new ExecutionView(controller, jQuery('#execution')[0], module));
 
   let userView = results[1];
   if (userView !== null) {
