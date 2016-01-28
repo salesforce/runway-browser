@@ -63,7 +63,7 @@ class ArrayValue extends Value {
   size() {
     return this.items.length;
   }
-  capcacity() {
+  capacity() {
     return this.items.length;
   }
 }
