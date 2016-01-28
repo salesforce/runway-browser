@@ -80,6 +80,7 @@ We can access it from JavaScript with:
     1
 
 Assignment is tedious (TODO: make the first one work):
+
     > light.assign('Yellow')
     Uncaught Error: Cannot assign value of Yellow to either-type TrafficLight
     > light.assign(light.type.getVariant('Red').makeDefaultValue())
@@ -125,6 +126,7 @@ We can access it from JavaScript with:
     "80"
 
 Assignment is also tedious:
+
     > dead.assign(dead.type.getVariant('Alive').makeDefaultValue())
     > dead.lookup('heartRate').assign(10)
 
@@ -139,9 +141,128 @@ this always return `undefined`).
 
 #### Arrays
 
+    > rm = module.ast.env.vars.get('roommates')
+    > rm.toString()
+    "[1: Happy, 2: Happy, 3: Happy, 4: Happy, 5: Happy]"
+    > rm.toJSON()
+    [
+      [
+        1,
+        "Happy"
+      ],
+      [
+        2,
+        "Happy"
+      ],
+      [
+        3,
+        "Happy"
+      ],
+      [
+        4,
+        "Happy"
+      ],
+      [
+        5,
+        "Happy"
+      ]
+    ]
+    > rm.index(2).toString()
+    "Happy"
+    > rm.size()
+    5
+    > rm.capacity()
+    5
+    > rm.forEach((v, i) => console.log(v.toString(), i))
+    Happy 1
+    Happy 2
+    Happy 3
+    Happy 4
+    Happy 5
 
 #### Sets
 
+Using the following model:
+
+    var bools : Set<Boolean>[3..5];
+
+We can access it from JavaScript with:
+
+    > bools = module.ast.env.vars.get('bools')
+    > bools.toString()
+    "{}"
+    > bools.toJSON()
+    []
+    > bools.push(module.ast.env.vars.get('True'))
+    > bools.toJSON()
+    ["True"]
+    > bools.toString()
+    "{True}"
+    > bools.push(module.ast.env.vars.get('False'))
+    > bools.toString()
+    "{False, True}"
+    > bools.toJSON()
+    ["False", "True"]
+    > bools.index(3).toString()
+    "True"
+    > bools.index(4).toString()
+    "False"
+    > bools.index(5).toString()
+    Uncaught Error: Cannot access index 5 of {3: True, 4: False}
+    > bools.size()
+    2
+    > bools.capacity()
+    3
+    > bools.contains(module.ast.env.vars.get('False'))
+    true
+    > bools.empty()
+    false
+    > bools.full()
+    false
 
 #### Ordered Sets
 
+Using the following model:
+
+    var bools : OrderedSet<Boolean>[3..5];
+
+We can access it from JavaScript with:
+
+    > bools = module.ast.env.vars.get('bools')
+    > bools.toString()
+    "{}"
+    > bools.toJSON()
+    []
+    > bools.push(module.ast.env.vars.get('True'))
+    > bools.toJSON()
+    [[3, "True"]]
+    > bools.toString()
+    "{3: True}"
+    > bools.push(module.ast.env.vars.get('False'))
+    > bools.toString()
+    "{3: True, 4: False}"
+    > bools.toJSON()
+    [[3, "True"], [4, "False"]]
+    > bools.index(3).toString()
+    "True"
+    > bools.index(4).toString()
+    "False"
+    > bools.index(5).toString()
+    Uncaught Error: Cannot access index 5 of {3: True, 4: False}
+    > bools.size()
+    2
+    > bools.capacity()
+    3
+    > bools.contains(module.ast.env.vars.get('False'))
+    true
+    > bools.empty()
+    false
+    > bools.full()
+    false
+
+When removing items, the remaining ones get renumbered:
+
+    > bools.remove(bools.index(3))
+    true
+    > bools.toString()
+    "{3: False}"

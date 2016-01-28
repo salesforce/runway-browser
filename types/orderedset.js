@@ -48,6 +48,10 @@ class OrderedSetValue extends Value {
     }).join(', ');
     return `{${inner}}`;
   }
+  toJSON() {
+    return this.usedItems().map((v, i) =>
+      [this.type.indextype.low + i, v.toJSON()]);
+  }
   push(v) {
     if (this.contains(v)) {
       return;
@@ -94,9 +98,6 @@ class OrderedSetValue extends Value {
   }
   full() {
     return this.used == this.type.indextype.high - this.type.indextype.low + 1;
-  }
-  toJSON() {
-    return this.usedItems().map((v) => v.toJSON());
   }
   assign(other) {
     this.used = 0;
