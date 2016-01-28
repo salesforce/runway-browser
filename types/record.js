@@ -22,7 +22,7 @@ class RecordValue extends Value {
       throw new errors.Internal(`Can't assign ${other} to ${this}`);
     }
     this.type.fieldtypes.forEach((fieldtype) => {
-      this[fieldtype.name] = other[fieldtype.name];
+      this[fieldtype.name].assign(other[fieldtype.name]);
     });
   }
 

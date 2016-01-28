@@ -17,7 +17,8 @@ class Return extends Statement {
 
   execute() {
     let e = new errors.Return(`Uncaught return statement at ${this.parsed.source}`);
-    e.value = this.expr.evaluate();
+    e.value = this.expr.type.makeDefaultValue();
+    e.value.assign(this.expr.evaluate());
     throw e;
   }
 }
