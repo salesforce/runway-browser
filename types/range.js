@@ -31,6 +31,10 @@ class RangeValue extends Value {
     }
   }
 
+  assignJSON(spec) {
+    this.assign(spec);
+  }
+
   equals(other) {
     if (typeof other == 'number') {
       return this.value == other;

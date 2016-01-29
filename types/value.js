@@ -11,6 +11,10 @@ class Value {
     throw new errors.Type(`assign() not implemented for ${this.type} values`);
   }
 
+  assignJSON() {
+    throw new errors.Type(`assignJSON() not implemented for ${this.type} values`);
+  }
+
   equals(other) {
     throw new errors.Type(`equals() not implemented for ${this.type} values`);
   }

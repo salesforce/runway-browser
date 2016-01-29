@@ -62,6 +62,13 @@ class SetValue extends Value {
   assign(other) {
     this.ordered.assign(other.ordered);
   }
+  assignJSON(spec) {
+    this.ordered.used = 0;
+    spec.forEach(v => {
+      this.ordered.items[this.ordered.used].assignJSON(v);
+      this.ordered.used += 1;
+    });
+  }
   equals(other) {
     this.ordered.equals(other.ordered);
   }

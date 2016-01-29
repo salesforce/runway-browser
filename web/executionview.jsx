@@ -9,12 +9,23 @@ let View = function(controller, elem, module) {
 
 let ExecutionView = React.createClass({
   render: function() {
-    return <ol reversed="1" style={{overflowY: 'auto', maxHeight: '10em'}}>
-      {controller.execution.map((execution, i) =>
-        <li key={i}>
+    let renderExecution = (execution, i) => {
+      return <li key={i}>
+        <a href=""
+          onClick={e => {
+          e.preventDefault();
+          controller.restore(execution);
+        }}>
           {execution.msg}
-        </li>
-      ).reverse()}
+        </a>
+      </li>;
+    };
+
+    return <ol
+      start={controller.execution.length - 1}
+      reversed="1"
+      style={{overflowY: 'auto', maxHeight: '10em'}}>
+        {controller.execution.map(renderExecution).reverse()}
     </ol>;
   }
 

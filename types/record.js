@@ -74,6 +74,12 @@ class RecordValue extends Value {
     })
     return o;
   }
+
+  assignJSON(spec) {
+    this.type.fieldtypes.forEach(fieldtype => {
+      this[fieldtype.name].assignJSON(spec[fieldtype.name]);
+    });
+  }
 }
 
 

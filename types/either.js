@@ -98,6 +98,19 @@ class EitherValue extends Value {
     }
   }
 
+  assignJSON(spec) {
+    if (typeof spec === 'string') {
+      this.assign(
+        this.eithertype.getVariant(spec)
+          .makeDefaultValue());
+    } else {
+      this.assign(
+        this.eithertype.getVariant(spec.tag)
+          .makeDefaultValue());
+      this.fields.assignJSON(spec.fields);
+    }
+  }
+
   toJSON() {
     if (this.fields !== undefined) {
       let o = {};

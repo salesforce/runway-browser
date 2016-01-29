@@ -108,6 +108,12 @@ class Controller {
     this.module = module;
     this.views = [];
     this.execution = [];
+    this.execution.push({
+      msg: 'Initial state',
+      state: this.serializeState(),
+      index: 0,
+    });
+    this.checkInvariants();
   }
 
   checkInvariants() {
@@ -133,6 +139,15 @@ class Controller {
     return new SerializedState(state);
   }
 
+  restoreState(state) {
+    state = state.toJSON();
+    this.module.env.vars.forEachLocal((mvar, name) => {
+      if (!mvar.isConstant) {
+        mvar.assignJSON(state[name]);
+      }
+    });
+  }
+
   tryChangeState(mutator) {
     jQuery('#error').text('');
     this.checkInvariants();
@@ -144,7 +159,11 @@ class Controller {
     let newState = this.serializeState();
     if (!oldState.equals(newState)) {
       console.log(msg);
-      this.execution.push({msg: msg, state: newState});
+      this.execution.push({
+        msg: msg,
+        state: newState,
+        index: this.execution.length,
+      });
       this.checkInvariants();
       this.updateViews();
     }
@@ -160,6 +179,15 @@ class Controller {
       this.module.ast.execute(); // run global initialization code
       return 'reset';
     });
+  }
+
+  restore(snapshot) {
+    console.log('restore');
+    jQuery('#error').text('');
+    this.execution = this.execution.slice(0, snapshot.index + 1);
+    this.restoreState(this.execution[this.execution.length - 1].state);
+    this.checkInvariants();
+    this.updateViews();
   }
 
   updateViews() {

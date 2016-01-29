@@ -103,6 +103,13 @@ class OrderedSetValue extends Value {
     this.used = 0;
     other.forEach(v => this.push(v));
   }
+  assignJSON(spec) {
+    this.used = 0;
+    spec.forEach(x => {
+      this.items[this.used].assignJSON(x[1]);
+      this.used += 1;
+    });
+  }
   equals(other) {
     if (this.used != other.used) {
       return false;

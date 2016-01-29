@@ -48,6 +48,11 @@ class ArrayValue extends Value {
   toJSON() {
     return this.items.map((v, i) => [this.type.indextype.low + i, v.toJSON()]);
   }
+  assignJSON(spec) {
+    spec.forEach(x => {
+      this.index(x[0]).assignJSON(x[1]);
+    });
+  }
   assign(other) {
     this.forEach((v, i) => this.index(i).assign(other.index(i)));   
   }
