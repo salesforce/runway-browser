@@ -15,7 +15,22 @@ let colors = [ // from colorbrewer2.org
 ];
 
 let StateDump = React.createClass({
+
+  getInitialState: function() {
+    return {editing: false};
+  },
+
+  edit: function() {
+    this.setState({editing: true});
+  },
+
+  saved: function() {
+    this.setState({editing: false});
+  },
+
   render: function() {
+    let controller = this.props.controller;
+    let editing = this.state.editing;
     let value = this.props.value;
     let horizontal = this.props.horizontal;
     if (horizontal === undefined) {
@@ -29,11 +44,13 @@ let StateDump = React.createClass({
     let kind = value.type.constructor.name;
     let tableStyle = {background: color};
 
-    let nested = value =>
+    let nested = (value, subpath) =>
       <StateDump
         value={value}
         horizontal={!horizontal}
-        depth={depth + 1} />;
+        depth={depth + 1}
+        controller={controller}
+        path={`${this.props.path}${subpath}`} />;
 
     let fieldRows = (value, type) =>
       type.fieldtypes
@@ -44,9 +61,17 @@ let StateDump = React.createClass({
               {fieldname}
             </td>
             <td>
-              {nested(value.lookup(fieldname))}
+              {nested(value.lookup(fieldname), `.${fieldname}`)}
             </td>
           </tr>);
+
+    let change = makeChange => (e => {
+      controller.tryChangeState(() => {
+        makeChange(e.target.value);
+        this.setState({});
+        return `edited ${this.props.path}`;
+      });
+    });
 
 
     if ('forEach' in value) {
@@ -57,7 +82,7 @@ let StateDump = React.createClass({
         let vrow = [];
         value.forEach((v, i) => {
           irow.push(<td key={i}>{i}</td>);
-          vrow.push(<td key={i}>{nested(v)}</td>);
+          vrow.push(<td key={i}>{nested(v, `[${i}]`)}</td>);
         });
         return <table className="statedump" style={tableStyle}>
             <thead>
@@ -72,7 +97,7 @@ let StateDump = React.createClass({
         value.forEach((v, i) => {
           rows.push(<tr key={i}>
               <td>{i}</td>
-              <td>{nested(v)}</td>
+              <td>{nested(v, `[${i}]`)}</td>
             </tr>);
         });
         return <table className="statedump" style={tableStyle}>
@@ -90,21 +115,61 @@ let StateDump = React.createClass({
 
     } else if (kind == 'EitherVariant' || kind == 'EitherType') {
 
+      let select = [];  
+      if (editing) {
+        let options = value.eithertype.variants
+          .map(v => v.name)
+          .map(name => <option key={name} value={name}>{name}</option>);
+        select = <select className="form-control"
+          value={value.varianttype.name}
+          onChange={change(entered => {
+            value.assign(value.eithertype.getVariant(entered).makeDefaultValue());
+            this.saved();
+          })}>
+          {options}
+        </select>;
+      }
+
       if (value.fields === undefined) {
-        return <span>{value.varianttype.name}</span>;
+        if (editing) {
+          return select;
+        } else {
+          return <span className="clickable" onClick={this.edit}>
+            {value.varianttype.name}
+          </span>;
+        }
       } else {
         return <table className="statedump" style={tableStyle}>
             <thead>
               <tr>
-                <th colSpan={2}>
-                  {value.varianttype.name}
-                </th>
+                {editing ? (
+                  <th colSpan={2}>
+                    {select}
+                  </th>
+                ) : (
+                  <th colSpan={2} className="clickable" onClick={this.edit}>
+                    {value.varianttype.name}
+                  </th>
+                )}
               </tr>
             </thead>
             <tbody>
               {fieldRows(value, value.varianttype.recordtype)}
             </tbody>
           </table>;
+      }
+
+    } else if (kind == 'RangeType') {
+
+      if (editing) {
+        return <input className="form-control"
+          value={value.toString()}
+          onChange={change(entered => value.assign(Number(entered)))}
+          onBlur={this.saved} />;
+      } else {
+        return <span className="clickable" onClick={this.edit}>
+            {value.toString()}
+          </span>;
       }
 
     } else {
@@ -120,7 +185,11 @@ let StateDumpEnv = React.createClass({
     env.vars.forEachLocal((value, name) => {
       if (!value.isConstant) {
         vars.push(<div key={name}>
-          {name}: <StateDump value={value} />
+          {name}:
+          <StateDump
+            value={value}
+            controller={this.props.controller}
+            path={name} />
         </div>);
       }
     });

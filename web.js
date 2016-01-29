@@ -119,7 +119,7 @@ class Controller {
       let msg = `Failed invariant ${name}: ${e}`;
       console.log(msg);
       jQuery('#error').text(msg);
-      throw e;
+      //throw e;
     }
   }
 
@@ -134,6 +134,7 @@ class Controller {
   }
 
   tryChangeState(mutator) {
+    jQuery('#error').text('');
     this.checkInvariants();
     let oldState = this.serializeState();
     let msg = mutator();
@@ -192,7 +193,10 @@ class HTMLStateView {
     this.component = ReactDOM.render(
       React.createElement(
         StateDump.StateDumpEnv,
-        {env: this.module.env}),
+        {
+          env: this.module.env,
+          controller: this.controller,
+        }),
       this.elem[0]);
   }
 
