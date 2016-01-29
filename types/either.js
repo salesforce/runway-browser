@@ -52,7 +52,12 @@ class EitherValue extends Value {
     }
     if (ok) {
       this.varianttype = newValue.varianttype;
-      this.fields = newValue.fields;
+      if (this.varianttype.recordtype === null) {
+        this.fields = undefined;
+      } else {
+        this.fields = this.varianttype.recordtype.makeDefaultValue();
+        this.fields.assign(newValue.fields);
+      }
     } else {
       throw new errors.Internal(`Cannot assign value of ${newValue} to ` +
         `either-type ${this.type.getName()}`);
