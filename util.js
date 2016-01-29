@@ -27,10 +27,24 @@ let range = (start, stop) => {
   return Array.from({
     length: stop - start,
   }, (v, i) => (start + i));
-}
+};
+
+let stringCount = (haystack, needle) => {
+  let count = 0;
+  let i = -1;
+  while (true) {
+    i = haystack.indexOf(needle, i + 1);
+    if (i >= 0) {
+      count += 1;
+    } else {
+      return count;
+    }
+  }
+};
 
 module.exports = {
   getRandomInt: getRandomInt,
   shuffle: shuffle,
   range: range,
+  stringCount: stringCount,
 };

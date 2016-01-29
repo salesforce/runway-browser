@@ -17,6 +17,7 @@ let Util = require('./web/util.js');
 let StateDump = require('./web/statedump.jsx');
 let RuleControls = require('./web/rulecontrols.jsx');
 let ExecutionView = require('./web/executionview.jsx');
+let REPLView = require('./web/repl.jsx');
 
 let preludeText = require('./prelude.model');
 
@@ -273,6 +274,8 @@ Promise.all([
     new RuleControls(controller, jQuery('#rulecontrols')[0], module));
   controller.views.push(
     new ExecutionView(controller, jQuery('#execution')[0], module));
+  controller.views.push(
+    new REPLView(controller, jQuery('#repl')[0], module));
 
   let userView = results[1];
   if (userView !== null) {
