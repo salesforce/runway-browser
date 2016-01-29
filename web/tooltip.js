@@ -1,7 +1,7 @@
 "use strict";
 
 let jQuery = require('jquery');
-let StateDump = require('./statedump.js');
+let StateDump = require('./statedump.jsx');
 
 class Tooltip {
   constructor(elem) {

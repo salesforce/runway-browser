@@ -14,7 +14,7 @@ let Input = require('./input.js');
 
 let Tooltip = require('./web/tooltip.js');
 let Util = require('./web/util.js');
-let StateDump = require('./web/statedump.js');
+let StateDump = require('./web/statedump.jsx');
 let RuleControls = require('./web/rulecontrols.jsx');
 let ExecutionView = require('./web/executionview.jsx');
 
@@ -166,7 +166,7 @@ class Controller {
   }
 }
 
-class DefaultView {
+class TextStateView {
   constructor(controller, elem, module) {
     this.controller = controller;
     this.elem = elem;
@@ -189,19 +189,15 @@ class HTMLStateView {
     this.controller = controller;
     this.elem = elem;
     this.module = module;
-    this.update();
+    this.component = ReactDOM.render(
+      React.createElement(
+        StateDump.StateDumpEnv,
+        {env: this.module.env}),
+      this.elem[0]);
   }
 
   update() {
-    let $ = jQuery;
-    let output = Array.from(this.module.env.vars.list())
-      .map(k => [k, this.module.env.vars.get(k)])
-      .filter(kv => kv[1].isConstant !== true)
-      .map(kv => {
-        return `${kv[0]}: ${StateDump.toHTMLString(kv[1])}`;
-      })
-      .join('\n<br />\n');
-    this.elem.html(output);
+    this.component.setState({});
   }
 }
 
@@ -240,9 +236,7 @@ Promise.all([
   let controller = new Controller(module);
   window.controller = controller;
   controller.views.push(
-    new DefaultView(controller, jQuery('#state'), module));
-  controller.views.push(
-    new HTMLStateView(controller, jQuery('#state2'), module));
+    new HTMLStateView(controller, jQuery('#state'), module));
   controller.views.push(
     new RuleControls(controller, jQuery('#rulecontrols')[0], module));
   controller.views.push(

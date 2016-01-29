@@ -19,6 +19,8 @@ table.statedump {
   margin: 5px;
 }
 
-table.statedump tr td {
+table.statedump tr td,
+table.statedump tr th
+{
   border: 1px solid black;
 }
