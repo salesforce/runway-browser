@@ -13,13 +13,12 @@ let simulate = (module) => {
   let simpleRules = [];
   module.env.rules.forEachLocal((rule, name) => {
     if (rule instanceof RuleFor) {
-      let indextype = rule.expr.type.indextype;
-      for (let i = indextype.low; i <= indextype.high; ++i) {
+      rule.expr.evaluate().forEach((v, i) => {
         simpleRules.push({
           name: `${name}(${i})`,
           fire: () => rule.fire(i),
         });
-      }
+      });
     } else {
       simpleRules.push({
         name: name,

@@ -3,7 +3,7 @@
 let makeExpression = require('../expressions/factory.js');
 let Environment = require('../environment.js').Environment;
 let Statement = require('./statement.js');
-let ArrayType = require('../types/array.js');
+let Types = require('../types/types.js');
 let makeStatement = require('./factory.js');
 let errors = require('../errors.js');
 
@@ -18,7 +18,7 @@ class RuleFor extends Statement {
 
   typecheck() {
     this.expr.typecheck();
-    if (!(this.expr.type instanceof ArrayType.Type)) {
+    if (!Types.implementsIterable(this.expr.type)) {
       throw new errors.Type(`Cannot iterate on a ${this.expr.type} ` +
         `at ${this.expr.source}`);
     }

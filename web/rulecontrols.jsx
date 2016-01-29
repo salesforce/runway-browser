@@ -13,8 +13,7 @@ let RuleControlsView = React.createClass({
     module.env.rules.forEachLocal((rule, name) => {
       let group = [];
       if (rule instanceof RuleFor) {
-        let indextype = rule.expr.type.indextype;
-        for (let i = indextype.low; i <= indextype.high; ++i) {
+        let indextype = rule.expr.evaluate().forEach((v, i) => {
           group.push(<button
               className="btn btn-default"
               key={`${name}-${i}`}
@@ -24,7 +23,7 @@ let RuleControlsView = React.createClass({
               })}>
                 {`${name}(${i})`}
             </button>);
-        }
+        });
       } else {
         group.push(<button
             className="btn btn-default"
