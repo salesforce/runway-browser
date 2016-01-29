@@ -216,7 +216,7 @@ let Person = React.createClass({
     let id = this.props.personId;
     this.menu = ruleMenu(`#person-${id}`, [
       ['wake', id],
-      ['board', id],
+      ['boardOrLeave', id],
       ['leave', id],
     ]);
   },
