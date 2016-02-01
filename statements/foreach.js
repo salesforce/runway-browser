@@ -24,8 +24,8 @@ class ForEach extends Statement {
     let dummyValue = this.expr.type.valuetype.makeDefaultValue();
     this.codeEnv.vars.set(this.parsed.value.value, dummyValue);
     if (this.parsed.index !== undefined) {
-      let dummyIndex = this.expr.type.indextype.makeDefaultValue();
-      this.codeEnv.vars.set(this.parsed.index.value, dummyIndex);
+      let index = this.expr.type.indextype.makeDefaultValue();
+      this.codeEnv.vars.set(this.parsed.index.value, index);
     }
     this.code.typecheck();
   }
@@ -38,9 +38,9 @@ class ForEach extends Statement {
     let restoreIndex = () => {
     };
     if (this.parsed.index !== undefined) {
-      let dummyIndex = this.codeEnv.getVar(this.parsed.index.value);
+      let index = this.codeEnv.getVar(this.parsed.index.value);
       restoreIndex = () => {
-        this.codeEnv.vars.shadow(this.parsed.index.value, dummyIndex);
+        index.assign(this.expr.type.indextype.makeDefaultValue());
       };
     }
     try {
@@ -49,7 +49,7 @@ class ForEach extends Statement {
         // getVar and holds onto it.
         this.codeEnv.vars.shadow(this.parsed.value.value, v);
         if (this.parsed.index !== undefined) {
-          this.codeEnv.vars.shadow(this.parsed.index.value, i);
+          this.codeEnv.getVar(this.parsed.index.value).assign(i);
         }
         try {
           this.code.execute();

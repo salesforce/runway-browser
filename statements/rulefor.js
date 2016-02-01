@@ -52,9 +52,9 @@ class RuleFor extends Statement {
     let restoreIndex = () => {
     };
     if (this.parsed.index !== undefined) {
-      let dummyIndex = this.innerEnv.getVar(this.parsed.index.value);
       restoreIndex = () => {
-        this.innerEnv.vars.shadow(this.parsed.index.value, dummyIndex);
+        this.innerEnv.vars.get(this.parsed.index.value).assign(
+          this.expr.type.indextype.makeDefaultValue());
       };
     }
 
@@ -64,7 +64,7 @@ class RuleFor extends Statement {
     // getVar and holds onto it.
     this.innerEnv.vars.shadow(this.parsed.value.value, value);
     if (this.parsed.index !== undefined) {
-      this.innerEnv.vars.shadow(this.parsed.index.value, index);
+      this.innerEnv.vars.get(this.parsed.index.value).assign(index);
     }
     this.inner.execute();
 
