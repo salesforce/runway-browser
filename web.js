@@ -170,6 +170,18 @@ class Controller {
     }
   }
 
+  wouldChangeState(mutator) {
+    let oldState = this.serializeState();
+    mutator();
+    let newState = this.serializeState();
+    if (oldState.equals(newState)) {
+      return false;
+    } else {
+      this.restoreState(oldState);
+      return true;
+    }
+  }
+
   resetToStartingState() {
     this.tryChangeState(() => {
       console.log('reset');
