@@ -4,6 +4,7 @@
 /README.html
 /bower_components/
 /bundle.js
+/bundle.js.map
 /node_modules/
 
 /448c34a56d699c29117adc64c43affeb.woff2
