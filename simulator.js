@@ -3,13 +3,7 @@
 let RuleFor = require('./statements/rulefor.js');
 let Util = require('./util.js');
 
-let stateString = (module) => {
-  let o = [];
-  let vars = module.env.vars.forEachLocal((v, k) => o.push(`${k}: ${v}`));
-  return o.join('\n');
-};
-
-let simulate = (module) => {
+let simulate = (module, controller) => {
   let simpleRules = [];
   module.env.rules.forEachLocal((rule, name) => {
     if (rule instanceof RuleFor) {
@@ -28,15 +22,13 @@ let simulate = (module) => {
   });
 
   Util.shuffle(simpleRules);
-  let start = stateString(module);
   for (let rule of simpleRules) {
-    //console.log(rule.name, 'start');
-    rule.fire();
-    //console.log(rule.name, 'done');
-    let now = stateString(module);
-    if (start !== now) {
-      console.log(rule.name);
+    let changed = controller.tryChangeState(() => {
+      rule.fire();
       return rule.name;
+    });
+    if (changed) {
+      return;
     }
   }
   console.log('deadlock');

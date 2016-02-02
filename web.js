@@ -8,7 +8,9 @@ let BootstrapMenu = require('bootstrap-menu');
 
 let compiler = require('./compiler.js');
 window.compiler = compiler;
-let simulator = require('./simulator.js');
+let Simulator = {
+  takeRandomStep: require('./simulator.js'),
+};
 let GlobalEnvironment = require('./environment.js').GlobalEnvironment;
 let Input = require('./input.js');
 
@@ -158,7 +160,9 @@ class Controller {
       msg = 'state changed';
     }
     let newState = this.serializeState();
-    if (!oldState.equals(newState)) {
+    if (oldState.equals(newState)) {
+      return false;
+    } else {
       console.log(msg);
       this.execution.push({
         msg: msg,
@@ -167,6 +171,7 @@ class Controller {
       });
       this.checkInvariants();
       this.updateViews();
+      return true;
     }
   }
 
@@ -308,7 +313,7 @@ Promise.all([
     if (simulateId === undefined) {
       let step = () => {
         simulateId = undefined;
-        controller.tryChangeState(() => simulator(module));
+        Simulator.takeRandomStep(module, controller);
         simulateId = setTimeout(step, window.simulateSpeed);
       };
       step();
