@@ -9,44 +9,63 @@ let View = function(controller, elem, module) {
 
 let RuleControlsView = React.createClass({
   render: function() {
-    let groups = [];
+    let rules = [];
     module.env.rules.forEachLocal((rule, name) => {
-      let group = [];
       if (rule instanceof RuleFor) {
+        let options = [];
         let indextype = rule.expr.evaluate().forEach((v, i) => {
-          group.push(<button
-              className="btn btn-default"
-              key={`${name}-${i}`}
-              onClick={() => controller.tryChangeState(() => {
-                rule.fire(i);
-                return `${name}(${i})`;
-              })}>
-                {`${name}(${i})`}
-            </button>);
+          options.push(<li key={`${name}-${i}`}>
+              <a href="#"
+                 onClick={() => controller.tryChangeState(() => {
+                  rule.fire(i);
+                  return `${name}(${i})`;
+                 })}>
+                    {`${name}(${i})`}
+              </a>
+            </li>);
         });
+        if (options.length == 0) {
+          options.push(<li key="0" className="dropdown-header">
+              Inactive
+            </li>);
+        }
+        rules.push(<div className="btn-group" key={name}>
+            <button className="btn btn-default btn-sm dropdown-toggle"
+            data-toggle="dropdown">
+              {name}{' '}
+              <span className="caret"></span>
+            </button>
+            <ul className="dropdown-menu">
+              {options}
+            </ul>
+          </div>);
+
       } else {
-        group.push(<button
-            className="btn btn-default"
-            key={name}
-            onClick={() => controller.tryChangeState(() => {
-              rule.fire();
-              return name;
-            })}>
-              {name}
-          </button>);
+        rules.push(<div className="btn-group" key={name}>
+            <button
+              className="btn btn-default btn-sm"
+              key={name}
+              onClick={() => controller.tryChangeState(() => {
+                rule.fire();
+                return name;
+              })}>
+                {name}
+            </button>
+          </div>);
       }
-      groups.push(<div className="btn-group" key={name}>
-          {group}
-        </div>);
     });
-    groups.push(<div className="btn-group" key="reset">
+
+    rules.push(<div className="btn-group" key="reset">
       <button
-        className="btn btn-default"
+        className="btn btn-default btn-sm"
         onClick={() => controller.resetToStartingState()}>
           reset
       </button>
     </div>);
-    return <div>{groups}</div>;
+
+    return <div className="btn-toolbar">
+        {rules}
+      </div>;
   }
 
 });
