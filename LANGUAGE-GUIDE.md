@@ -158,6 +158,15 @@ redundancy in your state variables.
 
 Various collection types are baked into the compiler.
 
+Arrays are fixed length.
+
+The following collections are of varying length (up to a fixed limit) and
+present similar interfaces:
+- Set: no duplicates, no ordering
+- MultiSet: allows duplicates, no ordering
+- OrderedSet: no duplicates, preserves insertion order
+- Vector: allows duplicates, preserves insertion order 
+
 #### Arrays
 
 Arrays are of fixed size and capacity and contain values of uniform type. They

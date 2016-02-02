@@ -9,8 +9,7 @@ let ArrayType = require('./array.js');
 let Either = require('./either.js');
 let Range = require('./range.js');
 let RecordType = require('./record.js');
-let OrderedSet = require('./orderedset.js');
-let Set = require('./set.js');
+let VarLen = require('./varlen.js');
 
 let make = function(decl, env, name) {
   if (decl.kind == 'range') {
@@ -28,10 +27,14 @@ let make = function(decl, env, name) {
   } else if (decl.kind == 'generic') {
     if (decl.base.value == 'Array') {
       return new ArrayType.Type(decl, env, name);
+    } else if (decl.base.value == 'MultiSet') {
+      return new VarLen.MultiSetType(decl, env, name);
     } else if (decl.base.value == 'OrderedSet') {
-      return new OrderedSet.Type(decl, env, name);
+      return new VarLen.OrderedSetType(decl, env, name);
+    } else if (decl.base.value == 'Vector') {
+      return new VarLen.VectorType(decl, env, name);
     } else if (decl.base.value == 'Set') {
-      return new Set.Type(decl, env, name);
+      return new VarLen.SetType(decl, env, name);
     } else {
       throw new errors.Unimplemented(`Unknown type '${decl.base.value}'`);
     }

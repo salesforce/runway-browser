@@ -5,8 +5,7 @@ let Either = require('./either.js');
 let NumberType = require('./number.js').Type;
 let RangeType = require('./range.js').Type;
 let RecordType = require('./record.js');
-let OrderedSetType = require('./orderedset.js');
-let SetType = require('./set.js');
+let VarLen = require('./varlen.js');
 
 
 let subtypeOf = function(sub, par) {
@@ -55,21 +54,23 @@ let haveOrdering = function(left, right) {
 };
 
 let implementsSet = function(t) {
-  return t instanceof SetType.Type || t instanceof OrderedSetType.Type;
+  // push pop remove contains empty full
+  return (t instanceof VarLen.SetType ||
+    t instanceof VarLen.OrderedSetType ||
+    t instanceof VarLen.MultiSetType ||
+    t instanceof VarLen.VectorType);
 }
 
 let implementsIterable = function(t) {
   // t needs .valueType, .indexType
   // output of evaluating value needs .forEach((v, i) => ...)
   return (t instanceof ArrayType.Type ||
-    t instanceof SetType.Type ||
-    t instanceof OrderedSetType.Type);
+    implementsSet(t));
 }
 
 let implementsIndexable = function(t) {
   return (t instanceof ArrayType.Type ||
-    t instanceof SetType.Type ||
-    t instanceof OrderedSetType.Type);
+    implementsSet(t));
 }
 
 module.exports = {

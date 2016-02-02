@@ -43,7 +43,11 @@ syntax case match
 syn keyword modelStructure      Array
 syn keyword modelStructure      Boolean
 syn keyword modelBoolean        False
+syn keyword modelStructure      MultiSet
+syn keyword modelStructure      OrderedSet
+syn keyword modelStructure      Set
 syn keyword modelBoolean        True
+syn keyword modelStructure      Vector
 syn keyword modelFunction       capacity
 syn keyword modelFunction       contains
 syn keyword modelFunction       empty
