@@ -9,7 +9,7 @@ let VarLen = require('./varlen.js');
 
 
 let subtypeOf = function(sub, par) {
-  if (sub == par) {
+  if (sub.equals(par)) {
     return true;
   }
   if (sub instanceof NumberType &&

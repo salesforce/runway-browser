@@ -5,6 +5,7 @@ let Environment = require('../environment.js').Environment;
 let makeStatement = require('./factory.js');
 let makeType = require('../types/factory.js');
 let Statement = require('./statement.js');
+let Types = require('../types/types.js');
 
 class Distribution extends Statement {
   constructor(parsed, env) {
@@ -37,6 +38,24 @@ class Distribution extends Statement {
     return this.returntype;
   }
 
+  typecheckApply(args) {
+    if (args.length != this.params.length) {
+      throw new errors.Type(`${this} takes exactly ` +
+        `${this.params.length} parameters, ` +
+        `${args.length} given`);
+    }
+    args.forEach(arg => arg.typecheck());
+    this.params.forEach((param, i) => {
+      let arg = args[i];
+      if (!Types.subtypeOf(arg.type, param.type)) {
+        throw new errors.Type(`${this} requires ` +
+          `${param.type} but given ${arg.type} ` +
+          `for argument ${i + 1}`);
+      }
+    });
+  }
+
+
   execute() {}
 
   evaluate(args) {
@@ -55,6 +74,10 @@ class Distribution extends Statement {
     if (this.returntype !== null) {
       throw new errors.Internal(`No value returned from ${this.parsed.id.value}`);
     }
+  }
+
+  toString() {
+    return `${this.parsed.id.value}()`;
   }
 }
 

@@ -37,6 +37,9 @@ class NumberType extends Type {
   constructor() {
     super(null, null, 'Number');
   }
+  equals(other) {
+    return other === NumberType.singleton;
+  }
   makeDefaultValue() {
     return new NumberValue(this);
   }

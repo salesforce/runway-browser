@@ -398,6 +398,7 @@ class Apply extends Expression {
       this.fn = this.env.functions.get(this.parsed.func.value);
       if (this.fn !== undefined) {
         this.type = this.fn.returntype;
+        this.fn.typecheckApply(this.args);
         return; // don't type-check the declaration again
       }
     }

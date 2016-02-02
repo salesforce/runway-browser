@@ -64,6 +64,11 @@ class RangeType extends Type {
     this.low = this.decl.low.value;
     this.high = this.decl.high.value;
   }
+  equals(other) {
+    return (other instanceof RangeType &&
+            this.low == other.low &&
+            this.high == other.high);
+  }
   makeDefaultValue() {
     return new RangeValue(this);
   }

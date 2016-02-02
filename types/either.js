@@ -142,6 +142,10 @@ class EitherVariant extends Type {
     }
   }
 
+  equals(other) {
+    return this === other;
+  }
+
   makeDefaultValue() {
     return new EitherValue(this, this.parenttype, this);
   }
@@ -165,6 +169,10 @@ class EitherType extends Type {
     this.variants = this.decl.fields.map(
       (field) => new EitherVariant(field, this.env, field.id.value, this)
     );
+  }
+
+  equals(other) {
+    return this === other;
   }
 
   getVariant(tag) {

@@ -91,6 +91,9 @@ class RecordType extends Type {
         type: makeType.make(field.type, this.env),
     }));
   }
+  equals(other) {
+    return this === other;
+  }
   fieldType(name) {
     let retval = undefined;
     this.fieldtypes.forEach((ft) => {

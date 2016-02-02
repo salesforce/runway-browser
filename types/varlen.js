@@ -187,6 +187,12 @@ class VarLenBaseType extends Type {
     this.valuetype = makeType.make(this.decl.args[0], this.env);
     this.indextype = makeType.make(this.decl.indexBy, this.env);
   }
+  equals(other) {
+    return (this.constructor === other.constructor &&
+      this.valuetype.equals(other.valuetype) &&
+      this.indextype.equals(other.indextype));
+
+  }
 }
 
 class SetType extends VarLenBaseType {
