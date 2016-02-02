@@ -6,6 +6,9 @@ let Util = require('./util.js');
 let simulate = (module, controller) => {
   let simpleRules = [];
   module.env.rules.forEachLocal((rule, name) => {
+    if (rule.simulatorDisable) {
+      return;
+    }
     if (rule instanceof RuleFor) {
       rule.expr.evaluate().forEach((v, i) => {
         simpleRules.push({
