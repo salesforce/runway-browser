@@ -314,6 +314,12 @@ Promise.all([
 
   let viewWrapper = jQuery('#viewwrapper');
   let viewElem = jQuery('#view');
+  let smallSide = 100;
+  controller.views.forEach(v => {
+    if (v.bigView) {
+      smallSide = 1000;
+    }
+  });
   viewWrapper.mouseup(() => {
     let width = viewWrapper.width();
     let height = viewWrapper.height();
@@ -321,11 +327,11 @@ Promise.all([
     viewElem.width(width);
     viewElem.height(height);
     if (width < height) {
-      height = height / width * 100;
-      width = 100;
+      height = height / width * smallSide;
+      width = smallSide;
     } else {
-      width = width / height * 100;
-      height = 100;
+      width = width / height * smallSide;
+      height = smallSide;
     }
     // viewElem.attr('viewBox', ...) sets viewbox (lowercase) instead
     viewElem[0].setAttribute('viewBox',
