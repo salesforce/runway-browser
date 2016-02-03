@@ -6,6 +6,7 @@ let jQuery = require('jquery');
 let Tooltip = require('Tooltip');
 let Util = require('Util');
 let fetchRemoteFile = require('fetchRemoteFile');
+let _ = require('lodash');
 
 let View = function(controller, svg, module) {
 
@@ -36,7 +37,7 @@ let bananaCopy = <g
 let TooManyBananasView = React.createClass({
   render: function() {
     let bananas = [];
-    Util.range(model.vars.get('bananas')).forEach(i => {
+    _.range(model.vars.get('bananas').value).forEach(i => {
       let x = 6 + i * 4;
       let y = 28 + i;
       if (i > 3) {
@@ -98,7 +99,7 @@ let TooManyBananasView = React.createClass({
         ReturningFromStore: rfs => {
           x = 30 - numReturning * 14;
           y = 60;
-          Util.range(rfs.lookup('carrying')).forEach(b => {
+          _.range(rfs.lookup('carrying').value).forEach(b => {
             let bx = x + b*3;
             let by = y + 10;
             if (b > 3) {

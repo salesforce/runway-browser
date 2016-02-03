@@ -14,6 +14,9 @@ let Simulator = {
 let GlobalEnvironment = require('./environment.js').GlobalEnvironment;
 let Input = require('./input.js');
 
+let _ = require('lodash');
+delete window._;
+
 let Tooltip = require('./web/tooltip.js');
 let Util = require('./web/util.js');
 let StateDump = require('./web/statedump.jsx');
@@ -59,6 +62,7 @@ let requireModules = {
   Tooltip: Tooltip,
   Util: Util,
   fetchRemoteFile: fetchRemoteFile,
+  lodash: _,
 };
 let pseudoRequire = function(module) {
   if (module in requireModules) {

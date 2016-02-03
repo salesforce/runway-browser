@@ -1,7 +1,5 @@
 "use strict";
 
-let MainUtil = require('../util.js');
-
 class BBox {
   constructor(x, y, w, h) {
     this.x = x;
@@ -139,7 +137,6 @@ let fontSize = bbox => {
 };
 
 module.exports = {
-  range: MainUtil.range,
   fillBBox: fillBBox,
   fontSize: fontSize,
   BBox: BBox,

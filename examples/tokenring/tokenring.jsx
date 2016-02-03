@@ -4,7 +4,7 @@ let React = require('React');
 let ReactDOM = require('ReactDOM');
 let jQuery = require('jquery');
 let Tooltip = require('Tooltip');
-let Util = require('Util');
+let _ = require('lodash');
 
 // Calculates where points on the circumference of a circle lie.
 class Circle {
@@ -33,7 +33,7 @@ let ring = new Circle(50, 50, 40);
 
 let TokenRingView = React.createClass({
   render: function() {
-    let servers = Util.range(numServers).map(i => {
+    let servers = _.range(numServers).map(i => {
       let id = i + 1;
       let frac = i / numServers;
       let point = ring.at(frac);

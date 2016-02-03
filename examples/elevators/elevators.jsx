@@ -6,6 +6,7 @@ let BootstrapMenu = require('bootstrap-menu');
 let jQuery = require('jquery');
 let Tooltip = require('Tooltip');
 let Util = require('Util');
+let _ = require('lodash');
 
 let View = function(controller, svg, module) {
 
@@ -276,8 +277,8 @@ let Background = React.createClass({
         x2={bbox.x2} y2={bbox.y2}
         style={{stroke: 'gray'}} />;
     };
-    let lines = Util.range(this.props.floors + 1).map(i => lowerLine(i + 1));
-    let labels = Util.range(this.props.floors).map(i => {
+    let lines = _.range(this.props.floors + 1).map(i => lowerLine(i + 1));
+    let labels = _.range(this.props.floors).map(i => {
       let id = i + 1;
       let bbox = layout.label(id);
       return <text key={id} x={bbox.x} y={bbox.y2} style={{fontSize: Util.fontSize(bbox)}}>
@@ -307,15 +308,15 @@ let ElevatorView = React.createClass({
           r={2} />);
       });
     });
-    let elevators = Util.range(numElevators).map(i => (
+    let elevators = _.range(numElevators).map(i => (
       <Elevator key={i + 1} elevatorId={i + 1}
         layout={layout} />
     ));
-    let people = Util.range(numPeople).map(i => (
+    let people = _.range(numPeople).map(i => (
       <Person key={i + 1} personId={i + 1}
         layout={layout} />
     ));
-    let floorControls = Util.range(numFloors).map(i => (
+    let floorControls = _.range(numFloors).map(i => (
       <FloorControl key={i + 1} floor={i + 1}
         layout={layout} />
     ));

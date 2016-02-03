@@ -19,16 +19,6 @@ let shuffle = (array) => {
   }
 };
 
-let range = (start, stop) => {
-  if (stop === undefined) {
-    stop = start;
-    start = 0;
-  }
-  return Array.from({
-    length: stop - start,
-  }, (v, i) => (start + i));
-};
-
 let stringCount = (haystack, needle) => {
   let count = 0;
   let i = -1;
@@ -45,6 +35,5 @@ let stringCount = (haystack, needle) => {
 module.exports = {
   getRandomInt: getRandomInt,
   shuffle: shuffle,
-  range: range,
   stringCount: stringCount,
 };
