@@ -338,7 +338,7 @@ class URandomFunction extends BaseFunction {
   }
   evaluateSub(args, env, gargs) {
     let range = gargs[0];
-    let number = _.random(range.low, range.high + 1);
+    let number = _.random(range.low, range.high);
     let value = gargs[0].makeDefaultValue();
     value.assign(number);
     return value;
@@ -359,7 +359,7 @@ let functions = [
   new ArithmeticFunction('/', (x, y) => Math.floor(x / y)),
   new ArithmeticFunction('%', (x, y) => (x % y)),
   new ArithmeticFunction('pow', (x, y) => Math.pow(x, y)),
-  new ArithmeticFunction('urandomRange', (x, y) => _.random(x, y + 1)),
+  new ArithmeticFunction('urandomRange', (x, y) => _.random(x, y)),
   new PushFunction(),
   new PopFunction(),
   new RemoveFunction(),
