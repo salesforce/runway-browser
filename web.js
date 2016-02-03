@@ -106,7 +106,7 @@ class SerializedState {
     return JSON.stringify(this.state, null, 2);
   }
   equals(other) {
-    return this.toString() === other.toString();
+    return _.isEqual(this.state, other.state);
   }
 }
 
