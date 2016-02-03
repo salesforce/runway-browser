@@ -1,9 +1,10 @@
 "use strict";
 
 let RuleFor = require('./statements/rulefor.js');
-let Util = require('./util.js');
+let _ = require('lodash');
 
 let simulate = (module, controller) => {
+
   let simpleRules = [];
   module.env.rules.forEachLocal((rule, name) => {
     if (rule.simulatorDisable) {
@@ -24,7 +25,7 @@ let simulate = (module, controller) => {
     }
   });
 
-  Util.shuffle(simpleRules);
+  simpleRules = _.shuffle(simpleRules);
   for (let rule of simpleRules) {
     let changed = controller.tryChangeState(() => {
       rule.fire();
