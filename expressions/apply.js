@@ -7,6 +7,7 @@ let NumberType = require('../types/number.js').Type;
 let RangeType = require('../types/range.js').Type;
 let makeExpression = require('./factory.js');
 let makeType = require('../types/factory.js');
+let _ = require('lodash');
 
 class BaseFunction {
   constructor(name, numargs, numgargs) {
@@ -325,10 +326,6 @@ class CapacityFunction extends BaseFunction {
   }
 }
 
-let randomRange = (low, high) => {
-  return low + Math.floor(Math.random() * (high - low + 1));
-};
-
 class URandomFunction extends BaseFunction {
   constructor() {
     super('urandom', 0, 1);
@@ -341,7 +338,7 @@ class URandomFunction extends BaseFunction {
   }
   evaluateSub(args, env, gargs) {
     let range = gargs[0];
-    let number = randomRange(range.low, range.high);
+    let number = _.random(range.low, range.high + 1);
     let value = gargs[0].makeDefaultValue();
     value.assign(number);
     return value;
@@ -362,7 +359,7 @@ let functions = [
   new ArithmeticFunction('/', (x, y) => Math.floor(x / y)),
   new ArithmeticFunction('%', (x, y) => (x % y)),
   new ArithmeticFunction('pow', (x, y) => Math.pow(x, y)),
-  new ArithmeticFunction('urandomRange', randomRange),
+  new ArithmeticFunction('urandomRange', (x, y) => _.random(x, y + 1)),
   new PushFunction(),
   new PopFunction(),
   new RemoveFunction(),
