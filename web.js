@@ -23,6 +23,7 @@ let StateDump = require('./web/statedump.jsx');
 let RuleControls = require('./web/rulecontrols.jsx');
 let ExecutionView = require('./web/executionview.jsx');
 let REPLView = require('./web/repl.jsx');
+let Changesets = require('./changesets.js');
 
 let preludeText = require('./prelude.model');
 
@@ -167,6 +168,7 @@ class Controller {
     if (oldState.equals(newState)) {
       return false;
     } else {
+      msg += ' (changed ' + Changesets.compareJSON(oldState.toJSON(), newState.toJSON()).join(', ') + ')';
       console.log(msg);
       this.execution.push({
         msg: msg,
