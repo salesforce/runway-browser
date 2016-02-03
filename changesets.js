@@ -70,6 +70,20 @@ let compareJSON = (state1, state2) => {
   return compareGlobals(state1, state2);
 };
 
+let affected = (changeset, readset) => {
+  // Could try _.sortedIndex to speed this up, but it's not clear that
+  // would be faster for the small arrays expected here.
+  for (let read of readset) {
+    for (let change of changeset) {
+      if (read.startsWith(change)) {
+        return true;
+      }
+    }
+  }
+  return false;
+};
+
 module.exports = {
   compareJSON: compareJSON,
+  affected: affected,
 };
