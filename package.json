@@ -11,6 +11,7 @@
     "imports-loader": "^0.6.5",
     "jquery": "^2.1.4",
     "jquery-ui": "^1.10.5",
+    "lodash": "^4.2.1",
     "react": "^0.14.3",
     "react-dom": "^0.14.3"
   },
