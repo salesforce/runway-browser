@@ -75,7 +75,7 @@ if (require.main === module) {
     try {
       invariant.check();
     } catch (e) {
-      console.log('Initial state', state);
+      console.log('Initial state', start);
       console.log('Failed', name);
       throw e;
     }
