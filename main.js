@@ -67,6 +67,7 @@ let repl = function(env) {
     }
   };
 
+  let context = {};
   var loop = function() {
     let processInput = function(input) {
       if (input.endsWith('\\')) {
@@ -89,10 +90,10 @@ let repl = function(env) {
         let args = input.split(' ');
         try {
           if (args.length == 2) {
-            env.getRule(args[1]).fire();
+            env.getRule(args[1]).fire(context);
             printEnv(env);
           } else if (args.length == 3) {
-            env.getRule(args[1]).fire(Number(args[2]));
+            env.getRule(args[1]).fire(Number(args[2]), context);
             printEnv(env);
           } else {
             console.log('huh?');
@@ -105,7 +106,7 @@ let repl = function(env) {
       } else {
         try {
           let module = forgivingLoad(input, env);
-          module.ast.execute();
+          module.ast.execute(context);
         } catch ( e ) {
           printError(e);
         }
@@ -130,7 +131,8 @@ if (require.main === module) {
   if (process.argv.length > 2) { // filename given
     let filename = process.argv[2];
     let module = compiler.load(new Input(filename, readFile(filename)), env);
-    module.ast.execute();
+    let context = {};
+    module.ast.execute(context);
     printEnv(env);
   }
 

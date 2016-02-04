@@ -123,7 +123,8 @@ let TooManyBananasView = React.createClass({
         className="clickable"
         onClick={() => controller.tryChangeState(() => {
             console.log(`step ${id}`);
-            model.getRule('step').fire(id);
+            let context = {};
+            model.getRule('step').fire(id, context);
         })} />);
     });
 

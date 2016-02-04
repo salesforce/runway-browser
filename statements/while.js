@@ -23,11 +23,11 @@ class While extends Statement {
     this.code.typecheck();
   }
 
-  execute() {
+  execute(context) {
     try {
-      while (this.expr.evaluate().equals(this.env.getVar('True'))) {
+      while (this.expr.evaluate(context).equals(this.env.getVar('True'))) {
         try {
-          this.code.execute();
+          this.code.execute(context);
         } catch ( e ) {
           if (!(e instanceof errors.Continue)) {
             throw e;

@@ -10,17 +10,18 @@ let View = function(controller, elem, module) {
 let RuleControlsView = React.createClass({
   render: function() {
     let rules = [];
+    let context = {};
     module.env.rules.forEachLocal((rule, name) => {
       if (rule instanceof RuleFor) {
         let options = [];
         let anyEnabled = false;
-        let indextype = rule.expr.evaluate().forEach((v, i) => {
-          if (controller.wouldChangeState(() => rule.fire(i))) {
+        let indextype = rule.expr.evaluate(context).forEach((v, i) => {
+          if (controller.wouldChangeState(() => rule.fire(i, context))) {
             anyEnabled = true;
             options.push(<li key={`${name}-${i}`}>
                 <a href="#"
                    onClick={() => controller.tryChangeState(() => {
-                    rule.fire(i);
+                    rule.fire(i, context);
                     return `${name}(${i})`;
                    })}>
                       {`${name}(${i})`}
@@ -53,12 +54,12 @@ let RuleControlsView = React.createClass({
           </div>);
 
       } else {
-        if (controller.wouldChangeState(() => rule.fire())) {
+        if (controller.wouldChangeState(() => rule.fire(context))) {
           rules.push(<div className="btn-group" key={name}>
               <button
                 className="btn btn-default btn-sm"
                 onClick={() => controller.tryChangeState(() => {
-                  rule.fire();
+                  rule.fire(context);
                   return name;
                 })}>
                   {name}

@@ -35,7 +35,7 @@ class RuleFor extends Statement {
     // do nothing
   }
 
-  fire(indexArg) {
+  fire(indexArg, context) {
     let index = this.expr.type.indextype.makeDefaultValue();
     if (indexArg === undefined) {
       // no index given, fire the first one
@@ -58,7 +58,7 @@ class RuleFor extends Statement {
       };
     }
 
-    let array = this.expr.evaluate();
+    let array = this.expr.evaluate(context);
     let value = array.index(index);
     // This is a little dangerous in that it assumes that no one ever does a
     // getVar and holds onto it.
@@ -66,7 +66,7 @@ class RuleFor extends Statement {
     if (this.parsed.index !== undefined) {
       this.innerEnv.vars.get(this.parsed.index.value).assign(index);
     }
-    this.inner.execute();
+    this.inner.execute(context);
 
     restoreIndex();
     restoreValue();

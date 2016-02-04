@@ -32,9 +32,9 @@ class VarDecl extends Statement {
     }
   }
 
-  execute() {
+  execute(context) {
     if (this.defaultExpr !== null) {
-      this.value.assign(this.defaultExpr.evaluate());
+      this.value.assign(this.defaultExpr.evaluate(context));
     }
   }
 

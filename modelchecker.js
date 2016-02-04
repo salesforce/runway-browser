@@ -37,20 +37,22 @@ let restoreState = (module, state) => {
   });
 };
 
+let context = {};
+
 let extractSimpleRules = (module) => {
   let simpleRules = [];
   module.env.rules.forEachLocal((rule, name) => {
     if (rule instanceof RuleFor) {
-      rule.expr.evaluate().forEach((v, i) => {
+      rule.expr.evaluate(context).forEach((v, i) => {
         simpleRules.push({
           name: `${name}(${i})`,
-          fire: () => rule.fire(i),
+          fire: () => rule.fire(i, context),
         });
       });
     } else {
       simpleRules.push({
         name: name,
-        fire: () => rule.fire(),
+        fire: () => rule.fire(context),
       });
     }
   });
@@ -65,7 +67,7 @@ if (require.main === module) {
 
   let filename = process.argv[2];
   let module = compiler.load(new Input(filename, readFile(filename)), env);
-  module.ast.execute();
+  module.ast.execute(context);
 
   let states = new Set(); // stores hashes of all known states satisfying invariants
   let unexplored = new Set(); // stores JSON of unexplored states (already known to satisfy invariants)
@@ -73,7 +75,7 @@ if (require.main === module) {
   let start = serializeState(module);
   module.env.invariants.forEachLocal((invariant, name) => {
     try {
-      invariant.check();
+      invariant.check(context);
     } catch (e) {
       console.log('Initial state', start);
       console.log('Failed', name);
@@ -111,7 +113,7 @@ if (require.main === module) {
         if (!states.has(stateHash)) {
           module.env.invariants.forEachLocal((invariant, name) => {
             try {
-              invariant.check();
+              invariant.check(context);
             } catch (e) {
               console.log('Was at', start);
               console.log('Applied', rule.name);

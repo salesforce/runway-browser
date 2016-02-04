@@ -20,9 +20,9 @@ class Rule extends Statement {
     // do nothing
   }
 
-  fire() {
+  fire(context) {
     try {
-      this.inner.execute();
+      this.inner.execute(context);
     } catch ( e ) {
       if (!(e instanceof errors.Return)) {
         throw e;

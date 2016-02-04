@@ -19,8 +19,8 @@ class Assert extends Statement {
     }
   }
 
-  execute() {
-    if (!this.expr.evaluate().equals(this.env.getVar('True'))) {
+  execute(context) {
+    if (!this.expr.evaluate(context).equals(this.env.getVar('True'))) {
       let msg = `Assertion failed: ${this.expr} at ${this.parsed.source}`;
       throw new errors.Assertion(msg);
     }

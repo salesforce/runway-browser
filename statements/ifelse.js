@@ -24,11 +24,11 @@ class IfElse extends Statement {
     this.falseStatements.typecheck();
   }
 
-  execute() {
-    if (this.condition.evaluate().equals(this.env.getVar('True'))) {
-      this.trueStatements.execute();
+  execute(context) {
+    if (this.condition.evaluate(context).equals(this.env.getVar('True'))) {
+      this.trueStatements.execute(context);
     } else {
-      this.falseStatements.execute();
+      this.falseStatements.execute(context);
     }
   }
 

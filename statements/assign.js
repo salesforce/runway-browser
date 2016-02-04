@@ -21,8 +21,8 @@ class Assign extends Statement {
     }
   }
 
-  execute() {
-    this.lhs.evaluate().assign(this.rhs.evaluate());
+  execute(context) {
+    this.lhs.evaluate(context).assign(this.rhs.evaluate(context));
   }
 
   toString(indent) {

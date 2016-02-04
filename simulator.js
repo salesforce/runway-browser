@@ -6,21 +6,22 @@ let _ = require('lodash');
 let simulate = (module, controller) => {
 
   let simpleRules = [];
+  let context = [];
   module.env.rules.forEachLocal((rule, name) => {
     if (rule.simulatorDisable) {
       return;
     }
     if (rule instanceof RuleFor) {
-      rule.expr.evaluate().forEach((v, i) => {
+      rule.expr.evaluate(context).forEach((v, i) => {
         simpleRules.push({
           name: `${name}(${i})`,
-          fire: () => rule.fire(i),
+          fire: () => rule.fire(i, context),
         });
       });
     } else {
       simpleRules.push({
         name: name,
-        fire: () => rule.fire(),
+        fire: () => rule.fire(context),
       });
     }
   });

@@ -54,7 +54,8 @@ describe('compiler.js', function() {
       let code = inline('param ELEVATORS: 1..1024 = 6;');
       let env = new Environment();
       let module = compiler.load(code, env);
-      module.ast.execute();
+      let context = {};
+      module.ast.execute(context);
       assert.equal(env.getVar('ELEVATORS').toString(), '6');
     });
   });
@@ -67,7 +68,8 @@ describe('compiler.js', function() {
       `);
       let env = new Environment();
       let module = compiler.load(code, env);
-      module.ast.execute();
+      let context = {};
+      module.ast.execute(context);
       assert.equal(env.getVar('foo').toString(), '8');
       assert.equal(env.getVar('bar').toString(), '11');
     });
@@ -98,8 +100,9 @@ describe('compiler.js', function() {
         }
       `);
       let module = compiler.load(code, env);
-      module.ast.execute();
-      env.getRule('foo').fire();
+      let context = {};
+      module.ast.execute(context);
+      env.getRule('foo').fire(context);
       assert.equal(env.getVar('x').toString(), 'True');
       assert.equal(env.getVar('y'), '2');
     });
@@ -112,7 +115,8 @@ describe('compiler.js', function() {
         y += 1;
       `);
       let module = compiler.load(code, env);
-      module.ast.execute();
+      let context = {};
+      module.ast.execute(context);
       assert.equal(env.getVar('y'), '2');
     });
   });

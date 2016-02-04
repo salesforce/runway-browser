@@ -10,8 +10,8 @@ class Sequence extends Statement {
     this.statements = this.parsed.statements.map((s) => makeStatement.make(s, this.env));
   }
 
-  execute() {
-    this.statements.forEach((s) => s.execute());
+  execute(context) {
+    this.statements.forEach((s) => s.execute(context));
   }
 
   typecheck() {

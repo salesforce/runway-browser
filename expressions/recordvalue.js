@@ -14,10 +14,10 @@ class RecordValue extends Expression {
     ]));
   }
 
-  evaluate() {
+  evaluate(context) {
     let value = this.type.makeDefaultValue();
     this.fields.forEach((field, name) => {
-      value.lookup(name).assign(field.evaluate());
+      value.lookup(name).assign(field.evaluate(context));
     });
     return value;
   }

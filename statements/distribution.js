@@ -58,13 +58,13 @@ class Distribution extends Statement {
 
   execute() {}
 
-  evaluate(args) {
+  evaluate(args, env, gargs, context) {
     this.params.forEach((param, i) => {
       let arg = args[i];
       this.codeEnv.vars.get(param.id).assign(arg);
     });
     try {
-      this.code.execute();
+      this.code.execute(context);
     } catch ( e ) {
       if (!(e instanceof errors.Return)) {
         throw e;

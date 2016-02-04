@@ -22,8 +22,8 @@ class Index extends Expression {
   // TODO: more checks
   }
 
-  evaluate() {
-    return this.container.evaluate().index(this.by.evaluate());
+  evaluate(context) {
+    return this.container.evaluate(context).index(this.by.evaluate(context));
   }
 
   toString(indent) {

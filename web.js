@@ -17,6 +17,7 @@ let Input = require('./input.js');
 let _ = require('lodash');
 delete window._;
 
+let errors = require('./errors.js');
 let Tooltip = require('./web/tooltip.js');
 let Util = require('./web/util.js');
 let StateDump = require('./web/statedump.jsx');
@@ -39,7 +40,8 @@ let prelude = compiler.loadPrelude(preludeText);
 let meval = (text) => {
   let env = new GlobalEnvironment(prelude.env);
   let module = compiler.load(new Input('eval', text), env);
-  module.ast.execute();
+  let context = {};
+  module.ast.execute(context);
 };
 window.meval = meval;
 
@@ -127,13 +129,17 @@ class Controller {
   checkInvariants() {
     try {
       this.module.env.invariants.forEachLocal((invariant, name) => {
-        invariant.check();
+        let context = {};
+        invariant.check(context);
       });
     } catch ( e ) {
-      let msg = `Failed invariant ${name}: ${e}`;
-      console.log(msg);
-      jQuery('#error').text(msg);
-      //throw e;
+      if (e instanceof errors.Runtime) {
+        let msg = `Failed invariant ${name}: ${e}`;
+        console.log(msg);
+        jQuery('#error').text(msg);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -200,7 +206,8 @@ class Controller {
       this.module.env.vars.forEachLocal((mvar, name) => {
         mvar.assign(mvar.type.makeDefaultValue());
       });
-      this.module.ast.execute(); // run global initialization code
+      let context = {};
+      this.module.ast.execute(context); // run global initialization code
       return 'reset';
     });
   }
@@ -284,10 +291,11 @@ Promise.all([
   try {
     module = compiler.load(input, env);
     window.module = module;
-    module.ast.execute();
+    let context = {};
+    module.ast.execute(context);
   } catch ( e ) {
     jQuery('#error').text(e);
-    return;
+    throw e;
   }
   let controller = new Controller(module);
   window.controller = controller;

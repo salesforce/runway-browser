@@ -31,8 +31,8 @@ class Lookup extends Expression {
     }
   }
 
-  evaluate() {
-    let parval = this.parent.evaluate();
+  evaluate(context) {
+    let parval = this.parent.evaluate(context);
     if (parval === undefined) {
       throw new errors.Internal(`Expr ${this.parent} evaluated to undefined`);
     }

@@ -11,7 +11,8 @@ let run = function(code) {
   let prelude = compiler.loadPrelude(readFile('prelude.model'));
   let env = new GlobalEnvironment(prelude.env);
   let module = compiler.load(new Input('unit test', code), env);
-  module.ast.execute();
+  let context = {};
+  module.ast.execute(context);
   return module;
 };
 

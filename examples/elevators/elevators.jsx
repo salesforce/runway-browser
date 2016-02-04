@@ -204,7 +204,8 @@ let ruleMenu = (selector, rules) => new BootstrapMenu(selector, {
       name: rule[0],
       onClick: () => controller.tryChangeState(() => {
         console.log(rule);
-        model.getRule(rule[0]).fire(rule[1]);
+        let context = {};
+        model.getRule(rule[0]).fire(rule[1], context);
       }),
   })),
 });

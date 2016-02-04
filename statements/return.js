@@ -15,10 +15,10 @@ class Return extends Statement {
   // TODO: return value should be subtype of containing function's return type
   }
 
-  execute() {
+  execute(context) {
     let e = new errors.Return(`Uncaught return statement at ${this.parsed.source}`);
     e.value = this.expr.type.makeDefaultValue();
-    e.value.assign(this.expr.evaluate());
+    e.value.assign(this.expr.evaluate(context));
     throw e;
   }
 }

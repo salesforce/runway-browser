@@ -14,7 +14,12 @@ class Identifier extends Expression {
     this.type = v.type;
   }
 
-  evaluate() {
+  evaluate(context) {
+    if (context === undefined) {
+      // This is the best way to know we're threading the context through every
+      // statement and expression.
+      throw new errors.Internal('Evaluation context not provided');
+    }
     let r = this.env.getVar(this.parsed.value);
     if (r === undefined) {
       throw new errors.Internal(`'${this.parsed.value}' is not a ` +

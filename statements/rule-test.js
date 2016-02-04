@@ -4,6 +4,7 @@ let assert = require('assert');
 let testing = require('../testing.js');
 
 describe('statements/rule.js', function() {
+  let context = {};
   describe('rule', function() {
     it('basic', function() {
       let module = testing.run(`
@@ -13,7 +14,7 @@ describe('statements/rule.js', function() {
         }
       `);
       assert.equal(module.env.getVar('bool').toString(), 'False');
-      module.env.getRule('setToTrue').fire();
+      module.env.getRule('setToTrue').fire(context);
       assert.equal(module.env.getVar('bool').toString(), 'True');
     });
 
@@ -25,8 +26,8 @@ describe('statements/rule.js', function() {
           bool = True;
         }
       `);
-      module.env.getRule('setToTrue').fire();
-      module.env.getRule('setToTrue').fire();
+      module.env.getRule('setToTrue').fire(context);
+      module.env.getRule('setToTrue').fire(context);
     });
 
     it('variables reset to start in nested environments', function() {
@@ -41,8 +42,8 @@ describe('statements/rule.js', function() {
           }
         }
       `);
-      module.env.getRule('setToTrue').fire();
-      module.env.getRule('setToTrue').fire();
+      module.env.getRule('setToTrue').fire(context);
+      module.env.getRule('setToTrue').fire(context);
     });
   });
 });

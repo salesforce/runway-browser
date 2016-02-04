@@ -19,8 +19,8 @@ class Invariant extends Statement {
     // do nothing
   }
 
-  check() {
-    this.inner.execute();
+  check(context) {
+    this.inner.execute(context);
   }
 
   toString(indent) {

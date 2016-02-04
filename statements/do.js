@@ -19,8 +19,8 @@ class Do extends Statement {
     }
   }
 
-  execute() {
-    this.expr.evaluate();
+  execute(context) {
+    this.expr.evaluate(context);
   }
 }
 

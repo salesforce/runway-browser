@@ -30,7 +30,7 @@ class ForEach extends Statement {
     this.code.typecheck();
   }
 
-  execute() {
+  execute(context) {
     let dummyValue = this.codeEnv.getVar(this.parsed.value.value);
     let restoreValue = () => {
       this.codeEnv.vars.shadow(this.parsed.value.value, dummyValue);
@@ -44,7 +44,7 @@ class ForEach extends Statement {
       };
     }
     try {
-      this.expr.evaluate().forEach((v, i) => {
+      this.expr.evaluate(context).forEach((v, i) => {
         // This is a little dangerous in that it assumes that no one ever does a
         // getVar and holds onto it.
         this.codeEnv.vars.shadow(this.parsed.value.value, v);
@@ -52,7 +52,7 @@ class ForEach extends Statement {
           this.codeEnv.getVar(this.parsed.index.value).assign(i);
         }
         try {
-          this.code.execute();
+          this.code.execute(context);
         } catch ( e ) {
           if (!(e instanceof errors.Continue)) {
             throw e;

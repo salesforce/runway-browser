@@ -13,8 +13,8 @@ class Print extends Statement {
     this.expr.typecheck();
   }
 
-  execute() {
-    console.log(this.expr.evaluate().toString());
+  execute(context) {
+    console.log(this.expr.evaluate(context).toString());
   }
 }
 

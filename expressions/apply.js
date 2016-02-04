@@ -40,12 +40,12 @@ class BaseFunction {
     }
     return type;
   }
-  evaluate(args, env, gargs) {
+  evaluate(args, env, gargs, context) {
     if (typeof this.evaluateSub !== 'function') {
       throw new errors.Unimplemented(`The function ${this.name} ` +
         `has not implemented evaluateSub()`);
     }
-    let value = this.evaluateSub(args, env, gargs);
+    let value = this.evaluateSub(args, env, gargs, context);
     if (value === undefined) {
       throw new errors.Internal(`The function ${this.name} ` +
         `returned nothing in evaluateSub()`);
@@ -124,9 +124,9 @@ class AndFunction extends BinaryBooleanFunction {
   constructor() {
     super('&&');
   }
-  evaluateSub(args, env) {
-    if (args[0].evaluate().equals(env.getVar('True'))) {
-      return args[1].evaluate();
+  evaluateSub(args, env, gargs, context) {
+    if (args[0].evaluate(context).equals(env.getVar('True'))) {
+      return args[1].evaluate(context);
     } else {
       return env.getVar('False');
     }
@@ -137,12 +137,12 @@ class OrFunction extends BinaryBooleanFunction {
   constructor() {
     super('||');
   }
-  evaluateSub(args, env) {
+  evaluateSub(args, env, gargs, context) {
     let True = env.getVar('True');
-    if (args[0].evaluate().equals(True)) {
+    if (args[0].evaluate(context).equals(True)) {
       return True;
     } else {
-      return args[1].evaluate();
+      return args[1].evaluate(context);
     }
   }
 }
@@ -407,12 +407,12 @@ class Apply extends Expression {
     this.type = this.fn.typecheck(this.args, this.env, this.gargs);
   }
 
-  evaluate() {
+  evaluate(context) {
     let args = this.args;
     if (this.fn.shortCircuit !== true) {
-      args = this.args.map((arg) => arg.evaluate());
+      args = this.args.map((arg) => arg.evaluate(context));
     }
-    return this.fn.evaluate(args, this.env, this.gargs);
+    return this.fn.evaluate(args, this.env, this.gargs, context);
   }
 
   toString(indent) {

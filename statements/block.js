@@ -16,9 +16,9 @@ class Block extends Statement {
     this.inner.typecheck();
   }
 
-  execute() {
+  execute(context) {
     this.innerEnv.vars.forEachLocal(v => v.assign(v.type.makeDefaultValue()));
-    this.inner.execute();
+    this.inner.execute(context);
   }
 
   toString(indent) {

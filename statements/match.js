@@ -37,8 +37,8 @@ class Match extends Statement {
     });
   }
 
-  execute() {
-    let value = this.expr.evaluate();
+  execute(context) {
+    let value = this.expr.evaluate(context);
     let variant = this.variants.get(value.varianttype.name);
     if (variant === undefined) {
       throw new errors.Internal(`Bad variant: ${value.varianttype.name}`);
@@ -46,7 +46,7 @@ class Match extends Statement {
     if (variant.id !== undefined) {
       variant.env.getVar(variant.id.value).assign(value);
     }
-    variant.code.execute();
+    variant.code.execute(context);
   }
 
   toString(indent) {
