@@ -33,10 +33,11 @@ let simulate = (module, controller) => {
       return rule.name;
     });
     if (changed) {
-      return;
+      return true;
     }
   }
   console.log('deadlock');
+  return false;
 };
 
 module.exports = simulate;

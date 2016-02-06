@@ -9,6 +9,10 @@ let fs = require('fs');
 let parser = require('./parser.js');
 let process = require('process');
 let checker = require('./modelchecker.js').checker;
+let Controller = require('./controller.js');
+let Simulator = {
+  step: require('./simulator.js'),
+};
 
 let out = function(o) {
   console.log(JSON.stringify(o, null, 2));
@@ -157,7 +161,14 @@ Usage: main.js [options] [<model>]
   }
 
   if (options.simulate) {
-    throw new errors.Unimplemented("simulation");
+    let controller = new Controller(module);
+    let i = 0;
+    do {
+      console.log();
+      console.log(i);
+      printEnv(env);
+      i += 1;
+    } while (Simulator.step(module, controller));
   } else if (options.check) {
     checker(module);
   } else { // repl
