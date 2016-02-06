@@ -1,22 +1,12 @@
 "use strict";
 
-
 let crypto = require('crypto');
-let fs = require('fs');
-let process = require('process');
-
-let GlobalEnvironment = require('./environment.js').GlobalEnvironment;
-let Input = require('./input.js');
-let compiler = require('./compiler.js');
 let RuleFor = require('./statements/rulefor.js');
-let errors = require('./errors.js');
 
 let hash = input =>
   crypto.createHash('sha1')
     .update(input)
     .digest('binary');
-
-let readFile = (filename) => fs.readFileSync(filename).toString();
 
 let serializeState = (module) => {
   let state = {};
@@ -59,15 +49,7 @@ let extractSimpleRules = (module) => {
   return simpleRules;
 };
 
-let catchBoundsErrors = false;
-
-if (require.main === module) {
-  let prelude = compiler.loadPrelude(readFile('prelude.model'));
-  let env = new GlobalEnvironment(prelude.env);
-
-  let filename = process.argv[2];
-  let module = compiler.load(new Input(filename, readFile(filename)), env);
-  module.ast.execute(context);
+let checker = function(module) {
 
   let states = new Set(); // stores hashes of all known states satisfying invariants
   let unexplored = new Set(); // stores JSON of unexplored states (already known to satisfy invariants)
@@ -132,4 +114,8 @@ if (require.main === module) {
     printStatus(expanded => (expanded % 100 == 0));
   }
   printStatus();
-}
+};
+
+module.exports = {
+  checker: checker,
+};

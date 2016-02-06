@@ -8,6 +8,7 @@ let docopt = require('docopt').docopt;
 let fs = require('fs');
 let parser = require('./parser.js');
 let process = require('process');
+let checker = require('./modelchecker.js').checker;
 
 let out = function(o) {
   console.log(JSON.stringify(o, null, 2));
@@ -147,9 +148,10 @@ Usage: main.js [options] [<model>]
   let prelude = compiler.loadPrelude(readFile('prelude.model'));
   let env = new GlobalEnvironment(prelude.env);
 
+  let module;
   if (options['<model>']) {
     let filename = options['<model>'];
-    let module = compiler.load(new Input(filename, readFile(filename)), env);
+    module = compiler.load(new Input(filename, readFile(filename)), env);
     let context = {};
     module.ast.execute(context);
   }
@@ -157,7 +159,7 @@ Usage: main.js [options] [<model>]
   if (options.simulate) {
     throw new errors.Unimplemented("simulation");
   } else if (options.check) {
-    throw new errors.Unimplemented("model checker");
+    checker(module);
   } else { // repl
     printEnv(env);
     repl(env);
