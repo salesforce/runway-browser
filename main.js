@@ -164,11 +164,10 @@ Usage: main.js [options] [<model>]
     let controller = new Controller(module);
     let i = 0;
     do {
-      console.log();
-      console.log(i);
-      printEnv(env);
+      process.stdout.write(`${i}: `);
       i += 1;
     } while (Simulator.step(module, controller));
+    printEnv(env);
   } else if (options.check) {
     checker(module);
   } else { // repl
