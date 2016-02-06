@@ -2,6 +2,7 @@
 
 let _ = require('lodash');
 let Changesets = require('./changesets.js');
+let errors = require('./errors.js');
 
 class SerializedState {
   constructor(state) {
@@ -20,14 +21,15 @@ class SerializedState {
 
 class Controller {
   constructor(module) {
+    this.errorHandler = (msg, e) => { throw e; };
+    this.resetHandler = () => {};
     this.module = module;
     this.views = [];
-    this.execution = [];
-    this.execution.push({
+    this.execution = [{
       msg: 'Initial state',
       state: this.serializeState(),
       index: 0,
-    });
+    }];
     this.checkInvariants();
   }
 
@@ -37,11 +39,12 @@ class Controller {
         let context = {};
         invariant.check(context);
       });
+      return true;
     } catch ( e ) {
       if (e instanceof errors.Runtime) {
         let msg = `Failed invariant ${name}: ${e}`;
-        console.log(msg);
-        jQuery('#error').text(msg);
+        this.errorHandler(msg, e);
+        return false;
       } else {
         throw e;
       }
@@ -68,7 +71,6 @@ class Controller {
   }
 
   tryChangeState(mutator) {
-    jQuery('#error').text('');
     this.checkInvariants();
     let oldState = this.serializeState();
     let msg = mutator();
@@ -105,21 +107,23 @@ class Controller {
   }
 
   resetToStartingState() {
-    this.tryChangeState(() => {
-      console.log('reset');
-      jQuery('#error').text('');
-      this.module.env.vars.forEachLocal((mvar, name) => {
-        mvar.assign(mvar.type.makeDefaultValue());
-      });
-      let context = {};
-      this.module.ast.execute(context); // run global initialization code
-      return 'reset';
+    console.log('reset');
+    this.module.env.vars.forEachLocal((mvar, name) => {
+      mvar.assign(mvar.type.makeDefaultValue());
     });
+    let context = {};
+    this.module.ast.execute(context); // run global initialization code
+    this.execution = [{
+      msg: 'Reset',
+      state: this.serializeState(),
+      index: 0,
+    }];
+    this.resetHandler();
+    this.updateViews();
   }
 
   restore(snapshot) {
     console.log('restore');
-    jQuery('#error').text('');
     this.execution = this.execution.slice(0, snapshot.index + 1);
     this.restoreState(this.execution[this.execution.length - 1].state);
     this.checkInvariants();

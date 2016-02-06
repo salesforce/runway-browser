@@ -170,6 +170,14 @@ Promise.all([
     throw e;
   }
   let controller = new Controller(module);
+  controller.errorHandler = (msg, e) => {
+    console.log(msg);
+    jQuery('#error').text(msg);
+    throw e;
+  };
+  controller.resetHandler = () => {
+    jQuery('#error').text('');
+  };
   window.controller = controller;
   controller.views.push(
     new HTMLStateView(controller, jQuery('#state'), module));
@@ -199,7 +207,12 @@ Promise.all([
     if (simulateId === undefined) {
       let step = () => {
         simulateId = undefined;
-        Simulator.takeRandomStep(module, controller);
+        try {
+          Simulator.takeRandomStep(module, controller);
+        } catch (e) {
+          jQuery('#simulate').prop('checked', false);
+          throw e;
+        }
         simulateId = setTimeout(step, window.simulateSpeed);
       };
       step();
