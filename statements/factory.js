@@ -20,6 +20,7 @@ let statements = new Map([
   ['match', require('./match.js')],
   ['paramdecl', require('./paramdecl.js')],
   ['print', require('./print.js')],
+  ['reset', require('./reset.js')],
   ['returnstmt', require('./return.js')],
   ['rule', require('./rule.js')],
   ['rulefor', require('./rulefor.js')],

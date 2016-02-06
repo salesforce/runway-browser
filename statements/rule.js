@@ -24,7 +24,15 @@ class Rule extends Statement {
     try {
       this.inner.execute(context);
     } catch ( e ) {
-      if (!(e instanceof errors.Return)) {
+      if (e instanceof errors.Return) {
+        return;
+      } else if (e instanceof errors.Reset) {
+        this.env.vars.forEachLocal((mvar, name) => {
+          mvar.assign(mvar.type.makeDefaultValue());
+        });
+        // TODO: how to run global initialization?
+        // module.ast.execute(context);
+      } else {
         throw e;
       }
     }

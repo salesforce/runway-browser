@@ -27,6 +27,7 @@ syn keyword modelConditional    match
 syn keyword modelStatement      param
 syn keyword modelStatement      print
 syn keyword modelStructure      record
+syn keyword modelRepeat         reset
 syn keyword modelStatement      return
 syn keyword modelStatement      rule
 syn keyword modelStatement      type

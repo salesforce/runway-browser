@@ -72,6 +72,13 @@ class Continue extends Runtime {
   }
 }
 
+class Reset extends Runtime {
+  constructor(message) {
+    super(message);
+    this.name = prefix + 'ResetError';
+  }
+}
+
 class Return extends Runtime {
   constructor(message) {
     super(message);
@@ -95,6 +102,7 @@ module.exports = {
   Internal: Internal,
   Lookup: Lookup,
   Parse: Parse,
+  Reset: Reset,
   Return: Return,
   Runtime: Runtime,
   Type: Type,

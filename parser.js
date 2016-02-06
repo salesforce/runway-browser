@@ -133,6 +133,7 @@ let keywords = {};
   'param',
   'print',
   'record',
+  'reset',
   'return',
   'rule',
   'type',
@@ -660,6 +661,12 @@ let continueStmt = seqMap(keywords.continue,
       kind: 'continue',
   })).source();
 
+let resetStmt = seqMap(keywords.reset,
+  semicolon,
+  () => ({
+      kind: 'reset',
+  })).source();
+
 let statement = Parsimmon.alt(
   param,
   typedecl,
@@ -677,6 +684,7 @@ let statement = Parsimmon.alt(
   vardecl,
   breakStmt,
   continueStmt,
+  resetStmt,
   whileLoop,
   expr.skip(semicolon).map(v => ({
       kind: 'do',
