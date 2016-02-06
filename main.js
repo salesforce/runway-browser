@@ -4,6 +4,7 @@ let GlobalEnvironment = require('./environment.js').GlobalEnvironment;
 let Input = require('./input.js');
 let compiler = require('./compiler.js');
 let errors = require('./errors.js');
+let docopt = require('docopt').docopt;
 let fs = require('fs');
 let parser = require('./parser.js');
 let process = require('process');
@@ -125,16 +126,40 @@ module.exports = {
 };
 
 if (require.main === module) {
+  let doc = `
+Usage: main.js [options] [<model>]
+       main.js check [options] <model>
+       main.js simulate [options] <model>
+
+  -h --help  Show this usage message.`;
+  let usageError = () => {
+    console.log(doc);
+    process.exit(1);
+  };
+
+  let options = docopt(doc);
+  //console.log('Options:', options);
+  if (options['<model>'] == 'check' ||
+      options['<model>'] == 'simulate') {
+    usageError();
+  }
+
   let prelude = compiler.loadPrelude(readFile('prelude.model'));
   let env = new GlobalEnvironment(prelude.env);
 
-  if (process.argv.length > 2) { // filename given
-    let filename = process.argv[2];
+  if (options['<model>']) {
+    let filename = options['<model>'];
     let module = compiler.load(new Input(filename, readFile(filename)), env);
     let context = {};
     module.ast.execute(context);
-    printEnv(env);
   }
 
-  repl(env);
+  if (options.simulate) {
+    throw new errors.Unimplemented("simulation");
+  } else if (options.check) {
+    throw new errors.Unimplemented("model checker");
+  } else { // repl
+    printEnv(env);
+    repl(env);
+  }
 }
