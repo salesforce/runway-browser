@@ -67,8 +67,10 @@ describe('changesets.js', function() {
         'a', 'b[2]', 'c.x',
       ];
       assert.equal(Changesets.affected(cs, ['a']), true);
+      assert.equal(Changesets.affected(cs, ['b']), true);
       assert.equal(Changesets.affected(cs, ['b[2].x']), true);
       assert.equal(Changesets.affected(cs, ['c.y']), false);
+      assert.equal(Changesets.affected(cs, ['c']), true);
     });
   });
 });

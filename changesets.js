@@ -75,7 +75,8 @@ let affected = (changeset, readset) => {
   // would be faster for the small arrays expected here.
   for (let read of readset) {
     for (let change of changeset) {
-      if (read.startsWith(change)) {
+      if (change.startsWith(read) ||
+          read.startsWith(change)) {
         return true;
       }
     }
