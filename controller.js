@@ -71,17 +71,17 @@ class Controller {
   }
 
   tryChangeState(mutator) {
-    this.checkInvariants();
-    let oldState = this.serializeState();
+    let oldState = this.execution[this.execution.length - 1].state;
     let msg = mutator();
     if (msg === undefined) {
       msg = 'state changed';
     }
     let newState = this.serializeState();
-    if (oldState.equals(newState)) {
+    let changes = Changesets.compareJSON(oldState.toJSON(), newState.toJSON());
+    if (!changes) {
       return false;
     } else {
-      msg += ' (changed ' + Changesets.compareJSON(oldState.toJSON(), newState.toJSON()).join(', ') + ')';
+      msg += ' (changed ' + changes.join(', ') + ')';
       console.log(msg);
       this.execution.push({
         msg: msg,
@@ -90,7 +90,7 @@ class Controller {
       });
       this.checkInvariants();
       this.updateViews();
-      return true;
+      return changes;
     }
   }
 
