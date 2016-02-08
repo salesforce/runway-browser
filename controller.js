@@ -70,7 +70,7 @@ class Controller {
     });
   }
 
-  tryChangeState(mutator) {
+  tryChangeState(mutator, checkInvariantsReplacement) {
     let oldState = this.execution[this.execution.length - 1].state;
     let msg = mutator();
     if (msg === undefined) {
@@ -88,7 +88,11 @@ class Controller {
         state: newState,
         index: this.execution.length,
       });
-      this.checkInvariants();
+      if (checkInvariantsReplacement === undefined) {
+        this.checkInvariants();
+      } else {
+        checkInvariantsReplacement(changes);
+      }
       this.updateViews();
       return changes;
     }

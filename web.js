@@ -9,7 +9,7 @@ let BootstrapMenu = require('bootstrap-menu');
 let compiler = require('./compiler.js');
 window.compiler = compiler;
 let Simulator = {
-  takeRandomStep: require('./simulator.js'),
+  takeRandomStep: require('./simulator.js').slow,
 };
 let GlobalEnvironment = require('./environment.js').GlobalEnvironment;
 let Input = require('./input.js');
