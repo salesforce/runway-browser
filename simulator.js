@@ -51,7 +51,7 @@ class Simulator {
     let rulesets = _.reject(this.controller.getRulesets(),
       'simulatorDisable');
     let rules = _.flatMap(rulesets, ruleset => ruleset.rules)
-    rules = _.filter(rules, 'active');
+    rules = _.filter(rules, rule => (rule.active !== controller.INACTIVE));
     rules = _.shuffle(rules);
     for (let rule of rules) {
       if (rule.fire()) {

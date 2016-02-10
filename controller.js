@@ -47,7 +47,6 @@ class Controller {
 
     this.checkInvariants();
 
-    this.rulesets = [];
     let makeRule = (name, _fire) => {
       let rule = {};
       rule.name = name;
@@ -58,19 +57,51 @@ class Controller {
           return name;
         });
         if (Changesets.empty(changes)) {
-          rule.active = false;
+          rule.active = Controller.INACTIVE;
           rule.readset = context.readset;
+          rule.changeset = changes;
+        } else {
+          rule.active = Controller.UNKNOWN;
+          rule.readset = null;
+          rule.changeset = null;
         }
         return changes;
       };
-      rule.active = true;
-      rule.readset = null;
+      rule.wouldChangeState = () => {
+        if (rule.active === Controller.ACTIVE ||
+            rule.active === Controller.INACTIVE) {
+          return rule.changeset;
+        } else {
+          let context = {readset: new Set()};
+          let changes = this.wouldChangeState(() => {
+            _fire(context);
+          });
+          if (Changesets.empty(changes)) {
+            rule.active = Controller.INACTIVE;
+            rule.readset = context.readset;
+            rule.changeset = changes;
+          } else {
+            rule.active = Controller.ACTIVE;
+            rule.readset = context.readset;
+            rule.changeset = changes;
+          }
+          return changes;
+        }
+      };
+      rule.active = Controller.UNKNOWN;
+      rule.readset = null; // valid when INACTIVE or ACTIVE
+      rule.changeset = null; // valid when INACTIVE ([]) or ACTIVE
       return rule;
     };
 
+    this.rulesets = [];
     module.env.rules.forEachLocal((rule, name) => {
       if (rule instanceof RuleFor) {
-        let ruleset = {};
+        let ruleset = {
+          source: rule,
+          rulefor: true,
+          name: name,
+        };
         let update = () => {
           let context = {readset: new Set()};
           let rules = [];
@@ -81,7 +112,6 @@ class Controller {
           ruleset.readset = context.readset;
           ruleset.rules = rules;
         };
-        ruleset.source = rule;
         update();
         ruleset.update = update;
         this.rulesets.push(ruleset);
@@ -91,6 +121,8 @@ class Controller {
           rules: [makeRule(name, context => rule.fire(context))],
           update: _.noop,
           source: rule,
+          name: name,
+          rulefor: false,
         });
       }
     });
@@ -111,9 +143,12 @@ class Controller {
         ruleset.update();
       } else {
         ruleset.rules.forEach(rule => {
-          if (!rule.active && affected(rule.readset)) {
-            rule.active = true;
+          if ((rule.active === Controller.ACTIVE ||
+               rule.active === Controller.INACTIVE) &&
+              affected(rule.readset)) {
+            rule.active = Controller.UNKNOWN;
             rule.readset = null;
+            rule.changeset = null;
           }
         });
       }
@@ -177,7 +212,7 @@ class Controller {
       return changes;
     } else {
       msg += ' (changed ' + changes.join(', ') + ')';
-      console.log(msg, JSON.stringify(Array.from(changes)));
+      console.log(msg);
       this.execution.push({
         msg: msg,
         state: newState,
@@ -185,7 +220,7 @@ class Controller {
       });
       this.reportChanges(changes);
       this.checkInvariants();
-      this.updateViews();
+      this.updateViews(changes);
       return changes;
     }
   }
@@ -195,12 +230,10 @@ class Controller {
     mutator();
     let newState = this.serializeState();
     let changes = Changesets.compareJSON(oldState.toJSON(), newState.toJSON());
-    if (Changesets.empty(changes)) {
-      return false;
-    } else {
+    if (!Changesets.empty(changes)) {
       this.restoreState(oldState);
-      return changes;
     }
+    return changes;
   }
 
   resetToStartingState() {
@@ -228,9 +261,16 @@ class Controller {
     this.checkInvariants();
   }
 
-  updateViews() {
-    this.views.forEach(view => view.update());
+  updateViews(changes) {
+    if (changes === undefined) {
+      changes = [''];
+    }
+    this.views.forEach(view => view.update(changes));
   }
 }
+
+Controller.ACTIVE = 1; // firing the rule would change the state
+Controller.INACTIVE = 2; // firing the rule might change the state
+Controller.UNKNOWN = 3; // firing the rule would not change the state
 
 module.exports = Controller;

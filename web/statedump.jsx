@@ -3,6 +3,7 @@
 let React = require('react');
 let ReactDOM = require('react-dom');
 let jQuery = require('jquery');
+let Changesets = require('../changesets.js');
 
 let colors = [ // from colorbrewer2.org
   //'#8c510a',
@@ -17,7 +18,10 @@ let colors = [ // from colorbrewer2.org
 let StateDump = React.createClass({
 
   getInitialState: function() {
-    return {editing: false};
+    return {
+      editing: false,
+      changes: [''],
+    };
   },
 
   edit: function() {
@@ -26,6 +30,11 @@ let StateDump = React.createClass({
 
   saved: function() {
     this.setState({editing: false});
+  },
+
+  shouldComponentUpdate: function(nextProps, nextState) {
+    console.assert(nextProps.changes !== undefined);
+    return Changesets.affected(nextProps.changes, this.props.path);
   },
 
   render: function() {
@@ -50,9 +59,10 @@ let StateDump = React.createClass({
         horizontal={!horizontal}
         depth={depth + 1}
         controller={controller}
-        path={`${this.props.path}${subpath}`} />;
+        path={`${this.props.path}${subpath}`}
+        changes={this.props.changes} />;
 
-    let fieldRows = (value, type) =>
+    let fieldRows = (value, type, subpath) =>
       type.fieldtypes
         .map(t => t.name)
         .map(fieldname =>
@@ -61,7 +71,7 @@ let StateDump = React.createClass({
               {fieldname}
             </td>
             <td>
-              {nested(value.lookup(fieldname), `.${fieldname}`)}
+              {nested(value.lookup(fieldname), `${subpath}.${fieldname}`)}
             </td>
           </tr>);
 
@@ -109,13 +119,13 @@ let StateDump = React.createClass({
 
       return <table className="statedump" style={tableStyle}>
           <tbody>
-            {fieldRows(value, value.type)}
+            {fieldRows(value, value.type, '')}
           </tbody>
         </table>;
 
     } else if (kind == 'EitherVariant' || kind == 'EitherType') {
 
-      let select = [];  
+      let select = [];
       if (editing) {
         let options = value.eithertype.variants
           .map(v => v.name)
@@ -154,7 +164,7 @@ let StateDump = React.createClass({
               </tr>
             </thead>
             <tbody>
-              {fieldRows(value, value.varianttype.recordtype)}
+              {fieldRows(value, value.varianttype.recordtype, `!${value.varianttype.name}`)}
             </tbody>
           </table>;
       }
@@ -179,6 +189,18 @@ let StateDump = React.createClass({
 });
 
 let StateDumpEnv = React.createClass({
+
+  getInitialState: function() {
+    return {
+      changes: [''],
+    };
+  },
+
+  shouldComponentUpdate: function(nextProps, nextState) {
+    console.assert(nextState.changes !== undefined);
+    return !Changesets.empty(nextState.changes);
+  },
+
   render: function() {
     let env = this.props.env;
     let vars = [];
@@ -189,7 +211,8 @@ let StateDumpEnv = React.createClass({
           <StateDump
             value={value}
             controller={this.props.controller}
-            path={name} />
+            path={name}
+            changes={this.state.changes} />
         </div>);
       }
     });

@@ -1,6 +1,6 @@
 "use strict";
 
-let RuleFor = require('../statements/rulefor.js');
+let Changesets = require('../changesets.js');
 let React = require('react');
 let ReactDOM = require('react-dom');
 let jQuery = require('jquery');
@@ -9,69 +9,59 @@ let View = function(controller, elem, module) {
 
 let RuleControlsView = React.createClass({
   render: function() {
-    let rules = [];
-    let context = {};
-    module.env.rules.forEachLocal((rule, name) => {
-      if (rule instanceof RuleFor) {
-        let options = [];
+    let rules = controller.getRulesets().map(ruleset => {
+      if (ruleset.rulefor) {
         let anyEnabled = false;
-        let indextype = rule.expr.evaluate(context).forEach((v, i) => {
-          if (controller.wouldChangeState(() => rule.fire(i, context))) {
+        let options = ruleset.rules.map(rule => {
+          if (!Changesets.empty(rule.wouldChangeState())) {
             anyEnabled = true;
-            options.push(<li key={`${name}-${i}`}>
-                <a href="#"
-                   onClick={() => controller.tryChangeState(() => {
-                    rule.fire(i, context);
-                    return `${name}(${i})`;
-                   })}>
-                      {`${name}(${i})`}
+            return <li key={rule.name}>
+                <a href="#" onClick={() => rule.fire()}>
+                  {rule.name}
                 </a>
-              </li>);
+              </li>;
           } else {
-            options.push(<li key={`${name}-${i}`} className="disabled">
+            return <li key={rule.name} className="disabled">
                 <a href="#">
-                  {`${name}(${i})`}
+                  {rule.name}
                 </a>
-              </li>);
-
+              </li>;
           }
         });
-        if (options.length == 0) {
+        if (options.length === 0) {
           options.push(<li key="0" className="dropdown-header">
               Inactive
             </li>);
         }
-        rules.push(<div className="btn-group" key={name}>
+        return <div className="btn-group" key={ruleset.name}>
             <button className={`btn btn-default btn-sm dropdown-toggle ` +
               `${anyEnabled ? '' : 'disabled'}`}
             data-toggle="dropdown">
-              {name}{' '}
+              {ruleset.name}{' '}
               <span className="caret"></span>
             </button>
             <ul className="dropdown-menu">
               {options}
             </ul>
-          </div>);
+          </div>;
 
       } else {
-        if (controller.wouldChangeState(() => rule.fire(context))) {
-          rules.push(<div className="btn-group" key={name}>
+        let rule = ruleset.rules[0];
+        if (!Changesets.empty(rule.wouldChangeState())) {
+          return <div className="btn-group" key={rule.name}>
               <button
                 className="btn btn-default btn-sm"
-                onClick={() => controller.tryChangeState(() => {
-                  rule.fire(context);
-                  return name;
-                })}>
-                  {name}
+                onClick={() => rule.fire()}>
+                  {rule.name}
               </button>
-            </div>);
+            </div>;
         } else {
-          rules.push(<div className="btn-group" key={name}>
+          return <div className="btn-group" key={rule.name}>
               <button
                 className="btn btn-default btn-sm disabled">
-                  {name}
+                  {rule.name}
               </button>
-            </div>);
+            </div>;
         }
       }
     });
@@ -94,6 +84,7 @@ let RuleControlsView = React.createClass({
 let reactComponent = ReactDOM.render(<RuleControlsView />, elem);
 
 return {
+  name: 'RuleControls',
   update: function() {
     reactComponent.setState({});
   }

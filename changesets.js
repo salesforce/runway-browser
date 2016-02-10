@@ -71,6 +71,12 @@ let compareJSON = (state1, state2) => {
 };
 
 let affected = (changeset, readset) => {
+  if (_.isString(changeset)) {
+    changeset = [changeset];
+  }
+  if (_.isString(readset)) {
+    readset = [readset];
+  }
   // Could try _.sortedIndex to speed this up, but it's not clear that
   // would be faster for the small arrays expected here.
   for (let read of readset) {

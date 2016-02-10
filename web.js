@@ -63,6 +63,7 @@ let requireModules = {
   Tooltip: Tooltip,
   Util: Util,
   fetchRemoteFile: fetchRemoteFile,
+  Changesets: require('./changesets.js'),
   lodash: _,
 };
 let pseudoRequire = function(module) {
@@ -129,8 +130,8 @@ class HTMLStateView {
       this.elem[0]);
   }
 
-  update() {
-    this.component.setState({});
+  update(changes) {
+    this.component.setState({changes: changes});
   }
 }
 
