@@ -265,7 +265,18 @@ class Controller {
     if (changes === undefined) {
       changes = [''];
     }
-    this.views.forEach(view => view.update(changes));
+    let updates = [];
+    let ms = qty => `${_.round(qty, 3)} ms`;
+    let startAll = performance.now();
+    let stop = startAll;
+    this.views.forEach(view => {
+      let start = stop;
+      view.update(changes);
+      stop = performance.now();
+      updates.push(`${view.name} took ${ms(stop - start)}`);
+    });
+    console.log(`View updates took ${ms(stop - startAll)}:
+  ${updates.join('\n  ')}`);
   }
 }
 

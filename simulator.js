@@ -48,13 +48,16 @@ class Simulator {
   }
 
   step() {
+    let start = performance.now();
     let rulesets = _.reject(this.controller.getRulesets(),
       'simulatorDisable');
     let rules = _.flatMap(rulesets, ruleset => ruleset.rules)
     rules = _.filter(rules, rule => (rule.active !== controller.INACTIVE));
     rules = _.shuffle(rules);
     for (let rule of rules) {
-      if (rule.fire()) {
+      if (!Changesets.empty(rule.fire())) {
+        let stop = performance.now();
+        console.log(`simulate took ${_.round(stop - start, 3)} ms`);
         return true;
       }
     }
