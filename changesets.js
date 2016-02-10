@@ -84,7 +84,19 @@ let affected = (changeset, readset) => {
   return false;
 };
 
+let empty = changeset => {
+  if ('length' in changeset) { // Array
+    return changeset.length === 0;
+  } else if ('size' in changeset) { // Set
+    return changeset.size === 0;
+  } else { // hmm
+    console.error(`Don't know what ${changeset} is`);
+    return false;
+  }
+};
+
 module.exports = {
   compareJSON: compareJSON,
   affected: affected,
+  empty: empty,
 };

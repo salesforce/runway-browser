@@ -8,14 +8,12 @@ let BootstrapMenu = require('bootstrap-menu');
 
 let compiler = require('./compiler.js');
 window.compiler = compiler;
-let Simulator = {
-  takeRandomStep: require('./simulator.js').slow,
-};
+let Simulator = require('./simulator.js').Simulator;
 let GlobalEnvironment = require('./environment.js').GlobalEnvironment;
 let Input = require('./input.js');
 
 let _ = require('lodash');
-delete window._;
+//delete window._;
 
 let errors = require('./errors.js');
 let Tooltip = require('./web/tooltip.js');
@@ -199,6 +197,7 @@ Promise.all([
   }
 
   window.simulateSpeed = 500;
+  let simulator = new Simulator(module, controller);
   jQuery('#simulate').change(() => {
     let stop = () => {
       window.clearTimeout(simulateId);
@@ -208,7 +207,7 @@ Promise.all([
       let step = () => {
         simulateId = undefined;
         try {
-          Simulator.takeRandomStep(module, controller);
+          simulator.step();
         } catch (e) {
           jQuery('#simulate').prop('checked', false);
           throw e;
