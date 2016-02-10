@@ -4,6 +4,7 @@ let _ = require('lodash');
 let Changesets = require('./changesets.js');
 let errors = require('./errors.js');
 let RuleFor = require('./statements/rulefor.js');
+let performance = {now: require('performance-now')};
 
 class SerializedState {
   constructor(state) {

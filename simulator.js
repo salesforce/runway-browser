@@ -3,6 +3,7 @@
 let RuleFor = require('./statements/rulefor.js');
 let Changesets = require('./changesets.js');
 let _ = require('lodash');
+let performance = {now: require('performance-now')};
 
 let slow = (module, controller) => {
 
@@ -52,7 +53,7 @@ class Simulator {
     let rulesets = _.reject(this.controller.getRulesets(),
       'simulatorDisable');
     let rules = _.flatMap(rulesets, ruleset => ruleset.rules)
-    rules = _.filter(rules, rule => (rule.active !== controller.INACTIVE));
+    rules = _.filter(rules, rule => (rule.active !== this.controller.INACTIVE));
     rules = _.shuffle(rules);
     for (let rule of rules) {
       if (!Changesets.empty(rule.fire())) {
