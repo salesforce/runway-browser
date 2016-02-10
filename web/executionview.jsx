@@ -34,6 +34,7 @@ let ExecutionView = React.createClass({
 let reactComponent = ReactDOM.render(<ExecutionView />, elem);
 
 return {
+  name: 'Execution',
   update: function() {
     reactComponent.setState({});
   }

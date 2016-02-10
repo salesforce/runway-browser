@@ -91,6 +91,7 @@ let REPLView = React.createClass({
 let reactComponent = ReactDOM.render(<REPLView />, elem);
 
 return {
+  name: 'REPL',
   update: function() {
   }
 };

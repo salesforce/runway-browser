@@ -99,6 +99,7 @@ let fetchRemoteJSX = function(filename) {
 
 class TextStateView {
   constructor(controller, elem, module) {
+    this.name = 'TextStateView';
     this.controller = controller;
     this.elem = elem;
     this.module = module;
@@ -117,6 +118,7 @@ class TextStateView {
 
 class HTMLStateView {
   constructor(controller, elem, module) {
+    this.name = 'HTMLStateView';
     this.controller = controller;
     this.elem = elem;
     this.module = module;
@@ -190,10 +192,16 @@ Promise.all([
   let userView = results[1];
   if (userView !== null) {
     userView = new userView(controller, jQuery('#view #user')[0], module);
+    let use = v => {
+      if (v.name === undefined) {
+        v.name = 'User';
+      }
+      controller.views.push(v);
+    };
     if (userView instanceof Promise) {
-      userView.then(v => controller.views.push(v));
+      userView.then(use);
     } else {
-      controller.views.push(userView);
+      use(userView);
     }
   }
 
