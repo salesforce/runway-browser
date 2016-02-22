@@ -10,7 +10,7 @@ let hash = input =>
 
 let serializeState = (module) => {
   let state = {};
-  module.env.vars.forEachLocal((mvar, name) => {
+  module.env.vars.forEach((mvar, name) => {
     if (!mvar.isConstant) {
       state[name] = mvar.toJSON();
     }
@@ -20,7 +20,7 @@ let serializeState = (module) => {
 
 let restoreState = (module, state) => {
   state = JSON.parse(state);
-  module.env.vars.forEachLocal((mvar, name) => {
+  module.env.vars.forEach((mvar, name) => {
     if (!mvar.isConstant) {
       mvar.assignJSON(state[name]);
     }
@@ -31,7 +31,7 @@ let context = {};
 
 let extractSimpleRules = (module) => {
   let simpleRules = [];
-  module.env.rules.forEachLocal((rule, name) => {
+  module.env.rules.forEach((rule, name) => {
     if (rule instanceof RuleFor) {
       rule.expr.evaluate(context).forEach((v, i) => {
         simpleRules.push({
@@ -55,7 +55,7 @@ let checker = function(module) {
   let unexplored = new Set(); // stores JSON of unexplored states (already known to satisfy invariants)
 
   let start = serializeState(module);
-  module.env.invariants.forEachLocal((invariant, name) => {
+  module.env.invariants.forEach((invariant, name) => {
     try {
       invariant.check(context);
     } catch (e) {
@@ -93,7 +93,7 @@ let checker = function(module) {
       if (state !== start) {
         let stateHash = hash(state);
         if (!states.has(stateHash)) {
-          module.env.invariants.forEachLocal((invariant, name) => {
+          module.env.invariants.forEach((invariant, name) => {
             try {
               invariant.check(context);
             } catch (e) {

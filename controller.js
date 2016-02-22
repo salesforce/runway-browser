@@ -33,18 +33,15 @@ class Controller {
       index: 0,
     }];
 
-    this.invariants = [];
-    this.module.env.invariants.forEachLocal((invariant, name) => {
-      this.invariants.push({
-        name: name,
-        // if if false, checking the invariant is a waste of time
-        active: true,
-        // if !active, a change in one of these variables will
-        // make the invariant active
-        readset: null,
-        check: context => invariant.check(context),
-      });
-    });
+    this.invariants = this.module.env.invariants.map((invariant, name) => ({
+      name: name,
+      // if if false, checking the invariant is a waste of time
+      active: true,
+      // if !active, a change in one of these variables will
+      // make the invariant active
+      readset: null,
+      check: context => invariant.check(context),
+    }));
 
     this.checkInvariants();
 
@@ -95,8 +92,7 @@ class Controller {
       return rule;
     };
 
-    this.rulesets = [];
-    module.env.rules.forEachLocal((rule, name) => {
+    this.rulesets = module.env.rules.map((rule, name) => {
       if (rule instanceof RuleFor) {
         let ruleset = {
           source: rule,
@@ -115,16 +111,16 @@ class Controller {
         };
         update();
         ruleset.update = update;
-        this.rulesets.push(ruleset);
+        return ruleset;
       } else {
-        this.rulesets.push({
+        return {
           readset: [],
           rules: [makeRule(name, context => rule.fire(context))],
           update: _.noop,
           source: rule,
           name: name,
           rulefor: false,
-        });
+        };
       }
     });
   }
@@ -183,7 +179,7 @@ class Controller {
 
   serializeState() {
     let state = {};
-    this.module.env.vars.forEachLocal((mvar, name) => {
+    this.module.env.vars.forEach((mvar, name) => {
       if (!mvar.isConstant) {
         state[name] = mvar.toJSON();
       }
@@ -193,7 +189,7 @@ class Controller {
 
   restoreState(state) {
     state = state.toJSON();
-    this.module.env.vars.forEachLocal((mvar, name) => {
+    this.module.env.vars.forEach((mvar, name) => {
       if (!mvar.isConstant) {
         mvar.assignJSON(state[name]);
       }
@@ -239,7 +235,7 @@ class Controller {
 
   resetToStartingState() {
     console.log('reset');
-    this.module.env.vars.forEachLocal((mvar, name) => {
+    this.module.env.vars.forEach((mvar, name) => {
       mvar.assign(mvar.type.makeDefaultValue());
     });
     let context = {};

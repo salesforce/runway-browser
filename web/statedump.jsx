@@ -204,7 +204,7 @@ let StateDumpEnv = React.createClass({
   render: function() {
     let env = this.props.env;
     let vars = [];
-    env.vars.forEachLocal((value, name) => {
+    env.vars.forEach((value, name) => {
       if (!value.isConstant) {
         vars.push(<div key={name}>
           {name}:

@@ -9,7 +9,7 @@ let slow = (module, controller) => {
 
   let simpleRules = [];
   let context = [];
-  module.env.rules.forEachLocal((rule, name) => {
+  module.env.rules.forEach((rule, name) => {
     if (rule.simulatorDisable) {
       return;
     }

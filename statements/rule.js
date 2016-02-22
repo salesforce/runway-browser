@@ -27,7 +27,7 @@ class Rule extends Statement {
       if (e instanceof errors.Return) {
         return;
       } else if (e instanceof errors.Reset) {
-        this.env.vars.forEachLocal((mvar, name) => {
+        this.env.vars.forEach((mvar, name) => {
           mvar.assign(mvar.type.makeDefaultValue());
         });
         // TODO: how to run global initialization?

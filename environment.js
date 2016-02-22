@@ -10,8 +10,31 @@ class EnvironmentMap {
     this.entries = new Map();
   }
 
+  forEach(cb) {
+    if (this.enclosing !== null) {
+      this.enclosing.forEach(cb);
+    }
+    this.forEachLocal(cb);
+  }
+
   forEachLocal(cb) {
-    return this.entries.forEach((vs, name) => cb(vs.value, name));
+    this.entries.forEach((vs, name) => cb(vs.value, name));
+  }
+
+  map(cb) {
+    if (this.enclosing === null) {
+      return this.mapLocal(cb);
+    } else {
+      return this.enclosing.map(cb).concat(this.mapLocal(cb));
+    }
+  }
+
+  mapLocal(cb) {
+    let result = [];
+    this.entries.forEach((vs, name) => {
+      result.push(cb(vs.value, name));
+    });
+    return result;
   }
 
   getValueSource(id) {
