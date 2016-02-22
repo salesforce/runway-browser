@@ -28,6 +28,14 @@ class NumberValue extends Value {
     return `${this.value}`;
   }
 
+  assignJSON(spec) {
+    this.value = spec;
+  }
+
+  toJSON() {
+    return this.value;
+  }
+
   toString() {
     return `${this.value}`;
   }
