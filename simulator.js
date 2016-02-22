@@ -62,7 +62,7 @@ class Simulator {
         return true;
       }
     }
-    console.log('deadlock', this.serializeState().toString());
+    console.log('deadlock', this.controller.serializeState().toString());
     return false;
   }
 
