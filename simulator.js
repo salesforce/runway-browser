@@ -51,7 +51,7 @@ class Simulator {
   step() {
     let start = performance.now();
     let rulesets = _.reject(this.controller.getRulesets(),
-      'simulatorDisable');
+      rs => rs.source.simulatorDisable);
     let rules = _.flatMap(rulesets, ruleset => ruleset.rules)
     rules = _.filter(rules, rule => (rule.active !== this.controller.INACTIVE));
     rules = _.shuffle(rules);
@@ -62,7 +62,8 @@ class Simulator {
         return true;
       }
     }
-    console.log('deadlock', this.controller.serializeState().toString());
+    console.log('deadlock');
+    // this.controller.serializeState().toString()
     return false;
   }
 

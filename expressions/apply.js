@@ -4,6 +4,7 @@ let errors = require('../errors.js');
 let Expression = require('./expression.js');
 let Types = require('../types/types.js');
 let NumberType = require('../types/number.js').Type;
+let BlackHoleNumberType = require('../types/blackholenumber.js').Type;
 let RangeType = require('../types/range.js').Type;
 let makeExpression = require('./factory.js');
 let makeType = require('../types/factory.js');
@@ -345,6 +346,57 @@ class URandomFunction extends BaseFunction {
   }
 }
 
+class PastFunction extends BaseFunction {
+  constructor() {
+    super('past', 1);
+  }
+  typecheckSub(params, env, gargs) {
+    if (!Types.isNumeric(params[0].type)) {
+      throw new errors.Type(`Cannot call (${this.name}) on ${params[0].type}`);
+    }
+    return env.getType('Boolean');
+  }
+  evaluateSub(args, env, gargs, context) {
+    if (context.readset !== undefined) {
+      context.readset.add('clock');
+    }
+    if (env.getType('Time') === BlackHoleNumberType.singleton) {
+      return env.getVar('True'); // enable everything
+    } else {
+      if (context.clock === undefined) {
+        throw new errors.Internal(`Cannot evaluate past() without a clock value`);
+      }
+      return env.getVar(context.clock >= args[0].value ? 'True' : 'False');
+    }
+  }
+}
+
+class LaterFunction extends BaseFunction {
+  constructor() {
+    super('later', 1);
+  }
+  typecheckSub(params, env, gargs) {
+    if (!Types.isNumeric(params[0].type)) {
+      throw new errors.Type(`Cannot call (${this.name}) on ${params[0].type}`);
+    }
+    return env.getType('Time');
+  }
+  evaluateSub(args, env, gargs, context) {
+    if (context.readset !== undefined) {
+      context.readset.add('clock');
+    }
+    let v = env.getType('Time').makeDefaultValue();
+    if (env.getType('Time') !== BlackHoleNumberType.singleton) {
+      if (context.clock === undefined) {
+        throw new errors.Internal(`Cannot evaluate past() without a clock value`);
+      }
+      v.assign(context.clock + args[0].value);
+    }
+    return v;
+  }
+}
+
+
 let functions = [
   new NegateFunction(),
   new EqualsFunction(),
@@ -371,6 +423,8 @@ let functions = [
   new AndFunction(),
   new OrFunction(),
   new URandomFunction(),
+  new PastFunction(),
+  new LaterFunction(),
 ];
 
 class Apply extends Expression {

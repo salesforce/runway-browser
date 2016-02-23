@@ -2,6 +2,7 @@
 
 let ArrayType = require('./array.js');
 let Either = require('./either.js');
+let BlackHoleNumberType = require('./blackholenumber.js').Type;
 let NumberType = require('./number.js').Type;
 let RangeType = require('./range.js').Type;
 let RecordType = require('./record.js');
@@ -12,14 +13,8 @@ let subtypeOf = function(sub, par) {
   if (sub.equals(par)) {
     return true;
   }
-  if (sub instanceof NumberType &&
-    par instanceof RangeType) {
-    // let runtime check handle this for now
-    return true;
-  }
-  if (sub instanceof RangeType &&
-    par instanceof RangeType) {
-    // let runtime check handle this for now
+  if (isNumeric(sub) && isNumeric(par)) {
+    // let runtime check handle ranges for now
     return true;
   }
   if (sub instanceof Either.Variant &&
@@ -46,7 +41,9 @@ let haveEquality = function(left, right) {
 };
 
 let isNumeric = function(t) {
-  return t instanceof NumberType || t instanceof RangeType;
+  return (t instanceof NumberType ||
+    t instanceof RangeType ||
+    t instanceof BlackHoleNumberType);
 };
 
 let haveOrdering = function(left, right) {

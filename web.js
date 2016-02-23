@@ -27,18 +27,25 @@ let Controller = require('./controller.js');
 let preludeText = require('./prelude.model');
 
 let queryString = require('querystring');
+let getParams = queryString.parse(window.location.search.slice(1));
 
 let React = require('react');
 let ReactDOM = require('react-dom');
 
 let babel = require('babel-standalone');
 
-let prelude = compiler.loadPrelude(preludeText);
+let useClock = getParams['clock'] && true;
+
+let prelude = compiler.loadPrelude(preludeText, {
+  clock: useClock,
+});
 
 let meval = (text) => {
   let env = new GlobalEnvironment(prelude.env);
   let module = compiler.load(new Input('eval', text), env);
-  let context = {};
+  let context = {
+    clock: 0,
+  };
   module.ast.execute(context);
 };
 window.meval = meval;
@@ -141,9 +148,7 @@ let pageLoaded = new Promise((resolve, reject) => {
   jQuery(window).load(resolve);
 });
 
-let simulateId = undefined;
 
-let getParams = queryString.parse(window.location.search.slice(1));
 let basename = 'examples/toomanybananas/toomanybananas';
 if ('model' in getParams) {
   basename = 'examples/' + getParams['model'];
@@ -164,7 +169,9 @@ Promise.all([
   try {
     module = compiler.load(input, env);
     window.module = module;
-    let context = {};
+    let context = {
+      clock: 0,
+    };
     module.ast.execute(context);
   } catch ( e ) {
     jQuery('#error').text(e);
@@ -205,9 +212,29 @@ Promise.all([
     }
   }
 
-  window.simulateSpeed = 500;
+  let animate = false;
+  let animating = false;
+  let simulateId = undefined;
+  let simulateStart = 0;
+
+  // 'simulateSpeed' is number of wall microseconds per simulated clock tick
+  // (or equivalently, the "x" of slowdown).
+  // For asynchronous models without clocks, it's the number of wall
+  // microseconds per step.
+  window.simulateSpeed = 500000;
+  if (useClock) {
+    window.simulateSpeed = 100;
+  }
   let simulator = new Simulator(module, controller);
-  jQuery('#simulate').change(() => {
+  let doStep = () => {
+    try {
+      simulator.step();
+    } catch (e) {
+      jQuery('#simulate').prop('checked', false);
+      throw e;
+    }
+  };
+  let toggleTimeout = () => {
     let stop = () => {
       window.clearTimeout(simulateId);
       simulateId = undefined;
@@ -215,25 +242,50 @@ Promise.all([
     if (simulateId === undefined) {
       let step = () => {
         simulateId = undefined;
-        try {
-          simulator.step();
-        } catch (e) {
-          jQuery('#simulate').prop('checked', false);
-          throw e;
-        }
-        simulateId = setTimeout(step, window.simulateSpeed);
+        doStep();
+        simulateId = setTimeout(step, window.simulateSpeed / 1000);
       };
       step();
     } else {
       stop();
     }
-  });
-  jQuery('#slower').click(() => {
-    window.simulateSpeed = Math.min(2000, Math.max(window.simulateSpeed * 2, 10));
-  });
-  jQuery('#faster').click(() => {
-    window.simulateSpeed = Math.max(window.simulateSpeed / 2, 5);
-  });
+  };
+  let toggleAnimate = () => {
+    let stop = () => {
+      window.cancelAnimationFrame(simulateId);
+      simulateId = undefined;
+    };
+    if (simulateId === undefined) {
+      let step = when => {
+        simulateId = undefined;
+        let elapsed = (when - simulateStart);
+        simulateStart = when;
+        //console.log('elapsed:', elapsed, 'ms');
+        if (elapsed > 500) { // probably had another tab open
+          console.log(`Too much time elapsed between animation ` +
+            `frames: ${elapsed} ms`);
+          elapsed = 0;
+        }
+        controller.advanceClock(elapsed * 1000 / window.simulateSpeed);
+        doStep();
+        simulateId = window.requestAnimationFrame(step);
+      };
+      step(simulateStart);
+    } else {
+      stop();
+    }
+  };
+  if (useClock) {
+    jQuery('#simulate').change(toggleAnimate);
+  } else {
+    jQuery('#simulate').change(toggleTimeout);
+  }
+  let mapSimulateSpeed = fn => {
+    window.simulateSpeed = _.clamp(fn(window.simulateSpeed), .1, 5000000);
+    console.log(window.simulateSpeed);
+  };
+  jQuery('#slower').click(() => mapSimulateSpeed(s => s * 2));
+  jQuery('#faster').click(() => mapSimulateSpeed(s => s / 2));
 
 
   let viewWrapper = jQuery('#viewwrapper');

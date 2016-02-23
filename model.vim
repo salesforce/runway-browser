@@ -53,6 +53,8 @@ syn keyword modelFunction       capacity
 syn keyword modelFunction       contains
 syn keyword modelFunction       empty
 syn keyword modelFunction       full
+syn keyword modelFunction       later
+syn keyword modelFunction       past
 syn keyword modelFunction       pop
 syn keyword modelFunction       pow
 syn keyword modelFunction       push

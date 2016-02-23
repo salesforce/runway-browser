@@ -27,9 +27,11 @@ class Controller {
     this.resetHandler = () => {};
     this.module = module;
     this.views = [];
+    this.clock = 0;
     this.execution = [{
       msg: 'Initial state',
       state: this.serializeState(),
+      clock: this.clock,
       index: 0,
     }];
 
@@ -49,7 +51,10 @@ class Controller {
       let rule = {};
       rule.name = name;
       rule.fire = () => {
-        let context = {readset: new Set()};
+        let context = {
+          readset: new Set(),
+          clock: this.clock,
+        };
         let changes = this.tryChangeState(() => {
           _fire(context);
           return name;
@@ -70,7 +75,10 @@ class Controller {
             rule.active === Controller.INACTIVE) {
           return rule.changeset;
         } else {
-          let context = {readset: new Set()};
+          let context = {
+            readset: new Set(),
+            clock: this.clock,
+          };
           let changes = this.wouldChangeState(() => {
             _fire(context);
           });
@@ -100,7 +108,10 @@ class Controller {
           name: name,
         };
         let update = () => {
-          let context = {readset: new Set()};
+          let context = {
+            readset: new Set(),
+            clock: this.clock,
+          };
           let rules = [];
           rule.expr.evaluate(context).forEach((v, i) => {
             rules.push(makeRule(`${name}(${i})`,
@@ -159,7 +170,10 @@ class Controller {
   checkInvariants() {
     for (let invariant of this.invariants) {
       if (invariant.active) {
-        let context = {readset: new Set()};
+        let context = {
+          readset: new Set(),
+          clock: this.clock,
+        };
         try {
           invariant.check(context);
           invariant.readset = context.readset;
@@ -214,6 +228,7 @@ class Controller {
         msg: msg,
         state: newState,
         index: this.execution.length,
+        clock: this.clock,
       });
       this.reportChanges(changes);
       this.checkInvariants();
@@ -233,17 +248,26 @@ class Controller {
     return changes;
   }
 
+  advanceClock(amount) {
+    amount = Math.round(amount);
+    this.clock += amount;
+    this.reportChanges(['clock']);
+    this.updateViews(['clock']);
+  }
+
   resetToStartingState() {
     console.log('reset');
     this.module.env.vars.forEach((mvar, name) => {
       mvar.assign(mvar.type.makeDefaultValue());
     });
-    let context = {};
+    this.clock = 0;
+    let context = {clock: this.clock};
     this.module.ast.execute(context); // run global initialization code
     this.execution = [{
       msg: 'Reset',
       state: this.serializeState(),
       index: 0,
+      clock: this.clock,
     }];
     this.resetHandler();
     this.updateViews();
@@ -272,8 +296,11 @@ class Controller {
       stop = performance.now();
       updates.push(`${view.name} took ${ms(stop - start)}`);
     });
-    console.log(`View updates took ${ms(stop - startAll)}:
+    let total = stop - startAll;
+    if (total > 10) {
+      console.log(`View updates took ${ms(total)}:
   ${updates.join('\n  ')}`);
+    }
   }
 }
 

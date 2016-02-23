@@ -50,7 +50,10 @@ let StateDump = React.createClass({
       depth = 0;
     }
     let color = colors[depth % colors.length];
-    let kind = value.type.constructor.name;
+    let kind = undefined;
+    if (_.hasIn(value, 'type')) {
+      kind = value.type.constructor.name;
+    }
     let tableStyle = {background: color};
 
     let nested = (value, subpath) =>
@@ -84,7 +87,7 @@ let StateDump = React.createClass({
     });
 
 
-    if ('forEach' in value) {
+    if (_.hasIn(value, 'forEach')) {
       // kind == 'ArrayType' || kind == 'SetType' || kind == 'OrderedSetType'
 
       if (horizontal) {
@@ -217,6 +220,12 @@ let StateDumpEnv = React.createClass({
       }
     });
     return <div>
+      clock:
+      <StateDump
+        value={this.props.controller.clock}
+        controller={this.props.controller}
+        path="clock"
+        changes={this.state.changes} />
       {vars}
       </div>;
   },
