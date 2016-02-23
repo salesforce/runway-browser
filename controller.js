@@ -293,6 +293,7 @@ class Controller {
     this.clock += amount;
     this.reportChanges(['clock']);
     this.updateViews(['clock']);
+    // TODO: is this updating views twice when clocks advance AND rules fire?
   }
 
   resetToStartingState() {
@@ -317,6 +318,7 @@ class Controller {
     console.log('restore');
     this.execution = this.execution.slice(0, snapshot.index + 1);
     this.restoreState(this.execution[this.execution.length - 1].state);
+    this.clock = snapshot.clock;
     this.reportChanges();
     this.updateViews();
     this.checkInvariants();
