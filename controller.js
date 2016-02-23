@@ -65,9 +65,13 @@ class Rule {
     this.controller = controller;
     this.name = name;
     this._fire = _fire;
+    this._unknown();
+  }
 
+  _unknown() {
     this.active = this.UNKNOWN;
     this.readset = null; // valid when INACTIVE or ACTIVE
+    this.nextWake = null; // valid when INACTIVE
     this.changeset = null; // valid when INACTIVE ([]) or ACTIVE
   }
 
@@ -75,19 +79,19 @@ class Rule {
     let context = {
       readset: new Set(),
       clock: this.controller.clock,
+      nextWake: Number.MAX_VALUE,
     };
     let changes = this.controller.tryChangeState(() => {
       this._fire(context);
-      return name;
+      return this.name;
     });
     if (Changesets.empty(changes)) {
       this.active = this.INACTIVE;
       this.readset = context.readset;
+      this.nextWake = context.nextWake;
       this.changeset = changes;
     } else {
-      this.active = this.UNKNOWN;
-      this.readset = null;
-      this.changeset = null;
+      this._unknown();
     }
     return changes;
   }
@@ -97,9 +101,11 @@ class Rule {
         this.active === this.INACTIVE) {
       return this.changeset;
     } else {
+      //console.log(`checking if ${this.name} would change state`);
       let context = {
         readset: new Set(),
         clock: this.controller.clock,
+        nextWake: Number.MAX_VALUE,
       };
       let changes = this.controller.wouldChangeState(() => {
         this._fire(context);
@@ -107,10 +113,12 @@ class Rule {
       if (Changesets.empty(changes)) {
         this.active = this.INACTIVE;
         this.readset = context.readset;
+        this.nextWake = context.nextWake;
         this.changeset = changes;
       } else {
         this.active = this.ACTIVE;
         this.readset = context.readset;
+        this.nextWake = null;
         this.changeset = changes;
       }
       return changes;
@@ -118,12 +126,15 @@ class Rule {
   }
 
   reportChanges(changes) {
-    if ((this.active === this.ACTIVE ||
-         this.active === this.INACTIVE) &&
-        Changesets.affected(changes, this.readset)) {
-      this.active = this.UNKNOWN;
-      this.readset = null;
-      this.changeset = null;
+    if (this.active === this.ACTIVE) {
+      if (Changesets.affected(changes, this.readset)) {
+        this._unknown();
+      }
+    } else if (this.active === this.INACTIVE) {
+      if (Changesets.affected(changes, this.readset) ||
+          this.nextWake <= this.controller.clock) {
+        this._unknown();
+      }
     }
   }
 }
@@ -143,13 +154,15 @@ class MultiRuleSet {
     };
     let rules = [];
     this.source.expr.evaluate(context).forEach((v, i) => {
-      rules.push(new Rule(this.controller, `${name}(${i})`,
+      rules.push(new Rule(this.controller, `${this.name}(${i})`,
         context => this.source.fire(i, context)));
     });
     this.readset = context.readset;
     this.rules = rules;
   }
   reportChanges(changes) {
+    // note that rule-for cannot access the clock for now (syntactically
+    // prohibited in the modeling language)
     if (Changesets.affected(changes, this.readset)) {
       this._update();
     } else {
@@ -205,6 +218,9 @@ class Controller {
     if (changes === undefined) {
       changes = [''];
     }
+    if (Changesets.empty(changes)) {
+      console.log('reportChanges all changed (this can be bad for performance)');
+    }
 
     this.invariants.forEach(invariant => invariant.reportChanges(changes));
     this.rulesets.forEach(ruleset => ruleset.reportChanges(changes));
@@ -241,13 +257,17 @@ class Controller {
     return new SerializedState(state);
   }
 
-  restoreState(state) {
+  _restoreState(state) {
     state = state.toJSON();
     this.module.env.vars.forEach((mvar, name) => {
       if (!mvar.isConstant) {
         mvar.assignJSON(state[name]);
       }
     });
+  }
+
+  restoreState(state) {
+    this._restoreState(state);
     this.reportChanges();
   }
 
@@ -283,7 +303,7 @@ class Controller {
     let newState = this.serializeState();
     let changes = Changesets.compareJSON(oldState.toJSON(), newState.toJSON());
     if (!Changesets.empty(changes)) {
-      this.restoreState(oldState);
+      this._restoreState(oldState);
     }
     return changes;
   }
@@ -291,7 +311,7 @@ class Controller {
   advanceClock(amount) {
     amount = Math.round(amount);
     this.clock += amount;
-    this.reportChanges(['clock']);
+    this.reportChanges(['clock:advanced']);
     this.updateViews(['clock']);
     // TODO: is this updating views twice when clocks advance AND rules fire?
   }
@@ -317,7 +337,7 @@ class Controller {
   restore(snapshot) {
     console.log('restore');
     this.execution = this.execution.slice(0, snapshot.index + 1);
-    this.restoreState(this.execution[this.execution.length - 1].state);
+    this._restoreState(this.execution[this.execution.length - 1].state);
     this.clock = snapshot.clock;
     this.reportChanges();
     this.updateViews();

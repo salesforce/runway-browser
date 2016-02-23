@@ -358,7 +358,7 @@ class PastFunction extends BaseFunction {
   }
   evaluateSub(args, env, gargs, context) {
     if (context.readset !== undefined) {
-      context.readset.add('clock');
+      context.readset.add('clock:past');
     }
     if (env.getType('Time') === BlackHoleNumberType.singleton) {
       return env.getVar('True'); // enable everything
@@ -366,7 +366,15 @@ class PastFunction extends BaseFunction {
       if (context.clock === undefined) {
         throw new errors.Internal(`Cannot evaluate past() without a clock value`);
       }
-      return env.getVar(context.clock >= args[0].value ? 'True' : 'False');
+      let past = context.clock >= args[0].value;
+      if (past) {
+        return env.getVar('True');
+      } else {
+        if (context.nextWake === undefined || context.nextWake > args[0].value) {
+          context.nextWake = args[0].value;
+        }
+        return env.getVar('False');
+      }
     }
   }
 }
@@ -383,7 +391,7 @@ class LaterFunction extends BaseFunction {
   }
   evaluateSub(args, env, gargs, context) {
     if (context.readset !== undefined) {
-      context.readset.add('clock');
+      context.readset.add('clock:later');
     }
     let v = env.getType('Time').makeDefaultValue();
     if (env.getType('Time') !== BlackHoleNumberType.singleton) {
