@@ -21,6 +21,159 @@ class SerializedState {
   }
 }
 
+class Invariant {
+  constructor(controller, name, source) {
+    this.controller = controller;
+    this.name = name;
+    this.source = source;
+    // if false, checking the invariant is a waste of time
+    this.active = true;
+    // if !active, a change in one of these variables will
+    // make the invariant active
+    this.readset = null;
+  }
+
+  check() {
+    if (!this.active) {
+      return false;
+    }
+    let context = {
+      readset: new Set(),
+      clock: this.clock,
+    };
+    this.source.check(context); // throws
+    this.readset = context.readset;
+  }
+
+  reportChanges() {
+    if (this.active) {
+      return;
+    }
+    if (Changesets.affected(changes, this.readset)) {
+      invariant.active = true;
+      invariant.readset = null;
+    }
+  }
+}
+
+class Rule {
+  constructor(controller, name, _fire) {
+    this.ACTIVE = 1; // firing the rule would change the state
+    this.INACTIVE = 2; // firing the rule might change the state
+    this.UNKNOWN = 3; // firing the rule would not change the state
+
+    this.controller = controller;
+    this.name = name;
+    this._fire = _fire;
+
+    this.active = this.UNKNOWN;
+    this.readset = null; // valid when INACTIVE or ACTIVE
+    this.changeset = null; // valid when INACTIVE ([]) or ACTIVE
+  }
+
+  fire() {
+    let context = {
+      readset: new Set(),
+      clock: this.controller.clock,
+    };
+    let changes = this.controller.tryChangeState(() => {
+      this._fire(context);
+      return name;
+    });
+    if (Changesets.empty(changes)) {
+      this.active = this.INACTIVE;
+      this.readset = context.readset;
+      this.changeset = changes;
+    } else {
+      this.active = this.UNKNOWN;
+      this.readset = null;
+      this.changeset = null;
+    }
+    return changes;
+  }
+
+  wouldChangeState() {
+    if (this.active === this.ACTIVE ||
+        this.active === this.INACTIVE) {
+      return this.changeset;
+    } else {
+      let context = {
+        readset: new Set(),
+        clock: this.controller.clock,
+      };
+      let changes = this.controller.wouldChangeState(() => {
+        this._fire(context);
+      });
+      if (Changesets.empty(changes)) {
+        this.active = this.INACTIVE;
+        this.readset = context.readset;
+        this.changeset = changes;
+      } else {
+        this.active = this.ACTIVE;
+        this.readset = context.readset;
+        this.changeset = changes;
+      }
+      return changes;
+    }
+  }
+
+  reportChanges(changes) {
+    if ((this.active === this.ACTIVE ||
+         this.active === this.INACTIVE) &&
+        Changesets.affected(changes, this.readset)) {
+      this.active = this.UNKNOWN;
+      this.readset = null;
+      this.changeset = null;
+    }
+  }
+}
+
+class MultiRuleSet {
+  constructor(controller, source, name) {
+    this.controller = controller;
+    this.source = source;
+    this.name = name;
+    this.rulefor = true;
+    this._update();
+  }
+  _update() {
+    let context = {
+      readset: new Set(),
+      clock: this.controller.clock,
+    };
+    let rules = [];
+    this.source.expr.evaluate(context).forEach((v, i) => {
+      rules.push(new Rule(this.controller, `${name}(${i})`,
+        context => this.source.fire(i, context)));
+    });
+    this.readset = context.readset;
+    this.rules = rules;
+  }
+  reportChanges(changes) {
+    if (Changesets.affected(changes, this.readset)) {
+      this._update();
+    } else {
+      this.rules.forEach(rule => rule.reportChanges(changes));
+    }
+  }
+}
+
+class SingleRuleSet {
+  constructor(controller, source, name) {
+    this.controller = controller;
+    this.source = source;
+    this.name = name;
+    this.rulefor = false;
+    this.readset = [];
+    this.rule = new Rule(this.controller, name,
+      context => this.source.fire(context));
+    this.rules = [this.rule];
+  }
+  reportChanges(changes) {
+    return this.rule.reportChanges(changes);
+  }
+}
+
 class Controller {
   constructor(module) {
     this.errorHandler = (msg, e) => { throw e; };
@@ -35,132 +188,26 @@ class Controller {
       index: 0,
     }];
 
-    this.invariants = this.module.env.invariants.map((invariant, name) => ({
-      name: name,
-      // if if false, checking the invariant is a waste of time
-      active: true,
-      // if !active, a change in one of these variables will
-      // make the invariant active
-      readset: null,
-      check: context => invariant.check(context),
-    }));
-
+    this.invariants = this.module.env.invariants.map((invariant, name) =>
+      new Invariant(this, name, invariant));
     this.checkInvariants();
-
-    let makeRule = (name, _fire) => {
-      let rule = {};
-      rule.name = name;
-      rule.fire = () => {
-        let context = {
-          readset: new Set(),
-          clock: this.clock,
-        };
-        let changes = this.tryChangeState(() => {
-          _fire(context);
-          return name;
-        });
-        if (Changesets.empty(changes)) {
-          rule.active = Controller.INACTIVE;
-          rule.readset = context.readset;
-          rule.changeset = changes;
-        } else {
-          rule.active = Controller.UNKNOWN;
-          rule.readset = null;
-          rule.changeset = null;
-        }
-        return changes;
-      };
-      rule.wouldChangeState = () => {
-        if (rule.active === Controller.ACTIVE ||
-            rule.active === Controller.INACTIVE) {
-          return rule.changeset;
-        } else {
-          let context = {
-            readset: new Set(),
-            clock: this.clock,
-          };
-          let changes = this.wouldChangeState(() => {
-            _fire(context);
-          });
-          if (Changesets.empty(changes)) {
-            rule.active = Controller.INACTIVE;
-            rule.readset = context.readset;
-            rule.changeset = changes;
-          } else {
-            rule.active = Controller.ACTIVE;
-            rule.readset = context.readset;
-            rule.changeset = changes;
-          }
-          return changes;
-        }
-      };
-      rule.active = Controller.UNKNOWN;
-      rule.readset = null; // valid when INACTIVE or ACTIVE
-      rule.changeset = null; // valid when INACTIVE ([]) or ACTIVE
-      return rule;
-    };
 
     this.rulesets = module.env.rules.map((rule, name) => {
       if (rule instanceof RuleFor) {
-        let ruleset = {
-          source: rule,
-          rulefor: true,
-          name: name,
-        };
-        let update = () => {
-          let context = {
-            readset: new Set(),
-            clock: this.clock,
-          };
-          let rules = [];
-          rule.expr.evaluate(context).forEach((v, i) => {
-            rules.push(makeRule(`${name}(${i})`,
-              context => rule.fire(i, context)));
-          });
-          ruleset.readset = context.readset;
-          ruleset.rules = rules;
-        };
-        update();
-        ruleset.update = update;
-        return ruleset;
+        return new MultiRuleSet(this, rule, name);
       } else {
-        return {
-          readset: [],
-          rules: [makeRule(name, context => rule.fire(context))],
-          update: _.noop,
-          source: rule,
-          name: name,
-          rulefor: false,
-        };
+        return new SingleRuleSet(this, rule, name);
       }
     });
   }
 
   reportChanges(changes) {
-    let affected = readset => (changes === undefined ||
-      Changesets.affected(changes, readset));
+    if (changes === undefined) {
+      changes = [''];
+    }
 
-    this.invariants.forEach(invariant => {
-      if (!invariant.active && affected(invariant.readset)) {
-          invariant.active = true;
-          invariant.readset = null;
-      }
-    });
-    this.rulesets.forEach(ruleset => {
-      if (affected(ruleset.readset)) {
-        ruleset.update();
-      } else {
-        ruleset.rules.forEach(rule => {
-          if ((rule.active === Controller.ACTIVE ||
-               rule.active === Controller.INACTIVE) &&
-              affected(rule.readset)) {
-            rule.active = Controller.UNKNOWN;
-            rule.readset = null;
-            rule.changeset = null;
-          }
-        });
-      }
-    });
+    this.invariants.forEach(invariant => invariant.reportChanges(changes));
+    this.rulesets.forEach(ruleset => ruleset.reportChanges(changes));
   }
 
   getRulesets() {
@@ -169,22 +216,15 @@ class Controller {
 
   checkInvariants() {
     for (let invariant of this.invariants) {
-      if (invariant.active) {
-        let context = {
-          readset: new Set(),
-          clock: this.clock,
-        };
-        try {
-          invariant.check(context);
-          invariant.readset = context.readset;
-        } catch ( e ) {
-          if (e instanceof errors.Runtime) {
-            let msg = `Failed invariant ${invariant.name}: ${e}`;
-            this.errorHandler(msg, e);
-            return false;
-          } else {
-            throw e;
-          }
+      try {
+        invariant.check();
+      } catch ( e ) {
+        if (e instanceof errors.Runtime) {
+          let msg = `Failed invariant ${invariant.name}: ${e}`;
+          this.errorHandler(msg, e);
+          return false;
+        } else {
+          throw e;
         }
       }
     }
@@ -303,9 +343,5 @@ class Controller {
     }
   }
 }
-
-Controller.ACTIVE = 1; // firing the rule would change the state
-Controller.INACTIVE = 2; // firing the rule might change the state
-Controller.UNKNOWN = 3; // firing the rule would not change the state
 
 module.exports = Controller;
