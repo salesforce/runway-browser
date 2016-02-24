@@ -10,7 +10,7 @@ let slow = (module, controller) => {
   let simpleRules = [];
   let context = [];
   module.env.rules.forEach((rule, name) => {
-    if (rule.simulatorDisable) {
+    if (rule.external) {
       return;
     }
     if (rule instanceof RuleFor) {
@@ -51,7 +51,7 @@ class Simulator {
   step() {
     let start = performance.now();
     let rulesets = _.reject(this.controller.getRulesets(),
-      rs => rs.source.simulatorDisable);
+      rs => rs.source.external);
     let rules = _.flatMap(rulesets, ruleset => ruleset.rules)
     rules = _.filter(rules, rule => (rule.active !== rule.INACTIVE));
     rules = _.shuffle(rules);

@@ -18,6 +18,7 @@ syn keyword modelRepeat         continue
 syn keyword modelStatement      distribution
 syn keyword modelStructure      either
 syn keyword modelConditional    else
+syn keyword modelStatement      external
 syn keyword modelRepeat         for
 syn keyword modelStatement      function
 syn keyword modelConditional    if

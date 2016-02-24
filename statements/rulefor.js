@@ -10,6 +10,7 @@ let errors = require('../errors.js');
 class RuleFor extends Statement {
   constructor(parsed, env) {
     super(parsed, env);
+    this.external = this.parsed.subkind === 'external';
     this.expr = makeExpression.make(this.parsed.expr, this.env);
     this.innerEnv = new Environment(this.env);
     this.inner = makeStatement.make(this.parsed.code, this.innerEnv);

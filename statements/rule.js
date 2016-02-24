@@ -8,6 +8,7 @@ let errors = require('../errors.js');
 class Rule extends Statement {
   constructor(parsed, env) {
     super(parsed, env);
+    this.external = this.parsed.subkind === 'external';
     this.inner = makeStatement.make(this.parsed.code, this.env);
     this.env.assignRule(this.parsed.id.value, this);
   }

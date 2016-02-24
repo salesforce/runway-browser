@@ -123,6 +123,7 @@ let keywords = {};
   'distribution',
   'either',
   'else',
+  'external',
   'for',
   'function',
   'if',
@@ -623,16 +624,17 @@ let invariant = seqMap(keywords.invariant,
       code: block,
   }));
 
-let rule = seqMap(keywords.rule,
+let rule = seqMap(alt(keywords.rule, keywords.external),
   id,
   block,
-  (_, id, block) => ({
+  (subkind, id, block) => ({
       kind: 'rule',
+      subkind: subkind,
       id: id,
       code: block,
   }));
 
-let rulefor = seqMap(keywords.rule,
+let rulefor = seqMap(alt(keywords.rule, keywords.external),
   id,
   keywords.for,
   id.skip(comma).times(0, 1),
@@ -640,8 +642,9 @@ let rulefor = seqMap(keywords.rule,
   keywords.in,
   expr,
   block,
-  (_, id, _2, index, value, _3, expr, block) => ({
+  (subkind, id, _2, index, value, _3, expr, block) => ({
       kind: 'rulefor',
+      subkind: subkind,
       id: id,
       index: index.length == 1 ? index[0] : undefined,
       value: value,
