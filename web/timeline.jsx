@@ -71,13 +71,13 @@ let Timeline = React.createClass({
         y1={lineY}
         y2={lineY}
         style={{stroke: 'gray', strokeWidth: 3}} />
+      {tics}
       <line
         x1={this.props.x}
         x2={this.props.x + this.props.width * maxClockFrac}
         y1={lineY}
         y2={lineY}
         style={{stroke: 'green', strokeWidth: 3}} />
-      {tics}
       <circle
         cx={this.props.x + this.props.width * frac}
         cy={lineY}
