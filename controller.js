@@ -308,6 +308,14 @@ class Controller {
     return changes;
   }
 
+  setClock(newClock) {
+    newClock = Math.round(newClock);
+    this.clock = newClock;
+    this.reportChanges(['clock']);
+    this.updateViews(['clock']);
+    // TODO: is this updating views twice when clocks advance AND rules fire?
+  }
+
   advanceClock(amount) {
     amount = Math.round(amount);
     this.clock += amount;

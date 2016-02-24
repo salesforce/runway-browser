@@ -72,6 +72,7 @@ let requireModules = {
   fetchRemoteFile: fetchRemoteFile,
   Changesets: require('./changesets.js'),
   lodash: _,
+  Timeline: require('./web/timeline.jsx'),
 };
 let pseudoRequire = function(module) {
   if (module in requireModules) {
