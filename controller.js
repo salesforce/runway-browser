@@ -75,7 +75,18 @@ class Rule {
     this.changeset = null; // valid when INACTIVE ([]) or ACTIVE
   }
 
+  getNextWake() {
+    if (this.active == this.INACTIVE) {
+      return this.nextWake;
+    } else {
+      throw new errors.Internal('May only call getNextWake() on INACTIVE rule');
+    }
+  }
+
   fire() {
+    if (this.active == this.INACTIVE) {
+      return this.changeset;
+    }
     let context = {
       readset: new Set(),
       clock: this.controller.clock,
@@ -289,16 +300,19 @@ class Controller {
         state: newState,
         index: this.execution.length,
         clock: this.clock,
+        changes: changes,
       });
       this.reportChanges(changes);
       this.checkInvariants();
-      this.updateViews(changes);
+      //this.updateViews(changes);
       return changes;
     }
   }
 
   wouldChangeState(mutator) {
-    let oldState = this.execution[this.execution.length - 1].state;
+    // commented for now since which state we're on has become unclear
+    //this.oldState = execution[this.execution.length - 1].state;
+    let oldState = this.serializeState();
     mutator();
     let newState = this.serializeState();
     let changes = Changesets.compareJSON(oldState.toJSON(), newState.toJSON());
@@ -308,20 +322,42 @@ class Controller {
     return changes;
   }
 
+  findPrevious(clock) {
+    let i = _.sortedIndexBy(this.execution, {clock: clock}, 'clock') - 1;
+    if (i < 0) {
+      i = 0;
+    }
+    return this.execution[i];
+  }
+
   setClock(newClock) {
     newClock = Math.round(newClock);
+    let oldClock = this.clock;
     this.clock = newClock;
-    this.reportChanges(['clock']);
-    this.updateViews(['clock']);
+    if (oldClock <= newClock) {
+      let prev = this.findPrevious(newClock);
+      if (prev.clock <= oldClock) {
+        this.reportChanges(['clock:advanced']);
+        this.updateViews(['clock']);
+        return;
+      } else {
+        this._restoreState(prev.state);
+        let changes = _.concat(prev.changes, ['clock:advanced']);
+        changes.sort();
+        this.reportChanges(changes);
+        this.updateViews(changes);
+      }
+    } else {
+      let prev = this.findPrevious(newClock);
+      this._restoreState(prev.state);
+      this.reportChanges();
+      this.updateViews();
+    }
     // TODO: is this updating views twice when clocks advance AND rules fire?
   }
 
   advanceClock(amount) {
-    amount = Math.round(amount);
-    this.clock += amount;
-    this.reportChanges(['clock:advanced']);
-    this.updateViews(['clock']);
-    // TODO: is this updating views twice when clocks advance AND rules fire?
+    this.setClock(this.clock + amount);
   }
 
   resetToStartingState() {

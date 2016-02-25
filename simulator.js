@@ -52,19 +52,25 @@ class Simulator {
     let start = performance.now();
     let rulesets = _.reject(this.controller.getRulesets(),
       rs => rs.source.external);
-    let rules = _.flatMap(rulesets, ruleset => ruleset.rules)
-    rules = _.filter(rules, rule => (rule.active !== rule.INACTIVE));
-    rules = _.shuffle(rules);
-    for (let rule of rules) {
-      if (!Changesets.empty(rule.fire())) {
-        let stop = performance.now();
-        console.log(`simulate took ${_.round(stop - start, 3)} ms`);
-        return true;
+    while (true) {
+      let nextWake = Number.MAX_VALUE;
+      let rules = _.flatMap(rulesets, ruleset => ruleset.rules);
+      rules = _.shuffle(rules);
+      for (let rule of rules) {
+        if (!Changesets.empty(rule.fire())) {
+          let stop = performance.now();
+          console.log(`simulate took ${_.round(stop - start, 3)} ms`);
+          return true;
+        }
+        nextWake = Math.min(nextWake, rule.getNextWake());
+      }
+      if (nextWake < Number.MAX_VALUE) {
+        this.controller.setClock(nextWake);
+      } else {
+        console.log('deadlock', this.controller.serializeState().toString());
+        return false;
       }
     }
-    console.log('deadlock');
-    // this.controller.serializeState().toString()
-    return false;
   }
 
 }

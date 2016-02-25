@@ -179,6 +179,18 @@ Promise.all([
     throw e;
   }
   let controller = new Controller(module);
+
+  let simulator = new Simulator(module, controller);
+  while (controller.clock < 1e6) {
+    if (!simulator.step()) {
+      break;
+    }
+    if (!useClock) {
+      controller.advanceClock(10000);
+    }
+  }
+  controller.setClock(0);
+
   controller.errorHandler = (msg, e) => {
     console.log(msg);
     jQuery('#error').text(msg);
@@ -213,6 +225,8 @@ Promise.all([
     }
   }
 
+
+
   let animate = false;
   let animating = false;
   let simulateId = undefined;
@@ -220,44 +234,16 @@ Promise.all([
 
   // 'simulateSpeed' is number of wall microseconds per simulated clock tick
   // (or equivalently, the "x" of slowdown).
-  // For asynchronous models without clocks, it's the number of wall
-  // microseconds per step.
-  window.simulateSpeed = 500000;
-  if (useClock) {
-    window.simulateSpeed = 100;
-  }
-  let simulator = new Simulator(module, controller);
-  let doStep = () => {
-    try {
-      simulator.step();
-    } catch (e) {
-      jQuery('#simulate').prop('checked', false);
-      throw e;
-    }
-  };
-  let toggleTimeout = () => {
-    let stop = () => {
-      window.clearTimeout(simulateId);
-      simulateId = undefined;
-    };
-    if (simulateId === undefined) {
-      let step = () => {
-        simulateId = undefined;
-        doStep();
-        simulateId = setTimeout(step, window.simulateSpeed / 1000);
-      };
-      step();
-    } else {
-      stop();
-    }
-  };
+  // For asynchronous models without clocks, steps are executed every 10ms of
+  // simulation time.
+  window.simulateSpeed = 100;
   let toggleAnimate = () => {
     let stop = () => {
       window.cancelAnimationFrame(simulateId);
       simulateId = undefined;
     };
     if (simulateId === undefined) {
-      let step = when => {
+      let draw = when => {
         simulateId = undefined;
         let elapsed = (when - simulateStart);
         simulateStart = when;
@@ -268,19 +254,14 @@ Promise.all([
           elapsed = 0;
         }
         controller.advanceClock(elapsed * 1000 / window.simulateSpeed);
-        doStep();
-        simulateId = window.requestAnimationFrame(step);
+        simulateId = window.requestAnimationFrame(draw);
       };
-      step(simulateStart);
+      draw(simulateStart);
     } else {
       stop();
     }
   };
-  if (useClock) {
-    jQuery('#simulate').change(toggleAnimate);
-  } else {
-    jQuery('#simulate').change(toggleTimeout);
-  }
+  jQuery('#simulate').change(toggleAnimate);
   let mapSimulateSpeed = fn => {
     window.simulateSpeed = _.clamp(fn(window.simulateSpeed), .1, 5000000);
     console.log(window.simulateSpeed);

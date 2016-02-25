@@ -107,20 +107,18 @@ let Timeline = React.createClass({
   onMouseMove: function(e) {
     if (this.state.dragging) {
       addSVGCoords(e, this.state.ref);
+      let x = e.svgX - this.state.offsetX;
+      let frac = _.clamp((x - this.props.x) / this.props.width, 0, 1);
+      let max = this.max(this.props.controller.clock);
+      this.props.controller.setClock(frac * max);
       this.setState({
-        x: e.svgX - this.state.offsetX,
+        x: x,
         y: e.svgY - this.state.offsetY,
       });
     }
   },
 
   onMouseUp: function(e) {
-    if (this.state.dragging) {
-      let frac = _.clamp((this.state.x - this.props.x) / this.props.width, 0, 1);
-      let max = this.max(this.props.controller.clock);
-      this.props.controller.setClock(frac * max);
-    }
-
     this.setState({
       dragging: false,
       ref: null,

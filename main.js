@@ -134,7 +134,11 @@ Usage: main.js [options] [<model>]
        main.js check [options] <model>
        main.js simulate [options] <model>
 
-  -h --help  Show this usage message.`;
+Options:
+  -a, --async  Do not use the clock: past(n) always returns true.
+               Note that the model checker never uses the clock.
+  -h, --help   Show this usage message.`;
+
   let usageError = () => {
     console.log(doc);
     process.exit(1);
@@ -147,14 +151,18 @@ Usage: main.js [options] [<model>]
     usageError();
   }
 
-  let prelude = compiler.loadPrelude(readFile('prelude.model'));
+  let prelude = compiler.loadPrelude(readFile('prelude.model'), {
+    clock: !options['--async'],
+  });
   let env = new GlobalEnvironment(prelude.env);
 
   let module;
   if (options['<model>']) {
     let filename = options['<model>'];
     module = compiler.load(new Input(filename, readFile(filename)), env);
-    let context = {};
+    let context = {
+      clock: 0,
+    };
     module.ast.execute(context);
   }
 
@@ -162,10 +170,15 @@ Usage: main.js [options] [<model>]
     let controller = new Controller(module);
     let simulator = new Simulator(module, controller);
     let i = 0;
-    do {
+    while (true) {
       process.stdout.write(`${i}: `);
+      let ok = simulator.step(i);
+      process.stdout.write(`  at clock ${controller.clock}\n`);
+      if (!ok) {
+        break;
+      }
       i += 1;
-    } while (simulator.step(i));
+    }
     printEnv(env);
   } else if (options.check) {
     checker(module);
