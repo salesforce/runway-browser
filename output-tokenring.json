@@ -398,6 +398,7 @@
     },
     {
       "kind": "rule",
+      "subkind": "rule",
       "id": {
         "kind": "id",
         "value": "deliverToken",
@@ -674,6 +675,7 @@
     },
     {
       "kind": "rulefor",
+      "subkind": "rule",
       "id": {
         "kind": "id",
         "value": "passToken",
