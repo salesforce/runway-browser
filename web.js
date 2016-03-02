@@ -165,31 +165,26 @@ Promise.all([
   pageLoaded,
 ]).then((results) => {
   let input = results[0];
-  let env = new GlobalEnvironment(prelude.env);
-  let module;
-  try {
-    module = compiler.load(input, env);
-    window.module = module;
-    let context = {
-      clock: 0,
-    };
-    module.ast.execute(context);
-  } catch ( e ) {
-    jQuery('#error').text(e);
-    throw e;
-  }
-  let controller = new Controller(module);
+  let makeModule = () => {
+    let env = new GlobalEnvironment(prelude.env);
+    let module;
+    try {
+      module = compiler.load(input, env);
+      window.module = module;
+      let context = {
+        clock: 0,
+      };
+      module.ast.execute(context);
+    } catch ( e ) {
+      jQuery('#error').text(e);
+      throw e;
+    }
+    return module;
+  };
+  let module = makeModule();
+  let controller = new Controller(module, makeModule());
 
   let simulator = new Simulator(module, controller);
-  while (controller.clock < 1e6) {
-    if (!simulator.step()) {
-      break;
-    }
-    if (!useClock) {
-      controller.advanceClock(10000);
-    }
-  }
-  controller.setClock(0);
 
   controller.errorHandler = (msg, e) => {
     console.log(msg);
@@ -212,20 +207,35 @@ Promise.all([
   let userView = results[1];
   if (userView !== null) {
     userView = new userView(controller, jQuery('#view #user')[0], module);
-    let use = v => {
+    Promise.resolve(userView).then(v => {
       if (v.name === undefined) {
         v.name = 'User';
       }
       controller.views.push(v);
-    };
-    if (userView instanceof Promise) {
-      userView.then(use);
-    } else {
-      use(userView);
-    }
+
+      let viewWrapper = jQuery('#viewwrapper');
+      let smallSide = v.bigView ? 1000 : 100;
+      viewWrapper.mouseup(() => {
+        let viewElem = jQuery('#view');
+        let width = viewWrapper.width();
+        let height = viewWrapper.height();
+        console.log(`resize to ${width}, ${height}`);
+        viewElem.width(width);
+        viewElem.height(height);
+        if (width < height) {
+          height = height / width * smallSide;
+          width = smallSide;
+        } else {
+          width = width / height * smallSide;
+          height = smallSide;
+        }
+        // viewElem.attr('viewBox', ...) sets viewbox (lowercase) instead
+        viewElem[0].setAttribute('viewBox',
+          `0 0 ${width} ${height}`);
+        v.update(['layout']);
+      });
+    });
   }
-
-
 
   let animate = false;
   let animating = false;
@@ -253,7 +263,10 @@ Promise.all([
             `frames: ${elapsed} ms`);
           elapsed = 0;
         }
-        controller.advanceClock(elapsed * 1000 / window.simulateSpeed);
+        controller.viewContext.advanceClock(elapsed * 1000 / window.simulateSpeed);
+        if (controller.viewContext.clock >= controller.genContext.clock) {
+          controller.viewContext.setClock(controller.genContext.clock);
+        }
         simulateId = window.requestAnimationFrame(draw);
       };
       draw(simulateStart);
@@ -264,36 +277,19 @@ Promise.all([
   jQuery('#simulate').change(toggleAnimate);
   let mapSimulateSpeed = fn => {
     window.simulateSpeed = _.clamp(fn(window.simulateSpeed), .1, 5000000);
-    console.log(window.simulateSpeed);
+    console.log(`replay speed set to ${window.simulateSpeed}x slowdown`);
   };
   jQuery('#slower').click(() => mapSimulateSpeed(s => s * 2));
   jQuery('#faster').click(() => mapSimulateSpeed(s => s / 2));
-
-
-  let viewWrapper = jQuery('#viewwrapper');
-  let viewElem = jQuery('#view');
-  let smallSide = 100;
-  controller.views.forEach(v => {
-    if (v.bigView) {
-      smallSide = 1000;
+  jQuery('#more').click(() => {
+    //while (controller.genContext.clock < 1e6) {
+    for (let i = 0; i < 10; ++i) {
+      if (!simulator.step()) {
+        break;
+      }
+      if (!useClock) {
+        controller.genContext.advanceClock(10000);
+      }
     }
-  });
-  viewWrapper.mouseup(() => {
-    let width = viewWrapper.width();
-    let height = viewWrapper.height();
-    console.log(`resize to ${width}, ${height}`);
-    viewElem.width(width);
-    viewElem.height(height);
-    if (width < height) {
-      height = height / width * smallSide;
-      width = smallSide;
-    } else {
-      width = width / height * smallSide;
-      height = smallSide;
-    }
-    // viewElem.attr('viewBox', ...) sets viewbox (lowercase) instead
-    viewElem[0].setAttribute('viewBox',
-      `0 0 ${width} ${height}`);
-    controller.updateViews();
   });
 });

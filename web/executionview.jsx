@@ -1,31 +1,44 @@
 "use strict";
 
-let RuleFor = require('../statements/rulefor.js');
+let _ = require('lodash');
+let Changesets = require('../changesets.js');
 let React = require('react');
 let ReactDOM = require('react-dom');
-let jQuery = require('jquery');
 
 let View = function(controller, elem, module) {
 
 let ExecutionView = React.createClass({
+
+  getInitialState: function() {
+    return {
+      changes: [''],
+    };
+  },
+
+  shouldComponentUpdate: function(nextProps, nextState) {
+    return Changesets.affected(nextState.changes, 'execution');
+  },
+
   render: function() {
-    let renderExecution = (execution, i) => {
+    let renderEvent = (event, i) => {
       return <li key={i}>
         <a href=""
           onClick={e => {
           e.preventDefault();
-          controller.restore(execution);
+          controller.viewContext.setClock(event.clock);
         }}>
-          {execution.msg}
+          {event.msg}
         </a>
       </li>;
     };
 
+    let execution = controller.genContext.cursor.execution;
+    
     return <ol
-      start={controller.execution.length - 1}
+      start={execution.size()}
       reversed="1"
       style={{overflowY: 'auto', maxHeight: '10em'}}>
-        {controller.execution.map(renderExecution).reverse()}
+        {execution.map(renderEvent).reverse()}
     </ol>;
   }
 
@@ -35,8 +48,8 @@ let reactComponent = ReactDOM.render(<ExecutionView />, elem);
 
 return {
   name: 'Execution',
-  update: function() {
-    reactComponent.setState({});
+  update: function(changes) {
+    reactComponent.setState({changes: changes});
   }
 };
 

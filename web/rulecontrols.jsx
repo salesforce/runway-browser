@@ -8,8 +8,21 @@ let jQuery = require('jquery');
 let View = function(controller, elem, module) {
 
 let RuleControlsView = React.createClass({
+  getInitialState: function() {
+    return {
+      changes: [''],
+    };
+  },
+
+  shouldComponentUpdate: function(nextProps, nextState) {
+    let changes = new Set(nextState.changes);
+    changes.delete('clock');
+    changes.delete('execution');
+    return Changesets.affected(changes, '');
+  },
+
   render: function() {
-    let rules = controller.getRulesets().map(ruleset => {
+    let rules = controller.viewContext.getRulesets().map(ruleset => {
       if (ruleset.rulefor) {
         let anyEnabled = false;
         let options = ruleset.rules.map(rule => {
@@ -66,6 +79,7 @@ let RuleControlsView = React.createClass({
       }
     });
 
+/*
     rules.push(<div className="btn-group" key="reset">
       <button
         className="btn btn-default btn-sm"
@@ -73,6 +87,7 @@ let RuleControlsView = React.createClass({
           reset
       </button>
     </div>);
+*/
 
     return <div className="btn-toolbar">
         {rules}
@@ -85,8 +100,8 @@ let reactComponent = ReactDOM.render(<RuleControlsView />, elem);
 
 return {
   name: 'RuleControls',
-  update: function() {
-    reactComponent.setState({});
+  update: function(changes) {
+    reactComponent.setState({changes: changes});
   }
 };
 

@@ -101,8 +101,15 @@ let empty = changeset => {
   }
 };
 
+let union = (cs1, cs2) => {
+  let changes = Array.from(cs1).concat(Array.from(cs2));
+  changes.sort();
+  return _.uniq(changes);
+};
+
 module.exports = {
   compareJSON: compareJSON,
   affected: affected,
   empty: empty,
+  union: union,
 };

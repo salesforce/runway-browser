@@ -2,6 +2,7 @@
 
 let _ = require('lodash');
 let Changesets = require('./changesets.js');
+let Execution = require('./execution.js');
 let errors = require('./errors.js');
 let RuleFor = require('./statements/rulefor.js');
 let performance = {now: require('performance-now')};
@@ -22,8 +23,8 @@ class SerializedState {
 }
 
 class Invariant {
-  constructor(controller, name, source) {
-    this.controller = controller;
+  constructor(context, name, source) {
+    this.context = context;
     this.name = name;
     this.source = source;
     // if false, checking the invariant is a waste of time
@@ -37,12 +38,12 @@ class Invariant {
     if (!this.active) {
       return false;
     }
-    let context = {
+    let econtext = {
       readset: new Set(),
       clock: this.clock,
     };
-    this.source.check(context); // throws
-    this.readset = context.readset;
+    this.source.check(econtext); // throws
+    this.readset = econtext.readset;
   }
 
   reportChanges() {
@@ -57,12 +58,12 @@ class Invariant {
 }
 
 class Rule {
-  constructor(controller, name, _fire) {
+  constructor(context, name, _fire) {
     this.ACTIVE = 1; // firing the rule would change the state
     this.INACTIVE = 2; // firing the rule might change the state
     this.UNKNOWN = 3; // firing the rule would not change the state
 
-    this.controller = controller;
+    this.context = context;
     this.name = name;
     this._fire = _fire;
     this._unknown();
@@ -87,19 +88,19 @@ class Rule {
     if (this.active == this.INACTIVE) {
       return this.changeset;
     }
-    let context = {
+    let econtext = {
       readset: new Set(),
-      clock: this.controller.clock,
+      clock: this.context.clock,
       nextWake: Number.MAX_VALUE,
     };
-    let changes = this.controller.tryChangeState(() => {
-      this._fire(context);
+    let changes = this.context.tryChangeState(() => {
+      this._fire(econtext);
       return this.name;
     });
     if (Changesets.empty(changes)) {
       this.active = this.INACTIVE;
-      this.readset = context.readset;
-      this.nextWake = context.nextWake;
+      this.readset = econtext.readset;
+      this.nextWake = econtext.nextWake;
       this.changeset = changes;
     } else {
       this._unknown();
@@ -113,22 +114,22 @@ class Rule {
       return this.changeset;
     } else {
       //console.log(`checking if ${this.name} would change state`);
-      let context = {
+      let econtext = {
         readset: new Set(),
-        clock: this.controller.clock,
+        clock: this.context.clock,
         nextWake: Number.MAX_VALUE,
       };
-      let changes = this.controller.wouldChangeState(() => {
-        this._fire(context);
+      let changes = this.context.wouldChangeState(() => {
+        this._fire(econtext);
       });
       if (Changesets.empty(changes)) {
         this.active = this.INACTIVE;
-        this.readset = context.readset;
-        this.nextWake = context.nextWake;
+        this.readset = econtext.readset;
+        this.nextWake = econtext.nextWake;
         this.changeset = changes;
       } else {
         this.active = this.ACTIVE;
-        this.readset = context.readset;
+        this.readset = econtext.readset;
         this.nextWake = null;
         this.changeset = changes;
       }
@@ -143,7 +144,7 @@ class Rule {
       }
     } else if (this.active === this.INACTIVE) {
       if (Changesets.affected(changes, this.readset) ||
-          this.nextWake <= this.controller.clock) {
+          this.nextWake <= this.context.clock) {
         this._unknown();
       }
     }
@@ -151,24 +152,24 @@ class Rule {
 }
 
 class MultiRuleSet {
-  constructor(controller, source, name) {
-    this.controller = controller;
+  constructor(context, source, name) {
+    this.context = context;
     this.source = source;
     this.name = name;
     this.rulefor = true;
     this._update();
   }
   _update() {
-    let context = {
+    let econtext = {
       readset: new Set(),
-      clock: this.controller.clock,
+      clock: this.context.clock,
     };
     let rules = [];
-    this.source.expr.evaluate(context).forEach((v, i) => {
-      rules.push(new Rule(this.controller, `${this.name}(${i})`,
-        context => this.source.fire(i, context)));
+    this.source.expr.evaluate(econtext).forEach((v, i) => {
+      rules.push(new Rule(this.context, `${this.name}(${i})`,
+        econtext => this.source.fire(i, econtext)));
     });
-    this.readset = context.readset;
+    this.readset = econtext.readset;
     this.rules = rules;
   }
   reportChanges(changes) {
@@ -183,14 +184,14 @@ class MultiRuleSet {
 }
 
 class SingleRuleSet {
-  constructor(controller, source, name) {
-    this.controller = controller;
+  constructor(context, source, name) {
+    this.context = context;
     this.source = source;
     this.name = name;
     this.rulefor = false;
     this.readset = [];
-    this.rule = new Rule(this.controller, name,
-      context => this.source.fire(context));
+    this.rule = new Rule(this.context, name,
+      econtext => this.source.fire(econtext));
     this.rules = [this.rule];
   }
   reportChanges(changes) {
@@ -198,25 +199,21 @@ class SingleRuleSet {
   }
 }
 
-class Controller {
-  constructor(module) {
-    this.errorHandler = (msg, e) => { throw e; };
-    this.resetHandler = () => {};
+class Context {
+  constructor(controller, module, type) {
+    this.controller = controller;
     this.module = module;
-    this.views = [];
     this.clock = 0;
-    this.execution = [{
-      msg: 'Initial state',
-      state: this.serializeState(),
-      clock: this.clock,
-      index: 0,
-    }];
+    this.type = type; // 'gen' or 'view'
+  }
 
+  _init() {
+    this.cursor = this.controller.executions[0].last();
     this.invariants = this.module.env.invariants.map((invariant, name) =>
       new Invariant(this, name, invariant));
     this.checkInvariants();
 
-    this.rulesets = module.env.rules.map((rule, name) => {
+    this.rulesets = this.module.env.rules.map((rule, name) => {
       if (rule instanceof RuleFor) {
         return new MultiRuleSet(this, rule, name);
       } else {
@@ -225,14 +222,10 @@ class Controller {
     });
   }
 
-  reportChanges(changes) {
+  _reportChanges(changes) {
     if (changes === undefined) {
       changes = [''];
     }
-    if (Changesets.empty(changes)) {
-      console.log('reportChanges all changed (this can be bad for performance)');
-    }
-
     this.invariants.forEach(invariant => invariant.reportChanges(changes));
     this.rulesets.forEach(ruleset => ruleset.reportChanges(changes));
   }
@@ -258,7 +251,7 @@ class Controller {
     return true;
   }
 
-  serializeState() {
+  _serializeState() {
     let state = {};
     this.module.env.vars.forEach((mvar, name) => {
       if (!mvar.isConstant) {
@@ -268,7 +261,7 @@ class Controller {
     return new SerializedState(state);
   }
 
-  _restoreState(state) {
+  _loadState(state) {
     state = state.toJSON();
     this.module.env.vars.forEach((mvar, name) => {
       if (!mvar.isConstant) {
@@ -277,118 +270,126 @@ class Controller {
     });
   }
 
-  restoreState(state) {
-    this._restoreState(state);
-    this.reportChanges();
-  }
-
   tryChangeState(mutator) {
-    let oldState = this.execution[this.execution.length - 1].state;
+    let startCursor = this.cursor;
+    let oldState = startCursor.getEvent().state;
     let msg = mutator();
     if (msg === undefined) {
       msg = 'state changed';
     }
-    let newState = this.serializeState();
+    let newState = this._serializeState();
     let changes = Changesets.compareJSON(oldState.toJSON(), newState.toJSON());
     if (Changesets.empty(changes)) {
       return changes;
     } else {
       msg += ' (changed ' + changes.join(', ') + ')';
       console.log(msg);
-      this.execution.push({
+      this.cursor = startCursor.addEvent({
         msg: msg,
         state: newState,
-        index: this.execution.length,
         clock: this.clock,
         changes: changes,
       });
-      this.reportChanges(changes);
+      if (this.controller.executions.indexOf(this.cursor.execution) === -1) {
+        this.controller.executions.push(this.cursor.execution);
+      }
       this.checkInvariants();
-      //this.updateViews(changes);
+      this._reportChanges(changes);
+      if (this.type == 'gen') {
+        this.controller._updateViews(['execution']);
+      } else {
+        this.controller.genContext.reset(this.cursor, this.clock);
+        this.controller._updateViews(
+          Changesets.union(changes, ['execution']));
+      }
       return changes;
     }
   }
 
   wouldChangeState(mutator) {
-    // commented for now since which state we're on has become unclear
-    //this.oldState = execution[this.execution.length - 1].state;
-    let oldState = this.serializeState();
+    let oldState = this.cursor.getEvent().state;
     mutator();
-    let newState = this.serializeState();
+    let newState = this._serializeState();
     let changes = Changesets.compareJSON(oldState.toJSON(), newState.toJSON());
     if (!Changesets.empty(changes)) {
-      this._restoreState(oldState);
+      this._loadState(oldState);
     }
     return changes;
-  }
-
-  findPrevious(clock) {
-    let i = _.sortedIndexBy(this.execution, {clock: clock}, 'clock') - 1;
-    if (i < 0) {
-      i = 0;
-    }
-    return this.execution[i];
   }
 
   setClock(newClock) {
     newClock = Math.round(newClock);
     let oldClock = this.clock;
+    let oldCursor = this.cursor;
     this.clock = newClock;
-    if (oldClock <= newClock) {
-      let prev = this.findPrevious(newClock);
-      if (prev.clock <= oldClock) {
-        this.reportChanges(['clock:advanced']);
-        this.updateViews(['clock']);
-        return;
-      } else {
-        this._restoreState(prev.state);
-        let changes = _.concat(prev.changes, ['clock:advanced']);
-        changes.sort();
-        this.reportChanges(changes);
-        this.updateViews(changes);
+    this.cursor = oldCursor.execution.preceding(e => (e.clock <= newClock));
+    if (oldCursor.equals(this.cursor)) {
+      this._reportChanges(['clock:advanced']);
+      if (this.type === 'view') {
+        this.controller._updateViews(['clock']);
       }
-    } else {
-      let prev = this.findPrevious(newClock);
-      this._restoreState(prev.state);
-      this.reportChanges();
-      this.updateViews();
+      return;
+    }
+    let prev = this.cursor.getEvent();
+    this._loadState(prev.state);
+    if (oldCursor.next() !== undefined &&
+        oldCursor.next().equals(this.cursor)) {
+      let changes = Changesets.union(prev.changes, ['clock']);
+      this._reportChanges(changes);
+      if (this.type === 'view') {
+        this.controller._updateViews(changes);
+      }
+      return;
+    }
+    let changes = Changesets.compareJSON(
+      oldCursor.getEvent().state.toJSON(),
+      prev.state.toJSON());
+    changes = Changesets.union(changes, ['clock']);
+    this._reportChanges(changes);
+    if (this.type === 'view') {
+      this.controller._updateViews(changes);
     }
     // TODO: is this updating views twice when clocks advance AND rules fire?
+  }
+
+  reset(newCursor, newClock) {
+    let newState = newCursor.getEvent().state;
+    let changes = Changesets.compareJSON(
+      this.cursor.getEvent().state.toJSON(),
+      newState.toJSON());
+    changes = Changesets.union(changes, ['clock']);
+    this._loadState(newState);
+    this.cursor = newCursor;
+    this.clock = newClock;
+    this._reportChanges(changes);
+    if (this.type === 'view') {
+      this.controller._updateViews(changes);
+    }
   }
 
   advanceClock(amount) {
     this.setClock(this.clock + amount);
   }
+}
 
-  resetToStartingState() {
-    console.log('reset');
-    this.module.env.vars.forEach((mvar, name) => {
-      mvar.assign(mvar.type.makeDefaultValue());
-    });
-    this.clock = 0;
-    let context = {clock: this.clock};
-    this.module.ast.execute(context); // run global initialization code
-    this.execution = [{
-      msg: 'Reset',
-      state: this.serializeState(),
-      index: 0,
-      clock: this.clock,
-    }];
-    this.resetHandler();
-    this.updateViews();
+class Controller {
+  constructor(module1, module2) {
+    this.views = [];
+    this.genContext = new Context(this, module2, 'gen');
+    this.viewContext = new Context(this, module1, 'view');
+    this.executions = [new Execution({
+      msg: 'Initial state',
+      state: this.genContext._serializeState(),
+      clock: 0,
+      changes: [''],
+    })];
+    this.genContext._init();
+    this.viewContext._init();
+    this.errorHandler = (msg, e) => { throw e; };
+    this.resetHandler = () => {};
   }
 
-  restore(snapshot) {
-    console.log('restore');
-    this.execution = this.execution.slice(0, snapshot.index + 1);
-    this._restoreState(this.execution[this.execution.length - 1].state);
-    this.clock = snapshot.clock;
-    this.reportChanges();
-    this.updateViews();
-    this.checkInvariants();
-  }
-
-  updateViews(changes) {
+  _updateViews(changes) {
     if (changes === undefined) {
       changes = [''];
     }
@@ -396,14 +397,17 @@ class Controller {
     let ms = qty => `${_.round(qty, 3)} ms`;
     let startAll = performance.now();
     let stop = startAll;
+    let threshold = 10;
     this.views.forEach(view => {
       let start = stop;
       view.update(changes);
       stop = performance.now();
-      updates.push(`${view.name} took ${ms(stop - start)}`);
+      if (stop - start > threshold / 3) {
+        updates.push(`${view.name} took ${ms(stop - start)}`);
+      }
     });
     let total = stop - startAll;
-    if (total > 10) {
+    if (total > threshold) {
       console.log(`View updates took ${ms(total)}:
   ${updates.join('\n  ')}`);
     }

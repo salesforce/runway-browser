@@ -79,7 +79,7 @@ let StateDump = React.createClass({
           </tr>);
 
     let change = makeChange => (e => {
-      controller.tryChangeState(() => {
+      controller.viewContext.tryChangeState(() => {
         makeChange(e.target.value);
         this.setState({});
         return `edited ${this.props.path}`;
@@ -222,7 +222,7 @@ let StateDumpEnv = React.createClass({
     return <div>
       clock:
       <StateDump
-        value={this.props.controller.clock}
+        value={this.props.controller.viewContext.clock}
         controller={this.props.controller}
         path="clock"
         changes={this.state.changes} />

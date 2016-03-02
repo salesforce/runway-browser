@@ -50,7 +50,7 @@ class Simulator {
 
   step() {
     let start = performance.now();
-    let rulesets = _.reject(this.controller.getRulesets(),
+    let rulesets = _.reject(this.controller.genContext.getRulesets(),
       rs => rs.source.external);
     while (true) {
       let nextWake = Number.MAX_VALUE;
@@ -65,9 +65,9 @@ class Simulator {
         nextWake = Math.min(nextWake, rule.getNextWake());
       }
       if (nextWake < Number.MAX_VALUE) {
-        this.controller.setClock(nextWake);
+        this.controller.genContext.setClock(nextWake);
       } else {
-        console.log('deadlock', this.controller.serializeState().toString());
+        console.log('deadlock');
         return false;
       }
     }
