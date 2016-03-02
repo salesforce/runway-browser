@@ -7,21 +7,6 @@ let errors = require('./errors.js');
 let RuleFor = require('./statements/rulefor.js');
 let performance = {now: require('performance-now')};
 
-class SerializedState {
-  constructor(state) {
-    this.state = state;
-  }
-  toJSON() {
-    return this.state;
-  }
-  toString() {
-    return JSON.stringify(this.state, null, 2);
-  }
-  equals(other) {
-    return _.isEqual(this.state, other.state);
-  }
-}
-
 class Invariant {
   constructor(context, name, source) {
     this.context = context;
@@ -258,11 +243,10 @@ class Context {
         state[name] = mvar.toJSON();
       }
     });
-    return new SerializedState(state);
+    return state;
   }
 
   _loadState(state) {
-    state = state.toJSON();
     this.module.env.vars.forEach((mvar, name) => {
       if (!mvar.isConstant) {
         mvar.assignJSON(state[name]);
@@ -278,7 +262,7 @@ class Context {
       msg = 'state changed';
     }
     let newState = this._serializeState();
-    let changes = Changesets.compareJSON(oldState.toJSON(), newState.toJSON());
+    let changes = Changesets.compareJSON(oldState, newState);
     if (Changesets.empty(changes)) {
       return changes;
     } else {
@@ -310,7 +294,7 @@ class Context {
     let oldState = this.cursor.getEvent().state;
     mutator();
     let newState = this._serializeState();
-    let changes = Changesets.compareJSON(oldState.toJSON(), newState.toJSON());
+    let changes = Changesets.compareJSON(oldState, newState);
     if (!Changesets.empty(changes)) {
       this._loadState(oldState);
     }
@@ -342,8 +326,8 @@ class Context {
       return;
     }
     let changes = Changesets.compareJSON(
-      oldCursor.getEvent().state.toJSON(),
-      prev.state.toJSON());
+      oldCursor.getEvent().state,
+      prev.state);
     changes = Changesets.union(changes, ['clock']);
     this._reportChanges(changes);
     if (this.type === 'view') {
@@ -355,8 +339,8 @@ class Context {
   reset(newCursor, newClock) {
     let newState = newCursor.getEvent().state;
     let changes = Changesets.compareJSON(
-      this.cursor.getEvent().state.toJSON(),
-      newState.toJSON());
+      this.cursor.getEvent().state,
+      newState);
     changes = Changesets.union(changes, ['clock']);
     this._loadState(newState);
     this.cursor = newCursor;
