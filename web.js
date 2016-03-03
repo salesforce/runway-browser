@@ -246,8 +246,8 @@ Promise.all([
   let nextWorkerId = 1;
   let startSimulating = () => {
     if (workerId === undefined &&
-        (controller.viewContext.cursor.execution.last().getEvent().clock <
-         controller.viewContext.clock + 2e5)) {
+        (controller.workspace.cursor.execution.last().getEvent().clock <
+         controller.workspace.clock + 2e5)) {
       workerId = nextWorkerId;
       nextWorkerId += 1;
       let thisWorkerId = workerId;
@@ -257,7 +257,7 @@ Promise.all([
         }
         workerId = undefined;
         if (newEvents.length > 0) {
-          let startCursor = controller.viewContext.cursor.execution.last();
+          let startCursor = controller.workspace.cursor.execution.last();
           let cursor = startCursor;
           newEvents.forEach(event => {
             cursor = cursor.addEvent(event);
@@ -269,7 +269,7 @@ Promise.all([
     }
   };
   
-  controller.viewContext.forked.sub(execution => {
+  controller.workspace.forked.sub(execution => {
     workerId = undefined;
     workerClient.reset(execution.last().getEvent())
       .then(startSimulating);
@@ -297,10 +297,10 @@ Promise.all([
             `frames: ${elapsed} ms`);
           elapsed = 0;
         }
-        controller.viewContext.advanceClock(elapsed * 1000 / window.simulateSpeed);
-        let maxGen = controller.viewContext.cursor.execution.last().getEvent().clock;
-        if (controller.viewContext.clock >= maxGen) {
-          controller.viewContext.setClock(maxGen);
+        controller.workspace.advanceClock(elapsed * 1000 / window.simulateSpeed);
+        let maxGen = controller.workspace.cursor.execution.last().getEvent().clock;
+        if (controller.workspace.clock >= maxGen) {
+          controller.workspace.setClock(maxGen);
         }
         startSimulating();
         simulateId = window.requestAnimationFrame(draw);

@@ -25,14 +25,14 @@ let ExecutionView = React.createClass({
         <a href=""
           onClick={e => {
           e.preventDefault();
-          controller.viewContext.setClock(event.clock);
+          controller.workspace.setClock(event.clock);
         }}>
           {_.round(event.clock / 1000, 1)} ms: {event.msg}
         </a>
       </li>;
     };
 
-    let execution = controller.viewContext.cursor.execution;
+    let execution = controller.workspace.cursor.execution;
     
     return <ol
       start={execution.size()}

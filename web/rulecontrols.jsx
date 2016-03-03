@@ -22,7 +22,7 @@ let RuleControlsView = React.createClass({
   },
 
   render: function() {
-    let rules = controller.viewContext.getRulesets().map(ruleset => {
+    let rules = controller.workspace.getRulesets().map(ruleset => {
       if (ruleset.rulefor) {
         let anyEnabled = false;
         let options = ruleset.rules.map(rule => {

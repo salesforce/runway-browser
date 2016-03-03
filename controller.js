@@ -6,9 +6,9 @@ let Workspace = require('./workspace.js').Workspace;
 class Controller {
   constructor(module) {
     this.views = [];
-    this.viewContext = new Workspace(module);
-    this.executions = [this.viewContext.cursor.execution];
-    this.viewContext.update.sub(changes => {
+    this.workspace = new Workspace(module);
+    this.executions = [this.workspace.cursor.execution];
+    this.workspace.update.sub(changes => {
       this._updateViews(changes);
     });
 
@@ -17,7 +17,7 @@ class Controller {
         this.executions.push(execution);
       }
     };
-    this.viewContext.forked.sub(onFork);
+    this.workspace.forked.sub(onFork);
   }
 
   _updateViews(changes) {
