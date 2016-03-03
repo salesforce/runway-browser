@@ -1,28 +1,14 @@
 'use strict';
 
-let Changesets = require('./changesets.js');
-let Execution = require('./execution.js');
 let performance = {now: require('performance-now')};
 let Workspace = require('./workspace.js').Workspace;
 
 class Controller {
-  constructor(module1, module2) {
+  constructor(module) {
     this.views = [];
-    this.genContext = new Workspace(module2);
-    this.viewContext = new Workspace(module1);
-    this.executions = [new Execution({
-      msg: 'Initial state',
-      state: this.genContext._serializeState(),
-      clock: 0,
-      changes: [''],
-    })];
-    this.genContext._init(this.executions[0].last());
-    this.viewContext._init(this.executions[0].last());
-    this.genContext.update.sub(changes => {
-      if (Changesets.affected(changes, 'execution')) {
-        this._updateViews(['execution']);
-      }
-    });
+    this.viewContext = new Workspace(module);
+    this.viewContext._init();
+    this.executions = [this.viewContext.cursor.execution];
     this.viewContext.update.sub(changes => {
       this._updateViews(changes);
     });
@@ -32,12 +18,7 @@ class Controller {
         this.executions.push(execution);
       }
     };
-    this.genContext.forked.sub(onFork);
     this.viewContext.forked.sub(onFork);
-
-    this.viewContext.forked.sub(execution => {
-      this.genContext.reset(this.viewContext.cursor, this.viewContext.clock);
-    });
   }
 
   _updateViews(changes) {

@@ -32,7 +32,7 @@ let ExecutionView = React.createClass({
       </li>;
     };
 
-    let execution = controller.genContext.cursor.execution;
+    let execution = controller.viewContext.cursor.execution;
     
     return <ol
       start={execution.size()}

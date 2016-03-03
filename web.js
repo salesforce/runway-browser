@@ -250,7 +250,7 @@ Promise.all([
   let nextWorkerId = 1;
   let startSimulating = () => {
     if (workerId === undefined &&
-        (controller.genContext.clock <
+        (controller.viewContext.cursor.execution.last().getEvent().clock <
          controller.viewContext.clock + 2e5)) {
       workerId = nextWorkerId;
       nextWorkerId += 1;
@@ -260,15 +260,22 @@ Promise.all([
           return;
         }
         workerId = undefined;
-        controller.genContext.inject(newEvents);
-        startSimulating();
+        if (newEvents.length > 0) {
+          let startCursor = controller.viewContext.cursor.execution.last();
+          let cursor = startCursor;
+          newEvents.forEach(event => {
+            cursor = cursor.addEvent(event);
+          });
+          controller._updateViews(['execution']);
+          startSimulating();
+        }
       });
     }
   };
-
-  controller.genContext.postReset.sub(() => {
+  
+  controller.viewContext.forked.sub(execution => {
     workerId = undefined;
-    workerClient.reset(controller.genContext.cursor.getEvent())
+    workerClient.reset(execution.last().getEvent())
       .then(startSimulating);
   });
 
@@ -295,8 +302,9 @@ Promise.all([
           elapsed = 0;
         }
         controller.viewContext.advanceClock(elapsed * 1000 / window.simulateSpeed);
-        if (controller.viewContext.clock >= controller.genContext.clock) {
-          controller.viewContext.setClock(controller.genContext.clock);
+        let maxGen = controller.viewContext.cursor.execution.last().getEvent().clock;
+        if (controller.viewContext.clock >= maxGen) {
+          controller.viewContext.setClock(maxGen);
         }
         startSimulating();
         simulateId = window.requestAnimationFrame(draw);

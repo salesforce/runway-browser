@@ -346,22 +346,6 @@ class Workspace {
   advanceClock(amount) {
     this.setClock(this.clock + amount);
   }
-
-  // only valid for genContext (this code probably won't live long)
-  inject(newEvents) {
-    if (newEvents.length === 0) {
-      return;
-    }
-    let startCursor = this.cursor;
-    newEvents.forEach(event => {
-      this.cursor = this.cursor.addEvent(event);
-    });
-    this.clock = _.last(newEvents).clock;
-    if (this.cursor.execution !== startCursor.execution) {
-      this.forked.pub(this.cursor.execution);
-    }
-    this.update.pub(['', 'execution']);
-  }
 }
 
 module.exports = {

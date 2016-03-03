@@ -28,9 +28,14 @@ let Timeline = React.createClass({
     return max;
   },
 
+  generated: function() {
+    let execution = this.props.controller.viewContext.cursor.execution;
+    return execution.last().getEvent().clock;
+  },
+
   render: function() {
     let lineY = this.props.y + this.props.height * 3/4;
-    let max = this.max(this.props.controller.genContext.clock);
+    let max = this.max(this.generated());
     let maxClockFrac = this.props.controller.viewContext.clock / max;
     let frac = maxClockFrac;
     if (this.state.dragging) {
@@ -74,7 +79,7 @@ let Timeline = React.createClass({
       {tics}
       <line
         x1={this.props.x}
-        x2={this.props.x + this.props.width * this.props.controller.genContext.clock / max}
+        x2={this.props.x + this.props.width * this.generated() / max}
         y1={lineY}
         y2={lineY}
         style={{stroke: 'green', strokeWidth: 3}} />
@@ -109,7 +114,7 @@ let Timeline = React.createClass({
       addSVGCoords(e, this.state.ref);
       let x = e.svgX - this.state.offsetX;
       let frac = _.clamp((x - this.props.x) / this.props.width, 0, 1);
-      let max = this.max(this.props.controller.genContext.clock);
+      let max = this.max(this.generated());
       this.props.controller.viewContext.setClock(frac * max);
       this.setState({
         x: x,
