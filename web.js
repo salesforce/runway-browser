@@ -168,24 +168,20 @@ Promise.all([
   pageLoaded,
 ]).then((results) => {
   let input = results[0];
-  let makeModule = () => {
-    let env = new GlobalEnvironment(prelude.env);
-    let module;
-    try {
-      module = compiler.load(input, env);
-      window.module = module;
-      let context = {
-        clock: 0,
-      };
-      module.ast.execute(context);
-    } catch ( e ) {
-      jQuery('#error').text(e);
-      throw e;
-    }
-    return module;
-  };
-  let module = makeModule();
-  let controller = new Controller(module, makeModule());
+  let env = new GlobalEnvironment(prelude.env);
+  let module;
+  try {
+    module = compiler.load(input, env);
+    window.module = module;
+    let context = {
+      clock: 0,
+    };
+    module.ast.execute(context);
+  } catch ( e ) {
+    jQuery('#error').text(e);
+    throw e;
+  }
+  let controller = new Controller(module);
 
   workerClient.load(preludeText, input);
   let simulator = new Simulator(module, controller);
