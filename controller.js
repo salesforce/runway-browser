@@ -6,6 +6,7 @@ let Execution = require('./execution.js');
 let errors = require('./errors.js');
 let RuleFor = require('./statements/rulefor.js');
 let performance = {now: require('performance-now')};
+let PubSub = require('./pubsub.js');
 
 class Invariant {
   constructor(context, name, source) {
@@ -185,15 +186,26 @@ class SingleRuleSet {
 }
 
 class Context {
-  constructor(controller, module, type) {
-    this.controller = controller;
+  constructor(module) {
     this.module = module;
     this.clock = 0;
-    this.type = type; // 'gen' or 'view'
+    this.update = new PubSub();
+    this.forked = new PubSub();
+    this.postReset = new PubSub();
+    this.invariantError = new PubSub();
   }
 
-  _init() {
-    this.cursor = this.controller.executions[0].last();
+  _init(cursor) {
+    if (cursor === undefined) {
+      this.cursor = new Execution({
+        msg: 'Initial state',
+        state: this._serializeState(),
+        clock: this.clock,
+        changes: [''],
+      }).last();
+    } else {
+      this.cursor = cursor;
+    }
     this.invariants = this.module.env.invariants.map((invariant, name) =>
       new Invariant(this, name, invariant));
     this.checkInvariants();
@@ -205,14 +217,13 @@ class Context {
         return new SingleRuleSet(this, rule, name);
       }
     });
-  }
-
-  _reportChanges(changes) {
-    if (changes === undefined) {
-      changes = [''];
-    }
-    this.invariants.forEach(invariant => invariant.reportChanges(changes));
-    this.rulesets.forEach(ruleset => ruleset.reportChanges(changes));
+    this.update.sub(changes => {
+      if (changes === undefined) {
+        changes = [''];
+      }
+      this.invariants.forEach(invariant => invariant.reportChanges(changes));
+      this.rulesets.forEach(ruleset => ruleset.reportChanges(changes));
+    });
   }
 
   getRulesets() {
@@ -226,7 +237,7 @@ class Context {
       } catch ( e ) {
         if (e instanceof errors.Runtime) {
           let msg = `Failed invariant ${invariant.name}: ${e}`;
-          this.errorHandler(msg, e);
+          this.invariantError.pub(msg, e);
           return false;
         } else {
           throw e;
@@ -274,18 +285,11 @@ class Context {
         clock: this.clock,
         changes: changes,
       });
-      if (this.controller.executions.indexOf(this.cursor.execution) === -1) {
-        this.controller.executions.push(this.cursor.execution);
-      }
       this.checkInvariants();
-      this._reportChanges(changes);
-      if (this.type == 'gen') {
-        this.controller._updateViews(['execution']);
-      } else {
-        this.controller.genContext.reset(this.cursor, this.clock);
-        this.controller._updateViews(
-          Changesets.union(changes, ['execution']));
+      if (this.cursor.execution !== startCursor.execution) {
+        this.forked.pub(this.cursor.execution);
       }
+      this.update.pub(Changesets.union(changes, ['execution']));
       return changes;
     }
   }
@@ -308,10 +312,7 @@ class Context {
     this.clock = newClock;
     this.cursor = oldCursor.execution.preceding(e => (e.clock <= newClock));
     if (oldCursor.equals(this.cursor)) {
-      this._reportChanges(['clock:advanced']);
-      if (this.type === 'view') {
-        this.controller._updateViews(['clock']);
-      }
+      this.update.pub(['clock:advanced']);
       return;
     }
     let prev = this.cursor.getEvent();
@@ -319,20 +320,14 @@ class Context {
     if (oldCursor.next() !== undefined &&
         oldCursor.next().equals(this.cursor)) {
       let changes = Changesets.union(prev.changes, ['clock']);
-      this._reportChanges(changes);
-      if (this.type === 'view') {
-        this.controller._updateViews(changes);
-      }
+      this.update.pub(changes);
       return;
     }
     let changes = Changesets.compareJSON(
       oldCursor.getEvent().state,
       prev.state);
     changes = Changesets.union(changes, ['clock']);
-    this._reportChanges(changes);
-    if (this.type === 'view') {
-      this.controller._updateViews(changes);
-    }
+    this.update.pub(changes);
     // TODO: is this updating views twice when clocks advance AND rules fire?
   }
 
@@ -345,51 +340,64 @@ class Context {
     this._loadState(newState);
     this.cursor = newCursor;
     this.clock = newClock;
-    if (this._resetHook !== undefined) {
-      this._resetHook();
-    }
-    this._reportChanges(changes);
-    if (this.type === 'view') {
-      this.controller._updateViews(changes);
-    }
+    this.postReset.pub(changes);
+    this.update.pub(changes);
   }
 
   advanceClock(amount) {
     this.setClock(this.clock + amount);
   }
 
-  // only valid for type 'gen' (this code probably won't live long)
+  // only valid for genContext (this code probably won't live long)
   inject(newEvents) {
     if (newEvents.length === 0) {
       return;
     }
+    let startCursor = this.cursor;
     newEvents.forEach(event => {
       this.cursor = this.cursor.addEvent(event);
     });
-    if (this.controller.executions.indexOf(this.cursor.execution) === -1) {
-      this.controller.executions.push(this.cursor.execution);
-    }
     this.clock = _.last(newEvents).clock;
-    this._reportChanges();
-    this.controller._updateViews(['execution']);
+    if (this.cursor.execution !== startCursor.execution) {
+      this.forked.pub(this.cursor.execution);
+    }
+    this.update.pub(['', 'execution']);
   }
 }
 
 class Controller {
   constructor(module1, module2) {
     this.views = [];
-    this.genContext = new Context(this, module2, 'gen');
-    this.viewContext = new Context(this, module1, 'view');
+    this.genContext = new Context(module2);
+    this.viewContext = new Context(module1);
     this.executions = [new Execution({
       msg: 'Initial state',
       state: this.genContext._serializeState(),
       clock: 0,
       changes: [''],
     })];
-    this.genContext._init();
-    this.viewContext._init();
-    this.errorHandler = (msg, e) => { throw e; };
-    this.resetHandler = () => {};
+    this.genContext._init(this.executions[0].last());
+    this.viewContext._init(this.executions[0].last());
+    this.genContext.update.sub(changes => {
+      if (Changesets.affected(changes, 'execution')) {
+        this._updateViews(['execution']);
+      }
+    });
+    this.viewContext.update.sub(changes => {
+      this._updateViews(changes);
+    });
+
+    let onFork = execution => {
+      if (this.executions.indexOf(execution) < 0) {
+        this.executions.push(execution);
+      }
+    };
+    this.genContext.forked.sub(onFork);
+    this.viewContext.forked.sub(onFork);
+
+    this.viewContext.forked.sub(execution => {
+      this.genContext.reset(this.viewContext.cursor, this.viewContext.clock);
+    });
   }
 
   _updateViews(changes) {

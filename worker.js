@@ -8,7 +8,6 @@ let Execution = require('./execution.js');
 let Context = require('./controller.js').Context;
 
 let module;
-let controller;
 let genContext;
 let simulator;
 let useClock = true;
@@ -23,18 +22,7 @@ let load = function(data) {
     clock: 0,
   };
   module.ast.execute(context);
-
-  controller = {
-    executions: [],
-    _updateViews: () => {},
-  };
-  genContext = new Context(controller, module, 'gen');
-  controller.executions.push(new Execution({
-    msg: 'Initial state',
-    state: genContext._serializeState(),
-    clock: 0,
-    changes: [''],
-  }));
+  genContext = new Context(module);
   genContext._init();
 
   simulator = new Simulator(module, genContext);
@@ -64,8 +52,7 @@ let simulate = function(data) {
 
 let reset = function(event) {
   console.log('resetting worker to', event);
-  controller.executions = [new Execution(event)];
-  genContext.reset(controller.executions[0].last(), event.clock);
+  genContext.reset(new Execution(event).last(), event.clock);
   return Promise.resolve({});
 };
 

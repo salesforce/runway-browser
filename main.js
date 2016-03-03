@@ -9,7 +9,7 @@ let fs = require('fs');
 let parser = require('./parser.js');
 let process = require('process');
 let checker = require('./modelchecker.js').checker;
-let Controller = require('./controller.js');
+let Context = require('./controller.js').Context;
 let Simulator = require('./simulator.js').Simulator;
 
 let out = function(o) {
@@ -167,13 +167,14 @@ Options:
   }
 
   if (options.simulate) {
-    let controller = new Controller(module);
-    let simulator = new Simulator(module, controller);
+    let genContext = new Context(module);
+    genContext._init();
+    let simulator = new Simulator(module, genContext);
     let i = 0;
     while (true) {
       process.stdout.write(`${i}: `);
       let ok = simulator.step(i);
-      process.stdout.write(`  at clock ${controller.clock}\n`);
+      process.stdout.write(`  at clock ${genContext.clock}\n`);
       if (!ok) {
         break;
       }

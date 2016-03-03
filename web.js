@@ -266,11 +266,11 @@ Promise.all([
     }
   };
 
-  controller.genContext._resetHook = () => {
+  controller.genContext.postReset.sub(() => {
     workerId = undefined;
     workerClient.reset(controller.genContext.cursor.getEvent())
       .then(startSimulating);
-  };
+  });
 
 
   // 'simulateSpeed' is number of wall microseconds per simulated clock tick
