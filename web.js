@@ -22,7 +22,7 @@ let StateDump = require('./web/statedump.jsx');
 let RuleControls = require('./web/rulecontrols.jsx');
 let ExecutionView = require('./web/executionview.jsx');
 let REPLView = require('./web/repl.jsx');
-let Controller = require('./controller.js');
+let Controller = require('./controller.js').Controller;
 
 let preludeText = require('./prelude.model');
 
@@ -39,6 +39,9 @@ let useClock = getParams['clock'] && true;
 let prelude = compiler.loadPrelude(preludeText, {
   clock: useClock,
 });
+
+let WorkerClient = require('./workerclient.js');
+window.workerClient = new WorkerClient();
 
 let meval = (text) => {
   let env = new GlobalEnvironment(prelude.env);
@@ -184,6 +187,7 @@ Promise.all([
   let module = makeModule();
   let controller = new Controller(module, makeModule());
 
+  workerClient.load(preludeText, input);
   let simulator = new Simulator(module, controller);
 
   controller.errorHandler = (msg, e) => {
@@ -242,6 +246,33 @@ Promise.all([
   let simulateId = undefined;
   let simulateStart = 0;
 
+  let workerId = undefined;
+  let nextWorkerId = 1;
+  let startSimulating = () => {
+    if (workerId === undefined &&
+        (controller.genContext.clock <
+         controller.viewContext.clock + 2e5)) {
+      workerId = nextWorkerId;
+      nextWorkerId += 1;
+      let thisWorkerId = workerId;
+      workerClient.simulate().then(newEvents => {
+        if (workerId !== thisWorkerId) {
+          return;
+        }
+        workerId = undefined;
+        controller.genContext.inject(newEvents);
+        startSimulating();
+      });
+    }
+  };
+
+  controller.genContext._resetHook = () => {
+    workerId = undefined;
+    workerClient.reset(controller.genContext.cursor.getEvent())
+      .then(startSimulating);
+  };
+
+
   // 'simulateSpeed' is number of wall microseconds per simulated clock tick
   // (or equivalently, the "x" of slowdown).
   // For asynchronous models without clocks, steps are executed every 10ms of
@@ -267,6 +298,7 @@ Promise.all([
         if (controller.viewContext.clock >= controller.genContext.clock) {
           controller.viewContext.setClock(controller.genContext.clock);
         }
+        startSimulating();
         simulateId = window.requestAnimationFrame(draw);
       };
       draw(simulateStart);
@@ -281,15 +313,4 @@ Promise.all([
   };
   jQuery('#slower').click(() => mapSimulateSpeed(s => s * 2));
   jQuery('#faster').click(() => mapSimulateSpeed(s => s / 2));
-  jQuery('#more').click(() => {
-    //while (controller.genContext.clock < 1e6) {
-    for (let i = 0; i < 10; ++i) {
-      if (!simulator.step()) {
-        break;
-      }
-      if (!useClock) {
-        controller.genContext.advanceClock(10000);
-      }
-    }
-  });
 });

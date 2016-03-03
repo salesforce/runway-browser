@@ -43,14 +43,14 @@ let slow = (module, controller) => {
 };
 
 class Simulator {
-  constructor(module, controller) {
+  constructor(module, genContext) {
     this.module = module;
-    this.controller = controller;
+    this.genContext = genContext;
   }
 
   step() {
     let start = performance.now();
-    let rulesets = _.reject(this.controller.genContext.getRulesets(),
+    let rulesets = _.reject(this.genContext.getRulesets(),
       rs => rs.source.external);
     while (true) {
       let nextWake = Number.MAX_VALUE;
@@ -65,7 +65,7 @@ class Simulator {
         nextWake = Math.min(nextWake, rule.getNextWake());
       }
       if (nextWake < Number.MAX_VALUE) {
-        this.controller.genContext.setClock(nextWake);
+        this.genContext.setClock(nextWake);
       } else {
         console.log('deadlock');
         return false;

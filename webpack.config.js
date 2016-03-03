@@ -1,4 +1,4 @@
-module.exports = {
+module.exports = [{
   entry: "./web.js",
   output: {
     path: __dirname,
@@ -40,4 +40,12 @@ module.exports = {
       },
     ]
   }
-};
+}, {
+  entry: "./worker.js",
+  output: {
+    path: __dirname,
+    filename: "worker-bundle.js"
+  },
+  devtool: 'eval-cheap-module-source-map',
+  target: 'webworker',
+}];

@@ -345,6 +345,9 @@ class Context {
     this._loadState(newState);
     this.cursor = newCursor;
     this.clock = newClock;
+    if (this._resetHook !== undefined) {
+      this._resetHook();
+    }
     this._reportChanges(changes);
     if (this.type === 'view') {
       this.controller._updateViews(changes);
@@ -353,6 +356,22 @@ class Context {
 
   advanceClock(amount) {
     this.setClock(this.clock + amount);
+  }
+
+  // only valid for type 'gen' (this code probably won't live long)
+  inject(newEvents) {
+    if (newEvents.length === 0) {
+      return;
+    }
+    newEvents.forEach(event => {
+      this.cursor = this.cursor.addEvent(event);
+    });
+    if (this.controller.executions.indexOf(this.cursor.execution) === -1) {
+      this.controller.executions.push(this.cursor.execution);
+    }
+    this.clock = _.last(newEvents).clock;
+    this._reportChanges();
+    this.controller._updateViews(['execution']);
   }
 }
 
@@ -398,4 +417,7 @@ class Controller {
   }
 }
 
-module.exports = Controller;
+module.exports = {
+  Controller: Controller,
+  Context: Context,
+};
