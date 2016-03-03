@@ -5,10 +5,10 @@ let Simulator = require('./simulator.js').Simulator;
 let GlobalEnvironment = require('./environment.js').GlobalEnvironment;
 let Input = require('./input.js');
 let Execution = require('./execution.js');
-let Context = require('./controller.js').Context;
+let Workspace = require('./workspace.js').Workspace;
 
 let module;
-let genContext;
+let workspace;
 let simulator;
 let useClock = true;
 
@@ -22,29 +22,29 @@ let load = function(data) {
     clock: 0,
   };
   module.ast.execute(context);
-  genContext = new Context(module);
-  genContext._init();
+  workspace = new Workspace(module);
+  workspace._init();
 
-  simulator = new Simulator(module, genContext);
+  simulator = new Simulator(module, workspace);
   return Promise.resolve({});
 };
 
 let simulate = function(data) {
-  let start = genContext.cursor.execution.size();
-  let clockLimit = genContext.clock + 1e5;
+  let start = workspace.cursor.execution.size();
+  let clockLimit = workspace.clock + 1e5;
   let wallLimit = performance.now() + 200;
   let count = 0;
   while (count < 100 &&
-         genContext.clock < clockLimit &&
+         workspace.clock < clockLimit &&
          performance.now() < wallLimit) {
     if (!simulator.step()) {
       break;
     }
     if (!useClock) {
-      genContext.advanceClock(10000);
+      workspace.advanceClock(10000);
     }
   }
-  let newEvents = genContext.cursor
+  let newEvents = workspace.cursor
     .map((event, i) => i < start ? false : event)
     .filter(event => event);
   return Promise.resolve(newEvents);
@@ -52,7 +52,7 @@ let simulate = function(data) {
 
 let reset = function(event) {
   console.log('resetting worker to', event);
-  genContext.reset(new Execution(event).last(), event.clock);
+  workspace.reset(new Execution(event).last(), event.clock);
   return Promise.resolve({});
 };
 
