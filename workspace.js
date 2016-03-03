@@ -192,19 +192,12 @@ class Workspace {
     this.forked = new PubSub();
     this.postReset = new PubSub();
     this.invariantError = new PubSub();
-  }
-
-  _init(cursor) {
-    if (cursor === undefined) {
-      this.cursor = new Execution({
-        msg: 'Initial state',
-        state: this._serializeState(),
-        clock: this.clock,
-        changes: [''],
-      }).last();
-    } else {
-      this.cursor = cursor;
-    }
+    this.cursor = new Execution({
+      msg: 'Initial state',
+      state: this._serializeState(),
+      clock: this.clock,
+      changes: [''],
+    }).last();
     this.invariants = this.module.env.invariants.map((invariant, name) =>
       new Invariant(this, name, invariant));
     this.checkInvariants();

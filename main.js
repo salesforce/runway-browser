@@ -168,7 +168,6 @@ Options:
 
   if (options.simulate) {
     let workspace = new Workspace(module);
-    workspace._init();
     let simulator = new Simulator(module, workspace);
     let i = 0;
     while (true) {

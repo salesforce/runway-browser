@@ -7,7 +7,6 @@ class Controller {
   constructor(module) {
     this.views = [];
     this.viewContext = new Workspace(module);
-    this.viewContext._init();
     this.executions = [this.viewContext.cursor.execution];
     this.viewContext.update.sub(changes => {
       this._updateViews(changes);

@@ -23,7 +23,6 @@ let load = function(data) {
   };
   module.ast.execute(context);
   workspace = new Workspace(module);
-  workspace._init();
 
   simulator = new Simulator(module, workspace);
   return Promise.resolve({});
