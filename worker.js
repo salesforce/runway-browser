@@ -43,9 +43,8 @@ let simulate = function(data) {
       workspace.advanceClock(10000);
     }
   }
-  let newEvents = workspace.cursor
-    .map((event, i) => i < start ? false : event)
-    .filter(event => event);
+  let newEvents = workspace.cursor.map(event => event).slice(1);
+  workspace.reset(workspace.cursor.execution.last(), workspace.clock);
   return Promise.resolve(newEvents);
 };
 
