@@ -183,7 +183,8 @@ Promise.all([
   }
   let controller = new Controller(module);
 
-  workerClient.load(preludeText, input);
+  workerClient.load(preludeText, input)
+    .then(workerClient.reset(controller.workspace.cursor.getEvent()));
   let simulator = new Simulator(module, controller);
 
   controller.errorHandler = (msg, e) => {
