@@ -4,6 +4,7 @@ let React = require('React');
 let ReactDOM = require('ReactDOM');
 let BootstrapMenu = require('bootstrap-menu');
 let jQuery = require('jquery');
+let Timeline = require('Timeline');
 let Tooltip = require('Tooltip');
 let Util = require('Util');
 let _ = require('lodash');
@@ -297,7 +298,7 @@ let ElevatorView = React.createClass({
   render: function() {
     let outerSVG = svg.parentElement;
     let box = outerSVG.viewBox.baseVal;
-    let layout = Layout(box.width, box.height);
+    let layout = Layout(box.width, box.height * .7);
     let destinations = [];
     model.vars.get('elevators').forEach((evar, eid) => {
       evar.lookup('destinations').forEach(floor => {
@@ -327,6 +328,9 @@ let ElevatorView = React.createClass({
       <g id="elevators">{elevators}</g>
       <g id="floorControls">{floorControls}</g>
       <g id="people">{people}</g>
+      <g transform="scale(.1)">
+        <Timeline controller={controller} x={100} y={800} width={800} height={100} />
+      </g>
     </g>;
   },
 });
