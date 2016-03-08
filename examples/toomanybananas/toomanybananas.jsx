@@ -121,10 +121,10 @@ let TooManyBananasView = React.createClass({
         y={y}
         xlinkHref={happy ? '#happy' : '#hungry'}
         className="clickable"
-        onClick={() => controller.tryChangeState(() => {
-            console.log(`step ${id}`);
-            let context = {};
-            model.getRule('step').fire(id, context);
+        onClick={() => controller.workspace.tryChangeState(() => {
+          console.log(`step ${id}`);
+          let context = {};
+          model.getRule('step').fire(id, context);
         })} />);
     });
 
@@ -139,7 +139,7 @@ let TooManyBananasView = React.createClass({
       <text x={2} y={40}
         style={{fontSize: 4, fill: 'white'}}
         className="clickable"
-        onClick={() => controller.tryChangeState(() => {
+        onClick={() => controller.workspace.tryChangeState(() => {
           console.log('spawn banana');
           model.vars.get('bananas').value += 1;
         })}>+</text>
