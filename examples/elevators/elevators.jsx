@@ -96,10 +96,14 @@ let Layout = (width, height) => {
 
 let elevatorFloor = (evar) => evar.lookup('location').match({
     AtFloor: a => a.at.value,
-    Between: b => evar.lookup('direction').match({
-        'Up': () => b.next.value - 0.5,
-        'Down': () => b.next.value + 0.5,
-      }),
+    Between: b => {
+      let frac = ((controller.workspace.clock - b.lookup('leftAt').value) /
+                  (b.lookup('nextAt').value - b.lookup('leftAt').value));
+      return evar.lookup('direction').match({
+        'Up': () => b.next.value - 1 + frac,
+        'Down': () => b.next.value + (1 - frac),
+      });
+    },
   });
 
 let elevatorDoors = (evar) => evar.lookup('location').match({
@@ -149,11 +153,20 @@ let Elevator = React.createClass({
           y2: bbox.y2 + 4,
       }),
     });
+    let doorColor = fracOpen => {
+      let dec = 0x55 + Math.round((0xff - 0x55) * fracOpen);
+      let hex = dec.toString(16);
+      return `#${hex}${hex}${hex}`;
+    };
     let doors = elevatorDoors(evar).match({
-      Closed: '#555555',
-      Opening: '#aaaaaa',
-      Open: 'white',
-      Closing: '#aaaaaa',
+      Closed: () => doorColor(0),
+      Open: () => doorColor(1),
+      Opening: o => doorColor(
+        (controller.workspace.clock - o.lookup('startAt').value) /
+        (o.lookup('doneAt').value - o.lookup('startAt').value)),
+      Closing: c => doorColor(1 -
+        (controller.workspace.clock - c.lookup('startAt').value) /
+        (c.lookup('doneAt').value - c.lookup('startAt').value)),
     });
     return <g
       id={'elevator-' + id}
@@ -181,7 +194,7 @@ let FloorControl = React.createClass({
     let bbox = this.props.layout.floorControls(this.props.floor); 
     let triangle = active => <path
       d="M 0,3 L 5,3 2.5,0 z"
-      style={{fill: active ? 'green' : 'white', stroke: 'black'}} />;
+      style={{fill: active ? 'white' : 'gray', stroke: 'black'}} />;
     let controlsVar = model.vars.get('floorControls').index(this.props.floor);
     let up = <g transform={`translate(${bbox.x-1}, ${bbox.y + 2})`}>
         {triangle(controlsVar.lookup('upActive').toString() === 'True')}

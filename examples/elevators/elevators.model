@@ -23,9 +23,22 @@ type FloorControl: record {
 }
 var floorControls: Array<FloorControl>[Floor];
 
+type Doors : either {
+  Closed,
+  Opening {
+    startAt: Time,
+    doneAt: Time,
+  },
+  Open { closeAt: Time },
+  Closing {
+    startAt: Time,
+    doneAt: Time,
+  },
+}
+
 type Elevator: record {
   destinations: Set<Floor>[Floor],
-  riders: OrderedSet<PersonId>[PersonId],
+  riders: Set<PersonId>[PersonId],
   direction: either {
     Up,
     Down,
@@ -33,15 +46,12 @@ type Elevator: record {
   location: either {
     AtFloor {
       at: Floor,
-      doors: either {
-        Closed,
-        Opening,
-        Open,
-        Closing,
-      },
+      doors: Doors,
     },
     Between {
       next: Floor,
+      leftAt: Time,
+      nextAt: Time,
       // doors are closed for safety purposes
     },
   },
@@ -57,10 +67,21 @@ distribution makeDestination(start: Floor) -> Floor {
   }
 }
 
+function doorsOpen(doors: Doors) -> Boolean {
+  match doors {
+    Open    => { return True; },
+    Closed  => { return False; },
+    Opening => { return False; },
+    Closing => { return False; },
+  }
+}
+
 rule move for elevator in elevators {
   match elevator.location {
     Between as b => {
-      elevator.location = AtFloor { at: b.next, doors: Closed };
+      if past(b.nextAt) {
+        elevator.location = AtFloor { at: b.next, doors: Closed };
+      }
     }, // end Between
     AtFloor as f => {
       if f.doors == Closed && !contains(elevator.destinations, f.at) {
@@ -69,7 +90,11 @@ rule move for elevator in elevators {
             if f.at < 6 {
               for dest in elevator.destinations {
                 if dest > f.at {
-                  elevator.location = Between { next: f.at + 1 };
+                  elevator.location = Between {
+                    next: f.at + 1,
+                    leftAt: later(0),
+                    nextAt: later(10000),
+                  };
                   break;
                 }
               }
@@ -79,7 +104,11 @@ rule move for elevator in elevators {
             if f.at > 1 {
               for dest in elevator.destinations {
                 if dest < f.at {
-                  elevator.location = Between { next: f.at - 1 };
+                  elevator.location = Between {
+                    next: f.at - 1,
+                    leftAt: later(0),
+                    nextAt: later(10000),
+                  };
                   break;
                 }
               }
@@ -125,7 +154,7 @@ rule changeDirection for elevator in elevators {
 
 // one person decides he/she wants to move floors and presses the up/down
 // button (Sleeping to Waiting)
-rule wake for person in people {
+external wake for person in people {
   match person {
     Sleeping as s => {
       var dest : Floor = makeDestination(s.floor);
@@ -166,38 +195,58 @@ rule makeDemands for pid, person in people {
 rule clearControl for eid, elevator in elevators {
   match elevator.location {
     AtFloor as f => {
-      if f.doors == Open {
+      if doorsOpen(f.doors) {
         match elevator.direction {
           Up => { floorControls[f.at].upActive = False; },
           Down => { floorControls[f.at].downActive = False; },
-        }
+        } // direction
       }
     },
     Between => {},
-  }
+  } // location
 }
 
 rule clearDestination for eid, elevator in elevators {
   match elevator.location {
     AtFloor as f => {
-      if f.doors == Open {
+      if doorsOpen(f.doors) {
         remove(elevator.destinations, f.at);
       }
     },
     Between => {},
-  }
+  } // location
 }
 
 rule moveDoors for eid, elevator in elevators {
   match elevator.location {
     AtFloor as f => {
       match f.doors {
-        Opening => { f.doors = Open; },
-        Open => { f.doors = Closing; },
-        Closing => { f.doors = Closed; },
+        Opening as o => { 
+          if past(o.doneAt) {
+            f.doors = Open {
+              closeAt: later(40000),
+            };
+          }
+        },
+        Open as o => {
+          if past(o.closeAt) {
+            f.doors = Closing {
+              startAt: later(0),
+              doneAt: later(20000),
+            };
+          }
+        },
+        Closing as c => {
+          if past(c.doneAt) {
+            f.doors = Closed;
+          }
+        },
         Closed => {
           if contains(elevator.destinations, f.at) {
-            f.doors = Opening;
+            f.doors = Opening {
+              startAt: later(0),
+              doneAt: later(20000),
+            };
           }
         },
       }
@@ -219,7 +268,7 @@ rule boardOrLeave for pid, person in people {
               Up => { dirOk = w.destination > w.floor; },
               Down => { dirOk = w.destination < w.floor; },
             }
-            if a.at == w.floor && a.doors == Open && dirOk {
+            if a.at == w.floor && doorsOpen(a.doors) && dirOk {
               person = Riding {
                 elevator: eid,
                 destination: w.destination,
@@ -236,7 +285,7 @@ rule boardOrLeave for pid, person in people {
     Riding as r => {
       match elevators[r.elevator].location {
         AtFloor as a => {
-          if a.at == r.destination && a.doors == Open {
+          if a.at == r.destination && doorsOpen(a.doors) {
             person = Sleeping {
               floor: r.destination,
             };
