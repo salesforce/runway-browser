@@ -202,7 +202,7 @@ let ruleMenu = (selector, rules) => new BootstrapMenu(selector, {
   menuEvent: 'click',
   actions: rules.map(rule => ({
       name: rule[0],
-      onClick: () => controller.tryChangeState(() => {
+      onClick: () => controller.workspace.tryChangeState(() => {
         console.log(rule);
         let context = {};
         model.getRule(rule[0]).fire(rule[1], context);

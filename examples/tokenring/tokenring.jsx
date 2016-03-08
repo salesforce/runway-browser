@@ -40,7 +40,7 @@ let TokenRingView = React.createClass({
       let serverVar = model.getVar('servers').index(id);
       let hasToken = (serverVar.hasToken.toString() == 'True');
       return <g key={id} className="clickable"
-        onClick={() => controller.tryChangeState(() => {
+        onClick={() => controller.workspace.tryChangeState(() => {
           console.log('passToken', id);
           let context = {};
           model.getRule('passToken').fire(id, context);
@@ -78,7 +78,7 @@ let TokenRingView = React.createClass({
         id="token"
         style={{fill: '#000088'}}
         className="clickable"
-        onClick={() => controller.tryChangeState(() => {
+        onClick={() => controller.workspace.tryChangeState(() => {
           console.log('deliverToken');
           let context = {};
           model.getRule('deliverToken').fire(context);
