@@ -38,13 +38,9 @@ class WorkerClient {
     });
   }
 
-  simulate() {
+  simulate(event) {
     console.log('starting simulate');
-    return this._request('simulate');
-  }
-
-  reset(event) {
-    return this._request('reset', event);
+    return this._request('simulate', event);
   }
 }
 

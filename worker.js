@@ -28,8 +28,10 @@ let load = function(data) {
   return Promise.resolve({});
 };
 
-let simulate = function(data) {
-  let start = workspace.cursor.execution.size();
+let simulate = function(event) {
+  if (event !== undefined) {
+    workspace.reset(new Execution(event).last(), event.clock);
+  }
   let clockLimit = workspace.clock + 1e5;
   let wallLimit = performance.now() + 200;
   let count = 0;
@@ -48,19 +50,10 @@ let simulate = function(data) {
   return Promise.resolve(newEvents);
 };
 
-let reset = function(event) {
-  console.log('resetting worker to', event);
-  workspace.reset(new Execution(event).last(), event.clock);
-  return Promise.resolve({});
-};
-
-
 self.onmessage = function(e) {
   let handler;
   if (e.data.type === 'load') {
     handler = load;
-  } else if (e.data.type === 'reset') {
-    handler = reset;
   } else if (e.data.type === 'simulate') {
     handler = simulate;
   } else {

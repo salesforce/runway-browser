@@ -15,6 +15,10 @@ class Execution {
     return this._startIndex + this._events.length;
   }
 
+  forkStart() {
+    return new Cursor(this, this._startIndex);
+  }
+
   last() {
     return new Cursor(this, this._startIndex + this._events.length - 1);
   }
@@ -95,6 +99,10 @@ class Cursor {
     this._index = index;
   }
 
+  index() {
+    return this._index;
+  }
+
   equals(other) {
     return (this.execution === other.execution &&
       this._index === other._index);
@@ -113,6 +121,15 @@ class Cursor {
       return new Cursor(this.execution, this._index + 1);
     } else {
       return undefined;
+    }
+  }
+
+  parent() {
+    if (this.execution._parent === null) {
+      return null;
+    } else {
+      return new Cursor(this.execution._parent,
+        this.execution._startIndex - 1);
     }
   }
 

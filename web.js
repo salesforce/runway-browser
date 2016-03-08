@@ -183,8 +183,7 @@ Promise.all([
   }
   let controller = new Controller(module);
 
-  workerClient.load(preludeText, input)
-    .then(workerClient.reset(controller.workspace.cursor.getEvent()));
+  workerClient.load(preludeText, input);
   let simulator = new Simulator(module, controller);
 
   controller.errorHandler = (msg, e) => {
@@ -243,23 +242,20 @@ Promise.all([
   let simulateId = undefined;
   let simulateStart = 0;
 
-  let workerId = undefined;
+  let usefulWorkerId = undefined;
   let nextWorkerId = 1;
   let startSimulating = () => {
-    if (workerId === undefined &&
-        (controller.workspace.cursor.execution.last().getEvent().clock <
-         controller.workspace.clock + 2e5)) {
-      workerId = nextWorkerId;
+    let cursor = controller.workspace.cursor.execution.last();
+    if (usefulWorkerId === undefined &&
+        cursor.getEvent().clock < controller.workspace.clock + 2e5) {
+      let thisWorkerId = nextWorkerId;
       nextWorkerId += 1;
-      let thisWorkerId = workerId;
-      workerClient.simulate().then(newEvents => {
-        if (workerId !== thisWorkerId) {
-          return;
+      usefulWorkerId = thisWorkerId;
+      workerClient.simulate(cursor.getEvent()).then(newEvents => {
+        if (usefulWorkerId === thisWorkerId) {
+          usefulWorkerId = undefined;
         }
-        workerId = undefined;
         if (newEvents.length > 0) {
-          let startCursor = controller.workspace.cursor.execution.last();
-          let cursor = startCursor;
           newEvents.forEach(event => {
             cursor = cursor.addEvent(event);
           });
@@ -271,9 +267,8 @@ Promise.all([
   };
   
   controller.workspace.forked.sub(execution => {
-    workerId = undefined;
-    workerClient.reset(execution.last().getEvent())
-      .then(startSimulating);
+    usefulWorkerId = undefined;
+    startSimulating();
   });
 
 
