@@ -192,6 +192,7 @@ class Workspace {
     this.forked = new PubSub();
     this.postReset = new PubSub();
     this.invariantError = new PubSub();
+    this.invariantError.sub((msg, e) => console.error(msg, e));
     this.cursor = new Execution({
       msg: 'Initial state',
       state: this._serializeState(),
@@ -271,17 +272,18 @@ class Workspace {
     } else {
       msg += ' (changed ' + changes.join(', ') + ')';
       console.log(msg);
-      this.cursor = startCursor.addEvent({
+      let event = {
         msg: msg,
         state: newState,
         clock: this.clock,
         changes: changes,
-      });
-      this.checkInvariants();
+      };
+      this.cursor = startCursor.addEvent(event);
       if (this.cursor.execution !== startCursor.execution) {
         this.forked.pub(this.cursor.execution);
       }
       this.update.pub(Changesets.union(changes, ['execution']));
+      event.passedInvariants = this.checkInvariants();
       return changes;
     }
   }

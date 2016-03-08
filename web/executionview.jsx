@@ -21,13 +21,18 @@ let ExecutionView = React.createClass({
 
   render: function() {
     let renderEvent = (event, i) => {
+      let style = {};
+      if (event.passedInvariants === false) {
+        style = {color: 'red'};
+      }
       return <li key={i}>
         <a href=""
           onClick={e => {
-          e.preventDefault();
-          controller.workspace.setClock(event.clock);
-        }}>
-          {_.round(event.clock / 1000, 1)} ms: {event.msg}
+            e.preventDefault();
+            controller.workspace.setClock(event.clock);
+          }}
+          style={style}>
+            {_.round(event.clock / 1000, 1)} ms: {event.msg}
         </a>
       </li>;
     };
