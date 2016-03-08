@@ -278,11 +278,12 @@ class Workspace {
         clock: this.clock,
         changes: changes,
       };
+      this.clock += 1;
       this.cursor = startCursor.addEvent(event);
       if (this.cursor.execution !== startCursor.execution) {
         this.forked.pub(this.cursor.execution);
       }
-      this.update.pub(Changesets.union(changes, ['execution']));
+      this.update.pub(Changesets.union(changes, ['clock', 'execution']));
       event.passedInvariants = this.checkInvariants();
       return changes;
     }
