@@ -6,6 +6,7 @@ let jQuery = require('jquery');
 let Tooltip = require('Tooltip');
 let Util = require('Util');
 let fetchRemoteFile = require('fetchRemoteFile');
+let Changesets = require('Changesets');
 let _ = require('lodash');
 
 let View = function(controller, svg, module) {
@@ -35,6 +36,15 @@ let bananaCopy = <g
   dangerouslySetInnerHTML={{__html: svgs.banana}}></g>;
 
 let TooManyBananasView = React.createClass({
+  getInitialState: function() {
+    return {
+      changes: [''],
+    };
+  },
+  shouldComponentUpdate: function(nextProps, nextState) {
+    return Changesets.affected(nextState.changes,
+      ['bananas', 'notePresent', 'roommates']);
+  },
   render: function() {
     let bananas = [];
     _.range(model.vars.get('bananas').value).forEach(i => {
@@ -153,11 +163,10 @@ let TooManyBananasView = React.createClass({
 let reactComponent = ReactDOM.render(<TooManyBananasView />, svg);
 
 return {
-  update: function() {
+  update: function(changes) {
     // trigger a render
-    reactComponent.setState({}, () => {
+    reactComponent.setState({changes: changes}, () => {
       tooltip.update();
-      console.log('rendered');
     });
   }
 };
