@@ -15,9 +15,11 @@ let ExecutionView = React.createClass({
     };
   },
 
+  /*
   shouldComponentUpdate: function(nextProps, nextState) {
-    return Changesets.affected(nextState.changes, 'execution');
+    return Changesets.affected(nextState.changes, '');
   },
+  */
 
   render: function() {
     let renderEvent = (event, i) => {
@@ -37,13 +39,11 @@ let ExecutionView = React.createClass({
       </li>;
     };
 
-    let execution = controller.workspace.cursor.execution;
-    
     return <ol
-      start={execution.size()}
+      start={controller.workspace.cursor.index()}
       reversed="1"
       style={{overflowY: 'auto', maxHeight: '10em'}}>
-        {execution.map(renderEvent).reverse()}
+        {controller.workspace.cursor.map(renderEvent).reverse()}
     </ol>;
   }
 
