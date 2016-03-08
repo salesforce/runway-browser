@@ -183,7 +183,7 @@ Promise.all([
   }
   let controller = new Controller(module);
 
-  workerClient.load(preludeText, input);
+  workerClient.load(preludeText, input, useClock);
   let simulator = new Simulator(module, controller);
 
   controller.errorHandler = (msg, e) => {

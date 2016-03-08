@@ -28,13 +28,14 @@ class WorkerClient {
     return promise;
   }
 
-  load(preludeText, input) {
+  load(preludeText, input, useClock) {
     return this._request('load', {
       preludeText: preludeText,
       input: {
         filename: input.filename,
         text: input.getText(),
       },
+      useClock: useClock,
     });
   }
 

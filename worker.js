@@ -10,9 +10,10 @@ let Workspace = require('./workspace.js').Workspace;
 let module;
 let workspace;
 let simulator;
-let useClock = true;
+let useClock;
 
 let load = function(data) {
+  useClock = data.useClock;
   let prelude = compiler.loadPrelude(data.preludeText, {
     clock: useClock,
   });
@@ -38,11 +39,11 @@ let simulate = function(event) {
   while (count < 100 &&
          workspace.clock < clockLimit &&
          performance.now() < wallLimit) {
-    if (!simulator.step()) {
-      break;
-    }
     if (!useClock) {
       workspace.advanceClock(10000);
+    }
+    if (!simulator.step()) {
+      break;
     }
   }
   let newEvents = workspace.cursor.map(event => event).slice(1);
