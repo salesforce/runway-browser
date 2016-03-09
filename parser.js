@@ -68,9 +68,20 @@ let sepBy1OptTrail = function(content, separator) {
 
 let comment = call(function() {
   let eolComment = regex(/\/\/[^\n]*/); // this kind
-  let moreComment = lazy(() => istring('*/')
-      .or(Parsimmon.any.then(moreComment)));
-  let multilineComment = istring('/*').then(moreComment);
+  let multilineComment = Parsimmon.custom(function(success, failure) {
+    return function(stream, i) {
+      if (stream.slice(i, i + 2) === '/*') {
+        for (let j = i + 2; j + 2 <= stream.length; ++j) {
+          if (stream.slice(j, j + 2) === '*/') {
+            return success(j + 2, 'multi-line comment');
+          }
+        }
+        return failure(i, "'*/'");
+      } else {
+        return failure(i, "'/*'");
+      }
+    };
+  });
   return eolComment
     .or(multilineComment)
     .desc('comment');
