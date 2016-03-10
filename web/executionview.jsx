@@ -34,7 +34,7 @@ let ExecutionView = React.createClass({
             controller.workspace.setClock(event.clock);
           }}
           style={style}>
-            {_.round(event.clock / 1000, 1)} ms: {event.msg}
+            {_.round(event.clock / 1000, 3)} {controller.clockUnits}: {event.msg}
         </a>
       </li>;
     };

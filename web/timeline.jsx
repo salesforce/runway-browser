@@ -13,6 +13,9 @@ let addSVGCoords = (e, svgNode) => {
 let numTics = 11;
 let ticXs = (x, width) => _.range(11).map(i => x + i/10 * width);
 
+let makeTime = clock =>
+  `${_.round(clock / 1000, 3)}${controller.clockUnits}`;
+
 let Labels = React.createClass({
   render: function() {
     return <g>
@@ -26,7 +29,7 @@ let Labels = React.createClass({
               textAnchor: 'middle',
               fill: 'gray',
             }}>
-              {`${this.props.maxClockShown * i/(numTics - 1) / 1e6}s`}
+              {makeTime(this.props.maxClockShown * i/(numTics - 1))}
          </text>)
        }
       </g>;
@@ -187,9 +190,9 @@ let Timelines = React.createClass({
     let clocks = this.props.controller.executions
       .map(execution => execution.last().getEvent().clock);
     let maxClockGen = Math.max(...clocks);
-    let maxClockShown = 1e6;
+    let maxClockShown = 1e4;
     while (maxClockGen > maxClockShown * .8) {
-      maxClockShown *= 2;
+      maxClockShown *= 10;
     }
 
     let execY = i => this.props.y + 30 * (i + 1);

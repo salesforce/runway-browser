@@ -21,7 +21,7 @@ var people: Array<Person>[PersonId];
 for person in people {
   person = Sleeping {
     floor: urandom<Floor>(),
-    wakeAt: later(urandomRange(0, 50000)),
+    wakeAt: later(urandomRange(0, 30000)),
   };
 }
 
@@ -225,7 +225,7 @@ rule move for elevator in elevators {
           elevator.location = Between {
             next: moveTo,
             leftAt: later(0),
-            nextAt: later(10000),
+            nextAt: later(4000),
           };
         } // end if moving
       } // end Closed
@@ -360,7 +360,7 @@ rule moveDoors for eid, elevator in elevators {
         Opening as o => { 
           if past(o.doneAt) {
             f.doors = Open {
-              closeAt: later(20000),
+              closeAt: later(4000),
             };
           }
         },
@@ -368,7 +368,7 @@ rule moveDoors for eid, elevator in elevators {
           if past(o.closeAt) {
             f.doors = Closing {
               startAt: later(0),
-              doneAt: later(20000),
+              doneAt: later(4000),
             };
           }
         },
@@ -381,7 +381,7 @@ rule moveDoors for eid, elevator in elevators {
           if (isDestination(f.at, elevator)) {
             f.doors = Opening {
               startAt: later(0),
-              doneAt: later(20000),
+              doneAt: later(4000),
             };
             remove(elevator.floorCalls, FloorCall {
               floor: f.at,
@@ -428,7 +428,7 @@ rule boardOrLeave for pid, person in people {
           if a.at == r.destination && doorsOpen(a.doors) {
             person = Sleeping {
               floor: r.destination,
-              wakeAt: later(urandomRange(50000, 250000)),
+              wakeAt: later(urandomRange(5000, 30000)),
             };
             remove(elevators[r.elevator].riders, pid);
           }

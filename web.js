@@ -35,6 +35,14 @@ let ReactDOM = require('react-dom');
 let babel = require('babel-standalone');
 
 let useClock = getParams['clock'] && true;
+let clockUnits;
+if (useClock) {
+  if (['us', 'ms', 's'].indexOf(getParams['clock']) >= 0) {
+    clockUnits = getParams['clock'];
+  } else {
+    clockUnits = 'ms';
+  }
+}
 
 let prelude = compiler.loadPrelude(preludeText, {
   clock: useClock,
@@ -182,6 +190,7 @@ Promise.all([
     throw e;
   }
   let controller = new Controller(module);
+  controller.clockUnits = clockUnits;
 
   workerClient.load(preludeText, input, useClock);
   let simulator = new Simulator(module, controller);
@@ -280,11 +289,10 @@ Promise.all([
   });
 
 
-  // 'simulateSpeed' is number of wall microseconds per simulated clock tick
-  // (or equivalently, the "x" of slowdown).
+  // 'simulateSpeed' is the "x" of slowdown.
   // For asynchronous models without clocks, steps are executed every 10ms of
   // simulation time.
-  window.simulateSpeed = 100;
+  window.simulateSpeed = getParams['speed'] || 100;
   let toggleAnimate = () => {
     let stop = () => {
       window.cancelAnimationFrame(simulateId);
