@@ -1,10 +1,12 @@
 type PersonId: 1..5;
-type ElevatorId: 1..3;
-type Floor: 1..6;
+type ElevatorId: 1..6;
+type Floor: 1..9;
+type FloorCalls: 1..18; // num floors * 2
 
 type Person: either {
   Sleeping {
     floor: Floor,
+    wakeAt: Time,
   },
   Waiting {
     floor: Floor,
@@ -16,6 +18,12 @@ type Person: either {
   },
 }
 var people: Array<Person>[PersonId];
+for person in people {
+  person = Sleeping {
+    floor: urandom<Floor>(),
+    wakeAt: later(urandomRange(0, 50000)),
+  };
+}
 
 type FloorControl: record {
   downActive: Boolean,
@@ -36,13 +44,20 @@ type Doors : either {
   },
 }
 
+type Direction : either {
+  Up,
+  Down,
+}
+
+type FloorCall : record {
+  floor: Floor,
+  direction: Direction,
+}
+
 type Elevator: record {
-  destinations: Set<Floor>[Floor],
+  floorCalls: Set<FloorCall>[FloorCalls],
   riders: Set<PersonId>[PersonId],
-  direction: either {
-    Up,
-    Down,
-  },
+  direction: Direction,
   location: either {
     AtFloor {
       at: Floor,
@@ -76,6 +91,67 @@ function doorsOpen(doors: Doors) -> Boolean {
   }
 }
 
+function callActive(floor: Floor, direction: Direction) -> Boolean {
+  match direction {
+    Up   => { return floorControls[floor].upActive;   },
+    Down => { return floorControls[floor].downActive; },
+  }
+}
+
+// In the current direction the elevator is traveling, should it open its doors
+// at the given floor?
+function isDestination(floor: Floor, elevator: Elevator) -> Boolean {
+  // person riding
+  for pid in elevator.riders {
+    match people[pid] {
+      Riding as r => {
+        if r.destination == floor {
+          return True;
+        }
+      }
+    }
+  }
+  // floor call
+  for call in elevator.floorCalls {
+    if (call.floor == floor &&
+        call.direction == elevator.direction) {
+      return True;
+    }
+  }
+  return False;
+}
+
+// One person decides they want to move floors (Sleeping to Waiting).
+// They haven't yet pressed the up/down button.
+rule wake for person in people {
+  match person {
+    Sleeping as s => {
+      if past(s.wakeAt) {
+        var dest : Floor = makeDestination(s.floor);
+        assert dest != s.floor;
+        person = Waiting {
+          floor: s.floor,
+          destination: dest,
+        };
+        if dest > s.floor {
+          if !floorControls[s.floor].upActive {
+            floorControls[s.floor].upActive = True;
+            dispatchElevator(s.floor, Up);
+          }
+        } else {
+          if !floorControls[s.floor].downActive {
+            floorControls[s.floor].downActive = True;
+            dispatchElevator(s.floor, Down);
+          }
+        }
+      }
+    },
+    Waiting => { /* do nothing */ },
+    Riding => { /* do nothing */ },
+  }
+}
+
+// Elevator moves up or down
 rule move for elevator in elevators {
   match elevator.location {
     Between as b => {
@@ -84,46 +160,85 @@ rule move for elevator in elevators {
       }
     }, // end Between
     AtFloor as f => {
-      if f.doors == Closed && !contains(elevator.destinations, f.at) {
+      if (f.doors == Closed &&
+          !isDestination(f.at, elevator)) {
+        // where to go in this direction
+        var moveTo : Floor = f.at;
+        // set to the other direction if there's anything worth going to in the
+        // other direction
+        var moveDir : Direction = elevator.direction;
         match elevator.direction {
           Up => {
-            if f.at < 6 {
-              for dest in elevator.destinations {
-                if dest > f.at {
-                  elevator.location = Between {
-                    next: f.at + 1,
-                    leftAt: later(0),
-                    nextAt: later(10000),
-                  };
-                  break;
+            for pid in elevator.riders {
+              match people[pid] {
+                Riding as r => {
+                  if r.destination > f.at {
+                    moveTo = f.at + 1;
+                  }
+                  if r.destination < f.at {
+                    moveDir = Down;
+                  }
                 }
+              }
+            }
+            for call in elevator.floorCalls {
+              if call.floor > f.at {
+                moveTo = f.at + 1;
+              }
+              if call.floor < f.at ||
+                 (call.floor == f.at && call.direction == Down) {
+                moveDir = Down;
               }
             }
           },
           Down => {
-            if f.at > 1 {
-              for dest in elevator.destinations {
-                if dest < f.at {
-                  elevator.location = Between {
-                    next: f.at - 1,
-                    leftAt: later(0),
-                    nextAt: later(10000),
-                  };
-                  break;
+            for pid in elevator.riders {
+              match people[pid] {
+                Riding as r => {
+                  if r.destination < f.at {
+                    moveTo = f.at - 1;
+                  }
+                  if r.destination > f.at {
+                    moveDir = Up;
+                  }
                 }
               }
             }
+            for call in elevator.floorCalls {
+              if call.floor < f.at {
+                moveTo = f.at - 1;
+              }
+              if call.floor > f.at ||
+                 (call.floor == f.at && call.direction == Up) {
+                moveDir = Up;
+              }
+            }
           },
-        }
+        } // end match direction
+        if moveTo == f.at {
+          // No reason to move in this direction.
+          // Might need to change direction.
+          if moveDir != elevator.direction {
+            elevator.direction = moveDir;
+          }
+        } else { // move in same direction
+          elevator.location = Between {
+            next: moveTo,
+            leftAt: later(0),
+            nextAt: later(10000),
+          };
+        } // end if moving
       } // end Closed
     } // end AtFloor
-  } // end match
-}
+  } // end match location
+} // end rule move
 
+/*
+// Elevator goes from up to down or down to up.
 rule changeDirection for elevator in elevators {
   match elevator.location {
     AtFloor as f => {
-      if f.doors == Closed {
+      if f.doors == Closed && !isDestination(f.at, elevator) {
         var smaller : Boolean = False;
         var larger : Boolean = False;
         for floor in elevator.destinations {
@@ -132,6 +247,14 @@ rule changeDirection for elevator in elevators {
           }
           if floor > f.at {
             larger = True;
+          }
+        }
+        for floor, control in floorControls {
+          if control.downActive {
+            if floor < f.at {
+              smaller = True;
+            }
+
           }
         }
         match elevator.direction {
@@ -148,50 +271,73 @@ rule changeDirection for elevator in elevators {
         }
       }
     },
-    Between as b => { /* no turning here */ },
+    Between as b => { /* no turning here * /},
   }
 }
+*/
 
-// one person decides he/she wants to move floors and presses the up/down
-// button (Sleeping to Waiting)
-external wake for person in people {
-  match person {
-    Sleeping as s => {
-      var dest : Floor = makeDestination(s.floor);
-      assert dest != s.floor;
-      person = Waiting {
-        floor: s.floor,
-        destination: dest,
-      };
-    },
-    Waiting => { /* do nothing */ },
-    Riding => { /* do nothing */ },
-  }
-}
-
-rule requestElevator for floor, control in floorControls {
-  if control.upActive || control.downActive {
-    var eid : ElevatorId = urandom<ElevatorId>();
-    push(elevators[eid].destinations, floor);
-  }
-}
-
-rule makeDemands for pid, person in people {
-  match person {
-    Sleeping => {},
-    Waiting as w => {
-      if w.destination > w.floor {
-        floorControls[w.floor].upActive = True;
-      } else {
-        floorControls[w.floor].downActive = True;
-      }
-    },
-    Riding as r => {
-      push(elevators[r.elevator].destinations, r.destination);
+function dispatchElevator(floor: Floor, direction: Direction) {
+  // measured in half-floors, should be >= (size(floorControls) - 1) * 3 * 2
+  type Distance: 0..600;
+  var distance: Array<Distance>[ElevatorId];
+  // calculate distances
+  for eid, elevator in elevators {
+    var at : Floor;
+    match elevator.location {
+      AtFloor as a => {
+        at = a.at;
+      },
+      Between as b => {
+        distance[eid] += 1;
+        at = b.next;
+      },
+    }
+    match elevator.direction {
+      Up => {
+        if at <= floor && direction == Up {
+          distance[eid] += 2 * (floor - at);
+        } else {
+          // worst case:
+          distance[eid] += 2 * ((size(floorControls) - at) + /* up to top */
+                                (size(floorControls) - 1) + /* down to bottom */
+                                (size(floorControls) - floor)); /* up to floor */
+        }
+      },
+      Down => {
+        if at >= floor && direction == Down {
+          distance[eid] += 2 * (at - floor);
+        } else {
+          // worst case:
+          distance[eid] += 2 * ((at - 1) + /* down to bottom */
+                                (size(floorControls) - 1) + /* up to top */
+                                (floor - 1)); /* down to floor */
+        }
+      },
     }
   }
+
+  // find closest elevators
+  var minDist : Distance = distance[1];
+  for eid, elevator in elevators {
+    if distance[eid] < minDist {
+      minDist = distance[eid];
+    }
+  }
+  var closest : Set<ElevatorId>[ElevatorId];
+  for eid, elevator in elevators {
+    if minDist == distance[eid] {
+      push(closest, eid);
+    }
+  }
+  // dispatch random closest elevator
+  var closestId : ElevatorId = closest[urandomRange(1, size(closest))];
+  push(elevators[closestId].floorCalls, FloorCall {
+    floor: floor,
+    direction: direction,
+  });
 }
 
+// Elevator clears a floor button.
 rule clearControl for eid, elevator in elevators {
   match elevator.location {
     AtFloor as f => {
@@ -206,17 +352,7 @@ rule clearControl for eid, elevator in elevators {
   } // location
 }
 
-rule clearDestination for eid, elevator in elevators {
-  match elevator.location {
-    AtFloor as f => {
-      if doorsOpen(f.doors) {
-        remove(elevator.destinations, f.at);
-      }
-    },
-    Between => {},
-  } // location
-}
-
+// Elevator opens or closes its doors.
 rule moveDoors for eid, elevator in elevators {
   match elevator.location {
     AtFloor as f => {
@@ -224,7 +360,7 @@ rule moveDoors for eid, elevator in elevators {
         Opening as o => { 
           if past(o.doneAt) {
             f.doors = Open {
-              closeAt: later(40000),
+              closeAt: later(20000),
             };
           }
         },
@@ -242,11 +378,15 @@ rule moveDoors for eid, elevator in elevators {
           }
         },
         Closed => {
-          if contains(elevator.destinations, f.at) {
+          if (isDestination(f.at, elevator)) {
             f.doors = Opening {
               startAt: later(0),
               doneAt: later(20000),
             };
+            remove(elevator.floorCalls, FloorCall {
+              floor: f.at,
+              direction: elevator.direction,
+            });
           }
         },
       }
@@ -256,6 +396,7 @@ rule moveDoors for eid, elevator in elevators {
   }
 }
 
+// Person gets on or off an elevator.
 rule boardOrLeave for pid, person in people {
   match person {
     Sleeping => { /* do nothing */ },
@@ -274,7 +415,6 @@ rule boardOrLeave for pid, person in people {
                 destination: w.destination,
               };
               push(elevator.riders, pid);
-              push(elevator.destinations, w.destination);
               break;
             }
           },
@@ -288,6 +428,7 @@ rule boardOrLeave for pid, person in people {
           if a.at == r.destination && doorsOpen(a.doors) {
             person = Sleeping {
               floor: r.destination,
+              wakeAt: later(urandomRange(50000, 250000)),
             };
             remove(elevators[r.elevator].riders, pid);
           }
@@ -335,4 +476,3 @@ invariant elevatorRidersCorrect {
     }
   }
 }
-

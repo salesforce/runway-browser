@@ -14,18 +14,19 @@ let View = function(controller, svg, module) {
 let model = module.env;
 let tooltip = new Tooltip(jQuery('#tooltip'));
 
-let numFloors = 6;
-let numElevators = 3;
-let numPeople = 5;
+let numFloors = model.vars.get('floorControls').size();
+let numElevators = model.vars.get('elevators').size();
+let numPeople = model.vars.get('people').size();
 
 let Layout = (width, height) => {
   let layout = {};
   layout.floor = floorId => {
+    let h = (height * .9) / numFloors;
     return Util.fillBBox({
       x: width * .02,
-      y: height * (.05 + .15 * (numFloors - floorId)),
+      y: h * (numFloors - floorId) + height * .05,
       w: width * .96,
-      h: height * .15,
+      h: h,
     });
   };
 
@@ -45,17 +46,18 @@ let Layout = (width, height) => {
     return Util.fillBBox({
       x: label.x2,
       y: floor.y + height * .02,
-      w: width * numElevators * .15,
+      w: width * .6,
       h: floor.h - height * .04,
     });
   };
 
   layout.elevator = (floorId, id) => {
     let elevators = layout.elevators(floorId);
+    let w = elevators.w / numElevators;
     return Util.fillBBox({
-      x: elevators.x + width * (.025 + (id - 1) * .15),
+      x: elevators.x + w * (id - 1) + w * .1,
       y: elevators.y,
-      w: width * .10,
+      w: w * .8,
       h: elevators.h,
     });
   };
@@ -64,7 +66,7 @@ let Layout = (width, height) => {
     let floor = layout.floor(floorId);
     let elevators = layout.elevators(floorId);
     return Util.fillBBox({
-      x: elevators.x2,
+      x: elevators.x2 + width * .02,
       y: floor.y + height * .02,
       w: 5,
       h: floor.h - height * .04,
@@ -73,21 +75,23 @@ let Layout = (width, height) => {
 
   layout.people = floorId => {
     let floor = layout.floor(floorId);
-    let elevators = layout.elevators(floorId);
+    let floorControls = layout.floorControls(floorId);
+    let x = floorControls.x2 + width * .02;
     return Util.fillBBox({
-      x: elevators.x2 + 5,
+      x: x,
       y: floor.y + height * .02,
-      w: floor.x2 - elevators.x2 - 5,
+      w: floor.x2 - x,
       h: floor.h - height * .04,
     });
   };
 
   layout.person = (floorId, count) => {
     let people = layout.people(floorId);
+    let w = people.w / numPeople;
     return Util.fillBBox({
-      x: people.x + width * (count - 1) * .08,
+      x: people.x + w * (count - 1),
       y: people.y,
-      w: width * .08,
+      w: w,
       h: people.h,
     });
   };
@@ -194,18 +198,19 @@ let FloorControl = React.createClass({
     let bbox = this.props.layout.floorControls(this.props.floor); 
     let triangle = active => <path
       d="M 0,3 L 5,3 2.5,0 z"
-      style={{fill: active ? 'white' : 'gray', stroke: 'black'}} />;
+      style={{fill: active ? 'red' : 'gray', stroke: 'none'}} />;
     let controlsVar = model.vars.get('floorControls').index(this.props.floor);
-    let up = <g transform={`translate(${bbox.x-1}, ${bbox.y + 2})`}>
+    let scale = bbox.h / 2 * .8 / 2.5;
+    let up = <g transform={`translate(${bbox.x}, ${bbox.y + bbox.h * .1}) scale(${scale})`}>
         {triangle(controlsVar.lookup('upActive').toString() === 'True')}
       </g>;
-    let down = <g transform={`translate(${bbox.x-1}, ${bbox.y + 2 + bbox.h/2}) rotate(180, 2.5, 1.5)`}>
+    let down = <g transform={`translate(${bbox.x}, ${bbox.y + bbox.h * .1 + bbox.h/2})  scale(${scale}) rotate(180, 2.5, 1.5)`}>
         {triangle(controlsVar.lookup('downActive').toString() === 'True')}
       </g>;
     if (this.props.floor == 1) {
       down = [];
     }
-    if (this.props.floor == 6) {
+    if (this.props.floor == numFloors) {
       up = [];
     }
     return <g>{up}{down}</g>;
@@ -263,12 +268,14 @@ let Person = React.createClass({
       Riding: r => {
         text = r.lookup('destination').toString();
         let evar = model.getVar('elevators').index(r.elevator);
+        let riders = evar.lookup('riders');
         let bbox = layout.elevator(elevatorFloor(evar),
             r.elevator.value);
-        let shift = 3 * (evar.lookup('riders').indexOf(id) - 2);
+        let shift = bbox.w * .9 / riders.size() * (riders.indexOf(id) - 2);
         bbox.x += shift;
         bbox.x2 += shift;
-        bbox.w += shift;
+        bbox.y -= bbox.h * .1;
+        bbox.y2 -= bbox.h * .1;
         return bbox;
       },
     });
@@ -314,7 +321,16 @@ let ElevatorView = React.createClass({
     let layout = Layout(box.width, box.height * .7);
     let destinations = [];
     model.vars.get('elevators').forEach((evar, eid) => {
-      evar.lookup('destinations').forEach(floor => {
+      let floors = new Set();
+      evar.lookup('floorCalls').forEach(floorCall => {
+        floors.add(floorCall.lookup('floor').value);
+      });
+      evar.lookup('riders').forEach(pid => {
+        model.vars.get('people').index(pid).match({
+          Riding: r => floors.add(r.lookup('destination').value),
+        });;
+      });
+      floors.forEach(floor => {
         let bbox = layout.elevator(floor, eid);
         destinations.push(<circle
           key={`dest-${eid}-${floor}`}
