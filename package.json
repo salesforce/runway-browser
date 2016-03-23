@@ -1,5 +1,5 @@
 {
-  "name": "modeling-compiler",
+  "name": "runway-browser",
   "version": "0.0.1-alpha.0",
   "description": "Requires node >=v4.x, bower, npm.",
   "main": "main.js",
@@ -8,7 +8,6 @@
     "bootstrap": "^3.3.5",
     "bootstrap-menu": "^1.0.8",
     "bootstrap-webpack": "0.0.5",
-    "docopt": "^0.6.2",
     "imports-loader": "^0.6.5",
     "jquery": "^2.1.4",
     "jquery-ui": "^1.10.5",
@@ -40,7 +39,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@localhost:dongaro/modeling-compiler.git"
+    "url": "git@localhost:dongaro/runway-browser.git"
   },
   "author": "Diego Ongaro <dongaro@salesforce.com>",
   "license": "UNLICENSED"

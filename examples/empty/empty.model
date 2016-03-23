@@ -1,5 +1,0 @@
-var counter : 0..9;
-
-rule increment {
-  counter = (counter + 1) % 10;
-}
