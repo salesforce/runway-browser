@@ -38,6 +38,10 @@ module.exports = [{
           presets: ['react'],
         },
       },
+      {
+        test: /\.json$/,
+        loader: "json-loader"
+      },
     ]
   }
 }, {
@@ -48,4 +52,12 @@ module.exports = [{
   },
   devtool: 'eval-cheap-module-source-map',
   target: 'webworker',
+  module: {
+    loaders: [
+      {
+        test: /\.json$/,
+        loader: "json-loader"
+      },
+    ],
+  },
 }];
