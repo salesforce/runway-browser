@@ -3,7 +3,7 @@
 let React = require('react');
 let ReactDOM = require('react-dom');
 let jQuery = require('jquery');
-let Changesets = require('../changesets.js');
+let Changesets = require('runway-compiler/changesets.js');
 
 let colors = [ // from colorbrewer2.org
   //'#8c510a',

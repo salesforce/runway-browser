@@ -1,6 +1,6 @@
 "use strict";
 
-let Changesets = require('../changesets.js');
+let Changesets = require('runway-compiler/changesets.js');
 let React = require('react');
 let ReactDOM = require('react-dom');
 let jQuery = require('jquery');

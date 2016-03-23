@@ -1,7 +1,7 @@
 "use strict";
 
 let _ = require('lodash');
-let Changesets = require('../changesets.js');
+let Changesets = require('runway-compiler/changesets.js');
 let React = require('react');
 let ReactDOM = require('react-dom');
 

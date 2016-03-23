@@ -6,16 +6,16 @@ window.jQuery = jQuery;
 require('bootstrap-webpack');
 let BootstrapMenu = require('bootstrap-menu');
 
-let compiler = require('./compiler.js');
+let compiler = require('runway-compiler/compiler.js');
 window.compiler = compiler;
-let Simulator = require('./simulator.js').Simulator;
-let GlobalEnvironment = require('./environment.js').GlobalEnvironment;
-let Input = require('./input.js');
+let Simulator = require('runway-compiler/simulator.js').Simulator;
+let GlobalEnvironment = require('runway-compiler/environment.js').GlobalEnvironment;
+let Input = require('runway-compiler/input.js');
 
 let _ = require('lodash');
 //delete window._;
 
-let errors = require('./errors.js');
+let errors = require('runway-compiler/errors.js');
 let Tooltip = require('./web/tooltip.js');
 let Util = require('./web/util.js');
 let StateDump = require('./web/statedump.jsx');
@@ -24,7 +24,7 @@ let ExecutionView = require('./web/executionview.jsx');
 let REPLView = require('./web/repl.jsx');
 let Controller = require('./controller.js').Controller;
 
-let preludeText = require('./prelude.model');
+let preludeText = require('runway-compiler/prelude.model');
 
 let queryString = require('querystring');
 let getParams = queryString.parse(window.location.search.slice(1));
@@ -81,7 +81,7 @@ let requireModules = {
   Tooltip: Tooltip,
   Util: Util,
   fetchRemoteFile: fetchRemoteFile,
-  Changesets: require('./changesets.js'),
+  Changesets: require('runway-compiler/changesets.js'),
   lodash: _,
   Timeline: require('./web/timeline.jsx'),
 };
@@ -161,9 +161,10 @@ let pageLoaded = new Promise((resolve, reject) => {
 });
 
 
-let basename = 'examples/toomanybananas/toomanybananas';
+let examples = 'node_modules/runway-compiler/examples/';
+let basename = examples + 'toomanybananas/toomanybananas';
 if ('model' in getParams) {
-  basename = 'examples/' + getParams['model'];
+  basename = examples + getParams['model'];
 }
 
 Promise.all([

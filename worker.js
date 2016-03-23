@@ -1,11 +1,11 @@
 'use strict';
 
-let compiler = require('./compiler.js');
-let Simulator = require('./simulator.js').Simulator;
-let GlobalEnvironment = require('./environment.js').GlobalEnvironment;
-let Input = require('./input.js');
-let Execution = require('./execution.js');
-let Workspace = require('./workspace.js').Workspace;
+let compiler = require('runway-compiler/compiler.js');
+let Simulator = require('runway-compiler/simulator.js').Simulator;
+let GlobalEnvironment = require('runway-compiler/environment.js').GlobalEnvironment;
+let Input = require('runway-compiler/input.js');
+let Execution = require('runway-compiler/execution.js');
+let Workspace = require('runway-compiler/workspace.js').Workspace;
 
 let module;
 let workspace;
