@@ -17,10 +17,20 @@ all: bundle.js
 
 .PHONY: setup
 setup: npm_setup \
+       compiler_setup \
        $(NULL)
 
 npm_setup:
 	$(NPM) install
+
+compiler_setup:
+	test -d node_modules/runway-compiler || (\
+	cd node_modules && \
+	URL=$$(dirname $$(git ls-remote --get-url))/runway-compiler.git && \
+	echo cloning $$URL && \
+	git clone $$URL && \
+	cd runway-compiler && \
+	make setup)
 
 .PHONY: test
 test: unit-test
