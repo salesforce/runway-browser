@@ -79,6 +79,6 @@ be slightly larger depending on how it's resized. We might change this soon, as
 other SVG tools seem to default to canvases that are an order of magnitude or
 so larger.
 - Manually positioning everything is annoying. Hopefully we can find a nicer
-solution in the future. `BBox` in [web/util.js](web/util.js) might help.
+solution in the future. `BBox` in [util.js](util.js) might help.
 - Don't be afraid to embrace some "globals" in your view. It's a lot easier
 than passing around the model everywhere, for example.

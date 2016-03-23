@@ -16,12 +16,12 @@ let _ = require('lodash');
 //delete window._;
 
 let errors = require('runway-compiler/errors.js');
-let Tooltip = require('./web/tooltip.js');
-let Util = require('./web/util.js');
-let StateDump = require('./web/statedump.jsx');
-let RuleControls = require('./web/rulecontrols.jsx');
-let ExecutionView = require('./web/executionview.jsx');
-let REPLView = require('./web/repl.jsx');
+let Tooltip = require('./tooltip.js');
+let Util = require('./util.js');
+let StateDump = require('./statedump.jsx');
+let RuleControls = require('./rulecontrols.jsx');
+let ExecutionView = require('./executionview.jsx');
+let REPLView = require('./repl.jsx');
 let Controller = require('./controller.js').Controller;
 
 let preludeText = require('runway-compiler/prelude.model');
@@ -83,7 +83,7 @@ let requireModules = {
   fetchRemoteFile: fetchRemoteFile,
   Changesets: require('runway-compiler/changesets.js'),
   lodash: _,
-  Timeline: require('./web/timeline.jsx'),
+  Timeline: require('./timeline.jsx'),
 };
 let pseudoRequire = function(module) {
   if (module in requireModules) {
