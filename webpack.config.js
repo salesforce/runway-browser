@@ -1,3 +1,11 @@
+var path = require('path');
+
+var resolveLoader = {
+  root: [
+    path.resolve('node_modules'),
+  ],
+};
+
 module.exports = [{
   entry: "./web.js",
   output: {
@@ -43,7 +51,8 @@ module.exports = [{
         loader: "json-loader"
       },
     ]
-  }
+  },
+  resolveLoader: resolveLoader,
 }, {
   entry: "./worker.js",
   output: {
@@ -60,4 +69,5 @@ module.exports = [{
       },
     ],
   },
+  resolveLoader: resolveLoader,
 }];
