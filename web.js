@@ -182,6 +182,7 @@ Promise.all([
   pageLoaded,
 ]).then((results) => {
   let input = results[0];
+  d3.select('#modelcode').append('pre').text(input.getText());
   let env = new GlobalEnvironment(prelude.env);
   let module;
   try {
