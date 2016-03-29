@@ -268,7 +268,8 @@ Promise.all([
       let thisWorkerId = nextWorkerId;
       nextWorkerId += 1;
       usefulWorkerId = thisWorkerId;
-      workerClient.simulate(startEvent).then(newEvents => {
+      workerClient.simulate(startEvent).then(result => {
+        let newEvents = result.events;
         if (usefulWorkerId === thisWorkerId) {
           usefulWorkerId = undefined;
           if (newEvents.length === 0) {
@@ -277,6 +278,7 @@ Promise.all([
             deadlockEvent = undefined;
           }
         }
+        controller.workspace._output = result.output;
         if (newEvents.length > 0) {
           newEvents.forEach(event => {
             cursor = cursor.addEvent(event);
@@ -287,7 +289,7 @@ Promise.all([
       });
     }
   };
-  
+
   controller.workspace.forked.sub(execution => {
     usefulWorkerId = undefined;
     startSimulating();

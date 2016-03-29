@@ -48,7 +48,10 @@ let simulate = function(event) {
   }
   let newEvents = workspace.cursor.map(event => event).slice(1);
   workspace.reset(workspace.cursor.execution.last(), workspace.clock);
-  return Promise.resolve(newEvents);
+  return Promise.resolve({
+    events: newEvents,
+    output: workspace.takeOutput(),
+  });
 };
 
 self.onmessage = function(e) {
