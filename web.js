@@ -219,6 +219,15 @@ Promise.all([
   controller.views.push(
     new REPLView(controller, jQuery('#repl')[0], module));
 
+  controller.workspace.invariantError.sub(msg => {
+    jQuery('#error').text(msg);
+  });
+  controller.workspace.update.sub(changes => {
+    if (controller.workspace.cursor.getEvent().passedInvariants === false) {
+      controller.workspace.checkInvariants();
+    }
+  });
+
   let userView = results[1];
   if (userView !== null) {
     userView = new userView(controller, jQuery('#view #user')[0], module);
