@@ -27,12 +27,13 @@ let REPLView = React.createClass({
          matched('[', ']'))) {
       let output = '(any output is shown in the dev console for now)';
       let error = false;
-      controller.tryChangeState(() => {
+      controller.workspace.tryChangeState(() => {
         try {
           // TODO: use forgivingLoad from main.js
+          let context = {};
           let nmodule = compiler.load(new Input('REPL', input),
-                                      module.ast.env);
-          nmodule.ast.execute();
+                                      module.ast.env, context);
+          nmodule.ast.execute(context);
         } catch (e) {
           error = true;
           output = e.toString();
@@ -74,7 +75,7 @@ let REPLView = React.createClass({
     });
 
     return <div>
-        <pre style={{maxHeight: '10em', scroll: 'auto'}}
+        <pre style={{maxHeight: '30em', scroll: 'auto'}}
           ref={pre => {this.pre = pre;}}>
           <code>
             {history.join('\n')}
