@@ -12,6 +12,9 @@ let Simulator = require('runway-compiler/simulator.js').Simulator;
 let GlobalEnvironment = require('runway-compiler/environment.js').GlobalEnvironment;
 let Input = require('runway-compiler/input.js');
 
+let d3 = require('d3');
+window.d3 = d3;
+
 let _ = require('lodash');
 //delete window._;
 
@@ -84,6 +87,7 @@ let requireModules = {
   Changesets: require('runway-compiler/changesets.js'),
   lodash: _,
   Timeline: require('./timeline.jsx'),
+  d3: d3,
 };
 let pseudoRequire = function(module) {
   if (module in requireModules) {
