@@ -31,6 +31,10 @@ class Controller {
     let threshold = 10;
     this.views.forEach(view => {
       let start = stop;
+      if (view.tab !== undefined &&
+          !_.includes(document.getElementById(view.tab).classList, 'active')) {
+        return; // hidden tab
+      }
       view.update(changes);
       stop = performance.now();
       if (stop - start > threshold / 3) {

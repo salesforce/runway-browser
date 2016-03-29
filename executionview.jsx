@@ -53,6 +53,7 @@ let reactComponent = ReactDOM.render(<ExecutionView />, elem);
 
 return {
   name: 'Execution',
+  tab: 'execution',
   update: function(changes) {
     reactComponent.setState({changes: changes});
   }

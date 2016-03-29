@@ -21,11 +21,11 @@
 
       <pre><code id="error" style="color: red"></code></pre>
 
-      <div id="viewwrapper" style="width: 120px; height: 120px">
-        <svg id="view" version="1.1" viewbox="0 0 1778 1000"
+      <div id="viewwrapper" style="width: 400px; height: 400px">
+        <svg id="view" version="1.1" viewbox="0 0 1000 1000"
           xmlns="http://www.w3.org/2000/svg"
           xmlns:xlink="http://www.w3.org/1999/xlink"
-          style="width: 160px; height: 90px">
+          style="width: 400px; height: 400px">
           <marker xmlns="http://www.w3.org/2000/svg" id="greentriangle" viewBox="0 0 10 10" refX="0" refY="5" markerUnits="strokeWidth" markerWidth="4" markerHeight="3" orient="auto">
             <path d="M 0 0 L 10 5 L 0 10 z" style="fill: green" />
           </marker>
@@ -34,17 +34,22 @@
         </svg>
       </div>
 
-      <div id="graph"></div>
+      <div>
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs">
+          <li class="active"><a href="#state" data-toggle="tab">State</a></li>
+          <li><a href="#execution" data-toggle="tab">Execution</a></li>
+          <li><a href="#repl" data-toggle="tab">REPL</a></li>
+          <li><a href="#graph" data-toggle="tab">Graph</a></li>
+        </ul>
 
-      <h2>Execution</h2>
-      <div id="execution"></div>
-
-      <h2>State</h2>
-      <div id="state"></div>
-
-      <h2>REPL</h2>
-      <div id="repl"></div>
-
+        <!-- Tab panes -->
+        <div class="tab-content">
+          <div class="tab-pane active" id="state">...</div>
+          <div class="tab-pane" id="execution">...</div>
+          <div class="tab-pane" id="repl">...</div>
+          <div class="tab-pane" id="graph">...</div>
+        </div>
     </div> <!-- container -->
 
 <div id="tooltip" class="tooltip top" role="tooltip">

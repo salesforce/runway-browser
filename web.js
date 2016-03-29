@@ -142,6 +142,7 @@ class TextStateView {
 class HTMLStateView {
   constructor(controller, elem, module) {
     this.name = 'HTMLStateView';
+    this.tab = 'state';
     this.controller = controller;
     this.elem = elem;
     this.module = module;
@@ -229,7 +230,7 @@ Promise.all([
 
       let viewWrapper = jQuery('#viewwrapper');
       let smallSide = v.bigView ? 1000 : 100;
-      viewWrapper.mouseup(() => {
+      let resize = () => {
         let viewElem = jQuery('#view');
         let width = viewWrapper.width();
         let height = viewWrapper.height();
@@ -247,9 +248,15 @@ Promise.all([
         viewElem[0].setAttribute('viewBox',
           `0 0 ${width} ${height}`);
         v.update(['layout']);
-      });
+      };
+      resize();
+      viewWrapper.mouseup(resize);
     });
   }
+  jQuery('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+    controller._updateViews();
+  });
+
 
   let animate = false;
   let animating = false;
