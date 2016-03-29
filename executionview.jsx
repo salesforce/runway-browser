@@ -27,6 +27,10 @@ let ExecutionView = React.createClass({
       if (event.passedInvariants === false) {
         style = {color: 'red'};
       }
+      let time = '';
+      if (controller.clockUnits !== undefined) {
+        time = `${_.round(event.clock / 1000, 3)} ${controller.clockUnits}: `;
+      }
       return <li key={i}>
         <a href=""
           onClick={e => {
@@ -34,7 +38,7 @@ let ExecutionView = React.createClass({
             controller.workspace.setClock(event.clock);
           }}
           style={style}>
-            {`${_.round(event.clock / 1000, 3)} ${controller.clockUnits}: ${event.msg}`}
+            {`${time}${event.msg}`}
         </a>
       </li>;
     };
