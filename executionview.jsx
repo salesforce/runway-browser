@@ -41,8 +41,7 @@ let ExecutionView = React.createClass({
 
     return <ol
       start={controller.workspace.cursor.index()}
-      reversed="1"
-      style={{overflowY: 'auto', maxHeight: '10em'}}>
+      reversed="1">
         {controller.workspace.cursor.map(renderEvent).reverse()}
     </ol>;
   }
