@@ -11,6 +11,7 @@ window.compiler = compiler;
 let Simulator = require('runway-compiler/simulator.js').Simulator;
 let GlobalEnvironment = require('runway-compiler/environment.js').GlobalEnvironment;
 let Input = require('runway-compiler/input.js');
+let Highlight = require('./highlight.js');
 
 let d3 = require('d3');
 window.d3 = d3;
@@ -182,7 +183,9 @@ Promise.all([
   pageLoaded,
 ]).then((results) => {
   let input = results[0];
-  d3.select('#modelcode').append('pre').text(input.getText());
+  document.getElementById('modelcode').appendChild(Highlight(input.getText()));
+
+
   let env = new GlobalEnvironment(prelude.env);
   let module;
   try {
