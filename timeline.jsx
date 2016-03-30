@@ -13,8 +13,13 @@ let addSVGCoords = (e, svgNode) => {
 let numTics = 11;
 let ticXs = (x, width) => _.range(11).map(i => x + i/10 * width);
 
-let makeTime = clock =>
-  `${_.round(clock / 1000, 3)}${controller.clockUnits}`;
+let makeTime = (clock, last) => {
+  let t = `${_.round(clock / 1000, 3)}`;
+  if (controller.clockUnits !== undefined && last) {
+    t += controller.clockUnits;
+  }
+  return t;
+};
 
 let Labels = React.createClass({
   render: function() {
@@ -22,14 +27,14 @@ let Labels = React.createClass({
       {ticXs(this.props.x, this.props.width).map((ticX, i) =>
         <text
             key={i}
-            x={ticX}
+            x={ticX + (i == 10 ? this.props.width / 40 : 0)}
             y={this.props.y}
             style={{
               fontSize: 32,
               textAnchor: 'middle',
               fill: 'gray',
             }}>
-              {makeTime(this.props.maxClockShown * i/(numTics - 1))}
+              {makeTime(this.props.maxClockShown * i/(numTics - 1), i == 10)}
          </text>)
        }
       </g>;
