@@ -273,8 +273,8 @@ Promise.all([
 
   let animate = false;
   let animating = false;
-  let simulateId = undefined;
-  let simulateStart = 0;
+  let playbackId = undefined;
+  let playbackStart = 0;
 
   let usefulWorkerId = undefined;
   let nextWorkerId = 1;
@@ -283,7 +283,8 @@ Promise.all([
     let cursor = controller.workspace.cursor.execution.last();
     let startEvent = cursor.getEvent();
     if (usefulWorkerId === undefined &&
-        startEvent.clock < controller.workspace.clock + 2e5 &&
+        (startEvent.clock < controller.workspace.clock + 1e5 ||
+         jQuery('#simulate')[0].checked) &&
         startEvent !== deadlockEvent) {
       let thisWorkerId = nextWorkerId;
       nextWorkerId += 1;
@@ -309,6 +310,7 @@ Promise.all([
       });
     }
   };
+  jQuery('#simulate').change(startSimulating);
 
   controller.workspace.forked.sub(execution => {
     usefulWorkerId = undefined;
@@ -316,44 +318,44 @@ Promise.all([
   });
 
 
-  // 'simulateSpeed' is the "x" of slowdown.
+  // 'playbackSpeed' is the "x" of slowdown.
   // For asynchronous models without clocks, steps are executed every 10ms of
   // simulation time.
-  window.simulateSpeed = getParams['speed'] || 100;
+  window.playbackSpeed = getParams['speed'] || 100;
   let toggleAnimate = () => {
     let stop = () => {
-      window.cancelAnimationFrame(simulateId);
-      simulateId = undefined;
+      window.cancelAnimationFrame(playbackId);
+      playbackId = undefined;
     };
-    if (simulateId === undefined) {
+    if (playbackId === undefined) {
       let draw = when => {
-        simulateId = undefined;
-        let elapsed = (when - simulateStart);
-        simulateStart = when;
+        playbackId = undefined;
+        let elapsed = (when - playbackStart);
+        playbackStart = when;
         //console.log('elapsed:', elapsed, 'ms');
         if (elapsed > 500) { // probably had another tab open
           console.log(`Too much time elapsed between animation ` +
             `frames: ${elapsed} ms`);
           elapsed = 0;
         }
-        controller.workspace.advanceClock(elapsed * 1000 / window.simulateSpeed);
+        controller.workspace.advanceClock(elapsed * 1000 / window.playbackSpeed);
         let maxGen = controller.workspace.cursor.execution.last().getEvent().clock;
         if (controller.workspace.clock >= maxGen) {
           controller.workspace.setClock(maxGen);
         }
         startSimulating();
-        simulateId = window.requestAnimationFrame(draw);
+        playbackId = window.requestAnimationFrame(draw);
       };
-      draw(simulateStart);
+      draw(playbackStart);
     } else {
       stop();
     }
   };
-  jQuery('#simulate').change(toggleAnimate);
-  let mapSimulateSpeed = fn => {
-    window.simulateSpeed = _.clamp(fn(window.simulateSpeed), .1, 5000000);
-    console.log(`replay speed set to ${window.simulateSpeed}x slowdown`);
+  jQuery('#playback').change(toggleAnimate);
+  let mapPlaybackSpeed = fn => {
+    window.playbackSpeed = _.clamp(fn(window.playbackSpeed), .1, 5000000);
+    console.log(`replay speed set to ${window.playbackSpeed}x slowdown`);
   };
-  jQuery('#slower').click(() => mapSimulateSpeed(s => s * 2));
-  jQuery('#faster').click(() => mapSimulateSpeed(s => s / 2));
+  jQuery('#slower').click(() => mapPlaybackSpeed(s => s * 2));
+  jQuery('#faster').click(() => mapPlaybackSpeed(s => s / 2));
 });
