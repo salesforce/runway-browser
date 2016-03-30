@@ -31,7 +31,11 @@ let ExecutionView = React.createClass({
       if (controller.clockUnits !== undefined) {
         time = `${_.round(event.clock / 1000, 3)} ${controller.clockUnits}: `;
       }
-      return <li key={i}>
+      let background;
+      if (i === current) {
+        background = '#ddd';
+      }
+      return <li key={i} style={{background: background}}>
         <a href=""
           onClick={e => {
             e.preventDefault();
@@ -42,11 +46,13 @@ let ExecutionView = React.createClass({
         </a>
       </li>;
     };
+    let cursor = controller.workspace.cursor.execution.last();
+    let current = controller.workspace.cursor.index();
 
     return <ol
-      start={controller.workspace.cursor.index()}
+      start={cursor.index()}
       reversed="1">
-        {controller.workspace.cursor.map(renderEvent).reverse()}
+        {cursor.map(renderEvent).reverse()}
     </ol>;
   }
 
