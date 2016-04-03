@@ -37,6 +37,7 @@ let React = require('react');
 let ReactDOM = require('react-dom');
 
 let babel = require('babel-standalone');
+let Timeline = require('./timeline.jsx');
 
 let useClock = getParams['clock'] && true;
 let clockUnits;
@@ -87,7 +88,7 @@ let requireModules = {
   fetchRemoteFile: fetchRemoteFile,
   Changesets: require('runway-compiler/changesets.js'),
   lodash: _,
-  Timeline: require('./timeline.jsx'),
+  Timeline: Timeline,
   d3: d3,
 };
 let pseudoRequire = function(module) {
@@ -162,6 +163,26 @@ class HTMLStateView {
   }
 }
 
+class TimelineView {
+  constructor(controller, elem, module) {
+    this.name = 'Timeline';
+    this.controller = controller;
+    this.elem = elem;
+    this.module = module;
+    this.component = ReactDOM.render(
+      React.createElement(Timeline, {
+          controller: this.controller,
+          x: 75,
+          y: 50,
+          width: 850,
+          height: 100,
+      }), elem);
+  }
+  update(changes) {
+    this.component.setState({});
+  }
+}
+
 let pageLoaded = new Promise((resolve, reject) => {
   jQuery(window).load(resolve);
 });
@@ -222,6 +243,8 @@ Promise.all([
     new ExecutionView(controller, jQuery('#execution')[0], module));
   controller.views.push(
     new REPLView(controller, jQuery('#repl')[0], module));
+  controller.views.push(
+    new TimelineView(controller, jQuery('#timeline')[0], module));
 
   controller.workspace.invariantError.sub(msg => {
     jQuery('#error').text(msg);
