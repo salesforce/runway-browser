@@ -3,6 +3,8 @@
 let performance = {now: require('performance-now')};
 let Workspace = require('runway-compiler/workspace.js').Workspace;
 
+window.viewTiming = [];
+
 class Controller {
   constructor(module) {
     this.views = [];
@@ -43,8 +45,11 @@ class Controller {
     });
     let total = stop - startAll;
     if (total > threshold) {
-      console.log(`View updates took ${ms(total)}:
+      window.viewTiming.push(`View updates took ${ms(total)}:
   ${updates.join('\n  ')}`);
+      if (window.viewTiming.length > 100) {
+          window.viewTiming = window.viewTiming.slice(50);
+      }
     }
   }
 }

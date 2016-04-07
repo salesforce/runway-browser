@@ -40,7 +40,6 @@ class WorkerClient {
   }
 
   simulate(event) {
-    console.log('starting simulate');
     return this._request('simulate', event);
   }
 }
