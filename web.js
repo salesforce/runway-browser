@@ -196,7 +196,11 @@ if ('model' in getParams) {
 
 Promise.all([
   fetchRemoteFile(basename + '.model'),
-  fetchRemoteJSX(basename + '.jsx')
+  fetchRemoteModule(basename + '.js')
+    .catch(err => {
+      console.log(`Failed to get JS file over HTTP: ${err}`);
+      return fetchRemoteJSX(basename + '.jsx');
+    })
     .catch(err => {
       console.log(`Failed to get view file over HTTP: ${err}`);
       return null;
