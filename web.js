@@ -90,6 +90,7 @@ let requireModules = {
   lodash: _,
   Timeline: Timeline,
   d3: d3,
+  colorbrewer: require('colorbrewer'),
 };
 let pseudoRequire = function(module) {
   if (module in requireModules) {
