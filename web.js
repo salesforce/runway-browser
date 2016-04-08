@@ -349,7 +349,18 @@ Promise.all([
   // For asynchronous models without clocks, steps are executed every 10ms of
   // simulation time.
   window.playbackSpeed = getParams['speed'] || 100;
+  jQuery('body > div')
+    .addClass('paused');
   let toggleAnimate = () => {
+    if (jQuery('#playback')[0].checked) {
+      jQuery('body > div')
+        .addClass('playback')
+        .removeClass('paused');
+    } else {
+      jQuery('body > div')
+        .addClass('paused')
+        .removeClass('playback');
+    }
     let stop = () => {
       window.cancelAnimationFrame(playbackId);
       playbackId = undefined;
