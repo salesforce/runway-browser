@@ -1,0 +1,10 @@
+@import "~solarized-light-syntax/styles/syntax-variables";
+@import "~solarized-light-syntax/styles/editor";
+
+.editor {
+  &:extend(atom-text-editor all);
+}
+
+.editor {
+  @import "~solarized-light-syntax/styles/languages/_base";
+}

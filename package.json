@@ -16,7 +16,8 @@
     "lodash": "^4.2.1",
     "performance-now": "^0.2.0",
     "react": "^0.14.3",
-    "react-dom": "^0.14.3"
+    "react-dom": "^0.14.3",
+    "solarized-light-syntax": "git+https://github.com/atom/solarized-light-syntax.git"
   },
   "devDependencies": {
     "babel-core": "^6.4.5",
@@ -30,7 +31,7 @@
     "jsfmt": "^0.5.2",
     "json-loader": "^0.5.4",
     "less": "^2.5.3",
-    "less-loader": "^2.2.1",
+    "less-loader": "^2.2.3",
     "mocha": "^2.3.3",
     "raw-loader": "^0.5.1",
     "style-loader": "^0.13.0",

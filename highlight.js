@@ -1,4 +1,5 @@
 let grammar = require('language-runway/grammars/runway.json');
+require('./highlight.less');
 
 grammar.patterns.forEach(pattern => {
   if (pattern.begin !== undefined && pattern.end !== undefined) {

@@ -20,6 +20,10 @@ module.exports = [{
         loader: "style!css"
       },
       {
+        test: /\.less$/,
+        loader: "style!css!less"
+      },
+      {
         test: /\.model$/,
         loader: "raw"
       },
