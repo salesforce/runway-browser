@@ -60,7 +60,15 @@
         <!-- Tab panes -->
         <div class="tab-content">
           <div class="tab-pane active" id="state">...</div>
-          <div class="tab-pane" id="execution">...</div>
+          <div class="tab-pane" id="execution">
+            <div id="execution-header">
+              <div class="btn-group" style="padding: 10px">
+                <button type="button" class="btn btn-default download">Download</button>
+                <button type="button" class="btn btn-default upload">Upload</button>
+              </div>
+            </div>
+            <div id="execution-inner"></div>
+          </div>
           <div class="tab-pane" id="repl">...</div>
           <div class="tab-pane" id="graph">...</div>
           <div class="tab-pane" id="modelcode"></div>

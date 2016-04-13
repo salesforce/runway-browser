@@ -12,6 +12,8 @@ let Simulator = require('runway-compiler/simulator.js').Simulator;
 let GlobalEnvironment = require('runway-compiler/environment.js').GlobalEnvironment;
 let Input = require('runway-compiler/input.js');
 let Highlight = require('./highlight.js');
+let Execution = require('runway-compiler/execution.js');
+let files = require('./files.js');
 
 let d3 = require('d3');
 window.d3 = d3;
@@ -245,7 +247,7 @@ Promise.all([
   controller.views.push(
     new RuleControls(controller, jQuery('#rulecontrols')[0], module));
   controller.views.push(
-    new ExecutionView(controller, jQuery('#execution')[0], module));
+    new ExecutionView(controller, jQuery('#execution-inner')[0], module));
   controller.views.push(
     new REPLView(controller, jQuery('#repl')[0], module));
   controller.views.push(
@@ -397,4 +399,21 @@ Promise.all([
   };
   jQuery('#slower').click(() => mapPlaybackSpeed(s => s * 2));
   jQuery('#faster').click(() => mapPlaybackSpeed(s => s / 2));
+});
+
+let getExecution = function() {
+  let events = controller.workspace.cursor.execution
+    .map(e => JSON.stringify(e, null, 2))
+    .join(',\n\n');
+  return `[\n\n${events}\n\n]`;
+};
+
+jQuery(function() {
+  jQuery('#execution button.download')
+    .click(() => files.download(getExecution(), 'execution.json', 'application/json'));
+  jQuery('#execution button.upload')
+    .click(() => files.upload('application/json').then(text => {
+      let execution = new Execution(JSON.parse(text));
+      controller.workspace.reset(execution.forkStart(), 0);
+    }));
 });
