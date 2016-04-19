@@ -192,17 +192,21 @@ let pageLoaded = new Promise((resolve, reject) => {
 
 
 let examples = 'node_modules/runway-compiler/examples/';
-let basename = examples + 'toomanybananas/toomanybananas';
+let basename = 'toomanybananas/toomanybananas';
 if ('model' in getParams) {
-  basename = examples + getParams['model'];
+  basename = getParams['model'];
 }
 
+pageLoaded.then(() => {
+  jQuery('.page-header h2 small').text(`${basename}.model`);
+});
+
 Promise.all([
-  fetchRemoteFile(basename + '.model'),
-  fetchRemoteModule(basename + '.js')
+  fetchRemoteFile(examples + basename + '.model'),
+  fetchRemoteModule(examples + basename + '.js')
     .catch(err => {
       console.log(`Failed to get JS file over HTTP: ${err}`);
-      return fetchRemoteJSX(basename + '.jsx');
+      return fetchRemoteJSX(examples + basename + '.jsx');
     })
     .catch(err => {
       console.log(`Failed to get view file over HTTP: ${err}`);
@@ -212,7 +216,6 @@ Promise.all([
 ]).then((results) => {
   let input = results[0];
   document.getElementById('modelcode').appendChild(Highlight(input.getText()));
-
 
   let env = new GlobalEnvironment(prelude.env);
   let module;
