@@ -15,6 +15,14 @@ let colors = [ // from colorbrewer2.org
   '#01665e',
 ];
 
+let makeTime = clock => {
+  let t = `${_.round(clock / 1000, 3)}`;
+  if (controller.clockUnits !== undefined) {
+    t += controller.clockUnits;
+  }
+  return t;
+};
+
 let StateDump = React.createClass({
 
   getInitialState: function() {
@@ -185,6 +193,11 @@ let StateDump = React.createClass({
           </span>;
       }
 
+    } else if (kind == 'NumberType' &&
+      value.type == controller.workspace.module.env.types.get('Time')) {
+      return <span>{makeTime(value.value)}</span>;
+    } else if (this.props.path == 'clock') {
+      return <span>{makeTime(value)}</span>;
     } else {
       return <span>{value.toString()}</span>;
     }
