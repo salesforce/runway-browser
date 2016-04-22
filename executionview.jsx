@@ -4,8 +4,39 @@ let _ = require('lodash');
 let Changesets = require('runway-compiler/changesets.js');
 let React = require('react');
 let ReactDOM = require('react-dom');
+let files = require('./files.js');
+let Execution = require('runway-compiler/execution.js');
 
-let View = function(controller, elem, module) {
+let View = function(controller) {
+
+let getExecution = function() {
+  let events = controller.workspace.cursor.execution
+    .map(e => JSON.stringify(e, null, 2))
+    .join(',\n\n');
+  return `[\n\n${events}\n\n]`;
+};
+
+let ExecutionHeader = React.createClass({
+  render: function() {
+    return (
+      <div id="execution-header">
+        <div className="btn-group" style={{padding: 10}}>
+          <button type="button" className="btn btn-default download"
+            onClick={() => files.download(getExecution(), 'execution.json', 'application/json')}>
+              Download
+          </button>
+          <button type="button" className="btn btn-default upload"
+            onClick={() => files.upload('application/json').then(text => {
+              let execution = new Execution(JSON.parse(text));
+              controller.workspace.reset(execution.forkStart(), 0);
+            })}>
+              Upload
+          </button>
+        </div>
+      </div>
+    );
+  }
+});
 
 let ExecutionView = React.createClass({
 
@@ -49,22 +80,39 @@ let ExecutionView = React.createClass({
     let cursor = controller.workspace.cursor.execution.last();
     let current = controller.workspace.cursor.index();
 
-    return <ol
-      start={cursor.index()}
-      reversed="1">
-        {cursor.map(renderEvent).reverse()}
-    </ol>;
+    return <div>
+      <ExecutionHeader />
+      <ol
+        start={cursor.index()}
+        reversed="1">
+          {cursor.map(renderEvent).reverse()}
+      </ol>
+    </div>;
   }
 
 });
 
-let reactComponent = ReactDOM.render(<ExecutionView />, elem);
+class Tab {
+  constructor(elem) {
+    this.reactComponent = ReactDOM.render(<ExecutionView />, elem);
+  }
+  update(changes) {
+    this.reactComponent.setState({changes: changes});
+  }
+  unmount() {
+    ReactDOM.unmountComponentAtNode(this.reactComponent.getDOMNode());
+  }
+}
+let tab = controller.mountTab(elem => new Tab(elem), 'execution', 'Execution');
 
 return {
   name: 'Execution',
-  tab: 'execution',
-  update: function(changes) {
-    reactComponent.setState({changes: changes});
+  update: changes => {
+    tab.update(changes);
+  },
+  unmount: () => {
+    tab.unmount();
+    controller.unmountTab('execution');
   }
 };
 

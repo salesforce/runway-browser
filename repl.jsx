@@ -5,7 +5,9 @@ let Util = require('runway-compiler/util.js');
 let React = require('react');
 let ReactDOM = require('react-dom');
 
-let View = function(controller, elem, module) {
+let View = function(controller) {
+
+let module = controller.workspace.module;
 
 let REPLView = React.createClass({
   getInitialState() {
@@ -89,7 +91,8 @@ let REPLView = React.createClass({
 
 });
 
-let reactComponent = ReactDOM.render(<REPLView />, elem);
+let reactComponent = controller.mountTab(elem => ReactDOM.render(<REPLView />, elem),
+  'repl', 'REPL');
 
 return {
   name: 'REPL',

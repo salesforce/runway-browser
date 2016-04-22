@@ -12,8 +12,6 @@ let Simulator = require('runway-compiler/simulator.js').Simulator;
 let GlobalEnvironment = require('runway-compiler/environment.js').GlobalEnvironment;
 let Input = require('runway-compiler/input.js');
 let Highlight = require('./highlight.js');
-let Execution = require('runway-compiler/execution.js');
-let files = require('./files.js');
 
 let d3 = require('d3');
 window.d3 = d3;
@@ -145,20 +143,18 @@ class TextStateView {
 }
 
 class HTMLStateView {
-  constructor(controller, elem, module) {
+  constructor(controller) {
     this.name = 'HTMLStateView';
-    this.tab = 'state';
     this.controller = controller;
-    this.elem = elem;
-    this.module = module;
-    this.component = ReactDOM.render(
-      React.createElement(
-        StateDump.StateDumpEnv,
-        {
-          env: this.module.env,
-          controller: this.controller,
-        }),
-      this.elem[0]);
+    this.component = this.controller.mountTab(elem =>
+       ReactDOM.render(
+        React.createElement(
+          StateDump.StateDumpEnv,
+          {
+            env: this.controller.workspace.module.env,
+            controller: this.controller,
+          }),
+        elem), 'state', 'State');
   }
 
   update(changes) {
@@ -215,7 +211,6 @@ Promise.all([
   pageLoaded,
 ]).then((results) => {
   let input = results[0];
-  document.getElementById('modelcode').appendChild(Highlight(input.getText()));
 
   let env = new GlobalEnvironment(prelude.env);
   let module;
@@ -245,14 +240,14 @@ Promise.all([
     jQuery('#error').text('');
   };
   window.controller = controller;
-  controller.views.push(
-    new HTMLStateView(controller, jQuery('#state'), module));
+  controller.addView(HTMLStateView);
+  controller.addView(ExecutionView);
+  controller.addView(REPLView);
+  controller.mountTab(elem => elem.appendChild(Highlight(input.getText())),
+    'modelcode', 'Model Code');
+
   controller.views.push(
     new RuleControls(controller, jQuery('#rulecontrols')[0], module));
-  controller.views.push(
-    new ExecutionView(controller, jQuery('#execution-inner')[0], module));
-  controller.views.push(
-    new REPLView(controller, jQuery('#repl')[0], module));
   controller.views.push(
     new TimelineView(controller, jQuery('#timeline')[0], module));
 
@@ -402,21 +397,4 @@ Promise.all([
   };
   jQuery('#slower').click(() => mapPlaybackSpeed(s => s * 2));
   jQuery('#faster').click(() => mapPlaybackSpeed(s => s / 2));
-});
-
-let getExecution = function() {
-  let events = controller.workspace.cursor.execution
-    .map(e => JSON.stringify(e, null, 2))
-    .join(',\n\n');
-  return `[\n\n${events}\n\n]`;
-};
-
-jQuery(function() {
-  jQuery('#execution button.download')
-    .click(() => files.download(getExecution(), 'execution.json', 'application/json'));
-  jQuery('#execution button.upload')
-    .click(() => files.upload('application/json').then(text => {
-      let execution = new Execution(JSON.parse(text));
-      controller.workspace.reset(execution.forkStart(), 0);
-    }));
 });

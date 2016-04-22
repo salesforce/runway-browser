@@ -22,6 +22,45 @@ class Controller {
     this.workspace.forked.sub(onFork);
   }
 
+  addView(viewConstructor) {
+    Promise.resolve(new viewConstructor(this))
+      .then(view => this.views.push(view));
+  }
+
+  mountTab(mount, id, name) {
+    if (name === undefined) {
+      name = id;
+    }
+    id = `tab-${id}`;
+    jQuery('#tabs ul.nav-tabs')
+      .append(jQuery('<li>')
+        .append(jQuery('<a>')
+          .attr('href', '#' + id)
+          .attr('data-toggle', 'tab')
+          .text(name)));
+    let content = jQuery('<div>')
+        .addClass('tab-pane')
+        .attr('id', id);
+    jQuery('#tabs div.tab-content')
+      .append(content);
+    this._activateSomeTab();
+    return mount(content[0]);
+  }
+
+  unmountTab(id) {
+    id = `tab-${id}`;
+    jQuery(`#tabs ul.nav-tabs li:has(a[href="#${id}"])`).remove();
+    jQuery(`#tabs div.tab-pane#${id}`).remove();
+    this._activateSomeTab();
+  }
+
+  _activateSomeTab() {
+    if (jQuery('#tabs ul.nav-tabs .active').length === 0) {
+      jQuery('#tabs ul.nav-tabs li:first').addClass('active');
+      jQuery('#tabs div.tab-pane:first').addClass('active');
+    }
+  }
+
   _updateViews(changes) {
     if (changes === undefined) {
       changes = [''];
