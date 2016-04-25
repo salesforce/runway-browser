@@ -20,6 +20,18 @@ class Controller {
       }
     };
     this.workspace.forked.sub(onFork);
+
+    this.highlight = [];
+  }
+
+  toggleHighlight(h) {
+    if (_.isEqual(this.highlight, h)) {
+      this.highlight = [];
+      return false;
+    } else {
+      this.highlight = h;
+      return true;
+    }
   }
 
   addView(viewConstructor) {

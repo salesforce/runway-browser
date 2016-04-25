@@ -91,6 +91,7 @@ let requireModules = {
   Timeline: Timeline,
   d3: d3,
   colorbrewer: require('colorbrewer'),
+  'runway-browser/stackedevents.js': require('./stackedevents.js'),
 };
 let pseudoRequire = function(module) {
   if (module in requireModules) {
