@@ -4,7 +4,6 @@ let jQuery = require('jquery');
 window.jQuery = jQuery;
 
 require('bootstrap-webpack');
-let BootstrapMenu = require('bootstrap-menu');
 
 let compiler = require('runway-compiler/compiler.js');
 window.compiler = compiler;
@@ -78,7 +77,6 @@ let fetchRemoteFile = (filename) => new Promise((resolve, reject) => {
 
 // exported to modules loaded at runtime
 let requireModules = {
-  'bootstrap-menu': BootstrapMenu,
   jquery: jQuery,
   React: React,
   ReactDOM: ReactDOM,
