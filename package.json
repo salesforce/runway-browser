@@ -11,6 +11,7 @@
     "d3": "^3.5.16",
     "imports-loader": "^0.6.5",
     "jquery": "^2.1.4",
+    "language-runway": "forcedotcom/language-runway",
     "lodash": "^4.2.1",
     "performance-now": "^0.2.0",
     "react": "^0.14.3",
