@@ -1,7 +1,7 @@
 'use strict';
 
 let performance = {now: require('performance-now')};
-let Workspace = require('runway-compiler/workspace.js').Workspace;
+let Workspace = require('runway-compiler/lib/workspace.js').Workspace;
 
 window.viewTiming = [];
 

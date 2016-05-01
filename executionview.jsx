@@ -1,11 +1,11 @@
 "use strict";
 
 let _ = require('lodash');
-let Changesets = require('runway-compiler/changesets.js');
+let Changesets = require('runway-compiler/lib/changesets.js');
 let React = require('react');
 let ReactDOM = require('react-dom');
 let files = require('./files.js');
-let Execution = require('runway-compiler/execution.js');
+let Execution = require('runway-compiler/lib/execution.js');
 
 let View = function(controller) {
 

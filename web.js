@@ -5,11 +5,11 @@ window.jQuery = jQuery;
 
 require('bootstrap-webpack');
 
-let compiler = require('runway-compiler/compiler.js');
+let compiler = require('runway-compiler/lib/compiler.js');
 window.compiler = compiler;
-let Simulator = require('runway-compiler/simulator.js').Simulator;
-let GlobalEnvironment = require('runway-compiler/environment.js').GlobalEnvironment;
-let Input = require('runway-compiler/input.js');
+let Simulator = require('runway-compiler/lib/simulator.js').Simulator;
+let GlobalEnvironment = require('runway-compiler/lib/environment.js').GlobalEnvironment;
+let Input = require('runway-compiler/lib/input.js');
 let Highlight = require('./highlight.js');
 
 let d3 = require('d3');
@@ -18,7 +18,7 @@ window.d3 = d3;
 let _ = require('lodash');
 //delete window._;
 
-let errors = require('runway-compiler/errors.js');
+let errors = require('runway-compiler/lib/errors.js');
 let Tooltip = require('./tooltip.js');
 let Util = require('./util.js');
 let StateDump = require('./statedump.jsx');
@@ -27,7 +27,7 @@ let ExecutionView = require('./executionview.jsx');
 let REPLView = require('./repl.jsx');
 let Controller = require('./controller.js').Controller;
 
-let preludeText = require('runway-compiler/prelude.model');
+let preludeText = require('runway-compiler/lib/prelude.model');
 
 let queryString = require('querystring');
 let getParams = queryString.parse(window.location.search.slice(1));
@@ -84,7 +84,7 @@ let requireModules = {
   Tooltip: Tooltip,
   Util: Util,
   fetchRemoteFile: fetchRemoteFile,
-  Changesets: require('runway-compiler/changesets.js'),
+  Changesets: require('runway-compiler/lib/changesets.js'),
   lodash: _,
   Timeline: Timeline,
   d3: d3,

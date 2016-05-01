@@ -1,7 +1,7 @@
 "use strict";
 
-let Input = require('runway-compiler/input.js');
-let Util = require('runway-compiler/util.js');
+let Input = require('runway-compiler/lib/input.js');
+let Util = require('runway-compiler/lib/util.js');
 let React = require('react');
 let ReactDOM = require('react-dom');
 

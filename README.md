@@ -7,19 +7,9 @@ Setup
 -----
 
 First make sure you have `node` and `npm` (node package manager) installed.
-On OS X, if you have homebrew, you can run:
+Then run `npm install` to install dependencies.
 
-    brew install node
-
-Then run `make setup` to get started.
-
-Also, `model.vim` is a vim syntax file you can use. Copy it into
-`~/.vim/syntax/` and set your filetype to `model` in `~/.vimrc`:
-
-    autocmd BufRead,BufNewFile *.model set filetype=model
-
-
-Run `make bundle.js`. This packages up the interpreter along with its
+Run `npm run webpack`. This packages up the interpreter along with its
 dependencies into a single JavaScript file using
 [webpack](https://webpack.github.io/). (This is a big gotcha if you're changing
 the internal code, where you forget this step. Use
@@ -32,25 +22,19 @@ Set up a web server to serve the top-level directory. For example:
 
 The `-o` will open `index.html` in a web browser as served through that web server.
 The first thing that'll do is pull down a model and view file for the default model,
-presently [examples/toomanybananas/toomanybananas.model](examples/toomanybananas/toomanybananas.model)
-and [examples/toomanybananas/toomanybananas.jsx](examples/toomanybananas/toomanybananas.jsx).
-By design, the model and view files aren't compiled into `bundle.js` with
-webpack and aren't processed by the web server at all.
+presently the Too Many Bananas model. By design, the model and view files
+aren't compiled into `bundle.js` with webpack and aren't processed by the web
+server at all.
 
 You should see the banana visualization come up and you can interact with it
 according to the rules of the model. To see other models, host them underneath
-the `examples/` directory, then pass a `?model=path/to/model`, stripping off
-the `.model` and `.jsx` extensions. For example, navigating to
+the `examples/` directory of the runway-compiler repo, then pass a
+`?model=path/to/model`, stripping off the `.model` and `.jsx` extensions. For
+example, navigating to
 <http://localhost:3030/?model=elevators/elevators> will load
-[examples/elevators/elevators.model](examples/elevators/elevators.model) and
-[examples/elevators/elevators.jsx](examples/elevators/elevators.jsx).
+`node_modules/runway-compiler/examples/elevators/elevators.model` and
+`node_modules/runway-compiler/examples/elevators/elevators.jsx`.
 
-
-Writing a Model
----------------
-
-Coming soon. The most important thing to note is that most things are
-pass-by-value (copy semantics), but for loops are by reference.
 
 Writing a View
 --------------
@@ -62,9 +46,7 @@ SVG by default, so you can build up the view incrementally.
 Start with an existing example for the basic structure. The key things you need
 to understand are:
 
-- [React](https://facebook.github.io/react/docs/why-react.html) with JSX, which
-has some minor extensions to standard JavaScript (you can use ES6 features, by
-the way).
+- D3.
 - [SVG](https://developer.mozilla.org/en-US/docs/Web/SVG). In particular, you
 should familiarize yourself with these common elements:
 [g](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/g),
