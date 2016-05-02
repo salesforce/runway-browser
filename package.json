@@ -37,6 +37,7 @@
     "webpack": "^1.12.2"
   },
   "scripts": {
+    "postinstall": "npm ls --prod --json > dist/deps.json",
     "webpack": "./node_modules/.bin/webpack",
     "start": "webpack-dev-server",
     "test": "make test"

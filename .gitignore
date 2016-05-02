@@ -5,6 +5,7 @@
 /dist/models/
 /dist/bundle.js
 /dist/bundle.js.map
+/dist/deps.json
 /dist/worker-bundle.js
 /dist/worker-bundle.js.map
 /dist/448c34a56d699c29117adc64c43affeb.woff2
