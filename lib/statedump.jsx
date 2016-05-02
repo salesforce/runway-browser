@@ -15,14 +15,6 @@ let colors = [ // from colorbrewer2.org
   '#01665e',
 ];
 
-let makeTime = clock => {
-  let t = `${_.round(clock / 1000, 3)}`;
-  if (controller.clockUnits !== undefined) {
-    t += controller.clockUnits;
-  }
-  return t;
-};
-
 let StateDump = React.createClass({
 
   getInitialState: function() {
@@ -94,6 +86,13 @@ let StateDump = React.createClass({
       });
     });
 
+    let makeTime = clock => {
+      let t = `${_.round(clock / 1000, 3)}`;
+      if (controller !== undefined && controller.clockUnits !== undefined) {
+        t += controller.clockUnits;
+      }
+      return t;
+    };
 
     if (_.hasIn(value, 'forEach')) {
       // kind == 'ArrayType' || kind == 'SetType' || kind == 'OrderedSetType'
@@ -194,6 +193,7 @@ let StateDump = React.createClass({
       }
 
     } else if (kind == 'NumberType' &&
+      controller !== undefined &&
       value.type == controller.workspace.module.env.types.get('Time')) {
       return <span>{makeTime(value.value)}</span>;
     } else if (this.props.path == 'clock') {
