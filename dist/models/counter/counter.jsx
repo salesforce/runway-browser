@@ -1,7 +1,7 @@
 "use strict";
 
-let React = require('React');
-let ReactDOM = require('ReactDOM');
+let React = require('deprecated!react');
+let ReactDOM = require('deprecated!react-dom');
 
 let View = function(controller, svg, module) {
 
