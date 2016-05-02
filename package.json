@@ -15,7 +15,7 @@
     "react": "^0.14.3",
     "react-dom": "^0.14.3",
     "runway-compiler": "SalesforceEng/runway-compiler",
-    "solarized-light-syntax": "atom/solarized-light-syntax"
+    "solarized-light-syntax": "atom/solarized-light-syntax#v1.0.2"
   },
   "devDependencies": {
     "babel-core": "^6.4.5",
