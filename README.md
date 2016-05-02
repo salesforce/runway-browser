@@ -21,10 +21,9 @@ Set up a web server to serve the `dist/` directory. For example:
     nws -d dist -o
 
 The `-o` will open `dist/index.html` in a web browser as served through that web server.
-The first thing that'll do is pull down a model and view file for the default model,
-presently the Too Many Bananas model. By design, the model and view files
-aren't compiled into `bundle.js` with webpack and aren't processed by the web
-server at all.
+The first thing that'll do is pull down a model and view file for the default
+model. By design, the model and view files aren't compiled into `bundle.js`
+with webpack and aren't processed by the web server at all.
 
 You should see a very basic counter model come up.
 
@@ -34,6 +33,8 @@ For example, navigating to
 <http://localhost:3030/?model=elevators/elevators> will load
 `dist/models/elevators/elevators.model` and
 `dist/models/elevators/elevators.js(x)`.
+Be sure to load only trustworthy view files, since those may run arbitrary
+JavaScript code within your browser.
 
 
 Writing a View
