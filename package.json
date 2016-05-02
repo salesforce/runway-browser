@@ -38,6 +38,7 @@
   },
   "scripts": {
     "webpack": "./node_modules/.bin/webpack",
+    "start": "webpack-dev-server",
     "test": "make test"
   },
   "repository": {

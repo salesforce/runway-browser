@@ -13,27 +13,27 @@ Run `npm run webpack`. This packages up the interpreter along with its
 dependencies into a single JavaScript file using
 [webpack](https://webpack.github.io/). (This is a big gotcha if you're changing
 the internal code, where you forget this step. Use
-`./node_modules/.bin/webpack --watch` for that.)
+`./node_modules/.bin/webpack --watch` for that or `webpack-dev-server`.)
 
-Set up a web server to serve the top-level directory. For example:
+Set up a web server to serve the `dist/` directory. For example:
 
     npm install -g nws
-    nws -o
+    nws -d dist -o
 
-The `-o` will open `index.html` in a web browser as served through that web server.
+The `-o` will open `dist/index.html` in a web browser as served through that web server.
 The first thing that'll do is pull down a model and view file for the default model,
 presently the Too Many Bananas model. By design, the model and view files
 aren't compiled into `bundle.js` with webpack and aren't processed by the web
 server at all.
 
-You should see the banana visualization come up and you can interact with it
-according to the rules of the model. To see other models, host them underneath
-the `examples/` directory of the runway-compiler repo, then pass a
-`?model=path/to/model`, stripping off the `.model` and `.jsx` extensions. For
-example, navigating to
+You should see a very basic counter model come up.
+
+To see other models, symlink them underneath the `dist/models/` directory, then
+pass a `?model=path/to/model`, stripping off the `.model` and `.js` extensions.
+For example, navigating to
 <http://localhost:3030/?model=elevators/elevators> will load
-`node_modules/runway-compiler/examples/elevators/elevators.model` and
-`node_modules/runway-compiler/examples/elevators/elevators.jsx`.
+`dist/models/elevators/elevators.model` and
+`dist/models/elevators/elevators.js(x)`.
 
 
 Writing a View

@@ -7,9 +7,12 @@ var resolveLoader = {
 };
 
 module.exports = [{
-  entry: "./web.js",
+  devServer: {
+    contentBase: './dist/',
+  },
+  entry: "./lib/web.js",
   output: {
-    path: __dirname,
+    path: "./dist/",
     filename: "bundle.js"
   },
   devtool: 'eval-cheap-module-source-map',
@@ -58,9 +61,9 @@ module.exports = [{
   },
   resolveLoader: resolveLoader,
 }, {
-  entry: "./worker.js",
+  entry: "./lib/worker.js",
   output: {
-    path: __dirname,
+    path: "./dist/",
     filename: "worker-bundle.js"
   },
   devtool: 'eval-cheap-module-source-map',

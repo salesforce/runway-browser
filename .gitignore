@@ -1,13 +1,13 @@
 *.bck
 /README.html
-/bundle.js
-/bundle.js.map
-/worker-bundle.js
-/worker-bundle.js.map
 /node_modules/
 
-/448c34a56d699c29117adc64c43affeb.woff2
-/89889688147bd7575d6327160d64e760.svg
-/e18bbf611f2a2e43afc071aa2f4e1512.ttf
-/f4769f9bdb7466be65088239c12046d1.eot
-/fa2772327f55d8198301fdb8bcfc8158.woff
+/dist/bundle.js
+/dist/bundle.js.map
+/dist/worker-bundle.js
+/dist/worker-bundle.js.map
+/dist/448c34a56d699c29117adc64c43affeb.woff2
+/dist/89889688147bd7575d6327160d64e760.svg
+/dist/e18bbf611f2a2e43afc071aa2f4e1512.ttf
+/dist/f4769f9bdb7466be65088239c12046d1.eot
+/dist/fa2772327f55d8198301fdb8bcfc8158.woff
