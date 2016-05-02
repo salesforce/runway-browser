@@ -2,6 +2,7 @@
 /README.html
 /node_modules/
 
+/dist/models/
 /dist/bundle.js
 /dist/bundle.js.map
 /dist/worker-bundle.js
