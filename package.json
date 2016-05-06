@@ -47,5 +47,5 @@
     "url": "git@localhost:dongaro/runway-browser.git"
   },
   "author": "Diego Ongaro <dongaro@salesforce.com>",
-  "license": "UNLICENSED"
+  "license": "MIT"
 }
