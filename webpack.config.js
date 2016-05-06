@@ -10,41 +10,41 @@ module.exports = [{
   devServer: {
     contentBase: './dist/',
   },
-  entry: "./lib/web.js",
+  entry: './lib/web.js',
   output: {
-    path: "./dist/",
-    filename: "bundle.js"
+    path: './dist/',
+    filename: 'bundle.js'
   },
   devtool: 'eval-cheap-module-source-map',
   module: {
     loaders: [
       {
         test: /\.css$/,
-        loader: "style!css"
+        loader: 'style!css'
       },
       {
         test: /\.less$/,
-        loader: "style!css!less"
+        loader: 'style!css!less'
       },
       {
         test: /\.model$/,
-        loader: "raw"
+        loader: 'raw'
       },
       {
         test: /\.(woff|woff2)$/,
-        loader: "url-loader?limit=10000&mimetype=application/font-woff"
+        loader: 'url-loader?limit=10000&mimetype=application/font-woff'
       },
       {
         test: /\.ttf$/,
-        loader: "file-loader"
+        loader: 'file-loader'
       },
       {
         test: /\.eot$/,
-        loader: "file-loader"
+        loader: 'file-loader'
       },
       {
         test: /\.svg$/,
-        loader: "file-loader"
+        loader: 'file-loader'
       },
       {
         test: /\.jsx$/,
@@ -55,16 +55,16 @@ module.exports = [{
       },
       {
         test: /\.json$/,
-        loader: "json-loader"
+        loader: 'json-loader'
       },
     ]
   },
   resolveLoader: resolveLoader,
 }, {
-  entry: "./lib/worker.js",
+  entry: './lib/worker.js',
   output: {
-    path: "./dist/",
-    filename: "worker-bundle.js"
+    path: './dist/',
+    filename: 'worker-bundle.js'
   },
   devtool: 'eval-cheap-module-source-map',
   target: 'webworker',
@@ -72,7 +72,7 @@ module.exports = [{
     loaders: [
       {
         test: /\.json$/,
-        loader: "json-loader"
+        loader: 'json-loader'
       },
     ],
   },
