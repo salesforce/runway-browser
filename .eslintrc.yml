@@ -1,0 +1,28 @@
+env:
+  browser: true
+  commonjs: true
+  shared-node-browser: true
+  es6: true
+extends: 'eslint:recommended'
+rules:
+  comma-dangle:
+    - error
+    - only-multiline
+  no-console:
+    - off
+  indent:
+    - error
+    - 2
+  linebreak-style:
+    - error
+    - unix
+  no-unused-vars:
+    - error
+    - args: none
+  quotes:
+    - error
+    - single
+    - {avoidEscape: true, allowTemplateLiterals: true}
+  semi:
+    - error
+    - always
