@@ -265,8 +265,29 @@ let toHTMLString = value => {
   return html;
 };
 
+class HTMLStateView {
+  constructor(controller) {
+    this.name = 'HTMLStateView';
+    this.controller = controller;
+    this.component = this.controller.mountTab(elem =>
+       ReactDOM.render(
+        React.createElement(
+          StateDumpEnv,
+          {
+            env: this.controller.workspace.module.env,
+            controller: this.controller,
+          }),
+        elem), 'state', 'State');
+  }
+
+  update(changes) {
+    this.component.setState({changes: changes});
+  }
+}
+
 module.exports = {
   toHTMLString: toHTMLString,
   StateDump: StateDump,
   StateDumpEnv: StateDumpEnv,
+  HTMLStateView: HTMLStateView,
 };

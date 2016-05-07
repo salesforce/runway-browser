@@ -10,6 +10,7 @@
 
 let _ = require('lodash');
 let React = require('react');
+let ReactDOM = require('react-dom');
 
 let addSVGCoords = (e, svgNode) => {
   let ctm = svgNode.getScreenCTM().inverse();
@@ -251,5 +252,27 @@ let Timelines = React.createClass({
       </g>;
   }
 });
+
+class TimelineView {
+  constructor(controller, elem, module) {
+    this.name = 'Timeline';
+    this.controller = controller;
+    this.elem = elem;
+    this.module = module;
+    this.component = ReactDOM.render(
+      React.createElement(Timelines, {
+        controller: this.controller,
+        x: 75,
+        y: 50,
+        width: 850,
+        height: 100,
+      }), elem);
+  }
+  update(changes) {
+    this.component.setState({});
+  }
+}
+
+Timelines.TimelineView = TimelineView;
 
 module.exports = Timelines;
