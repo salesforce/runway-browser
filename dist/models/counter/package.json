@@ -1,0 +1,17 @@
+{
+  "name": "runway-model-counter",
+  "version": "0.1.0",
+  "description": "Counter model for use in Runway, essentially Hello World",
+  "keywords": [
+    "runway"
+  ],
+  "author": "Diego Ongaro <dongaro@salesforce.com>",
+  "license": "MIT",
+  "models": {
+    "main": {
+      "name": "Counter",
+      "spec": "counter.model",
+      "view": "counter.jsx"
+    }
+  }
+}

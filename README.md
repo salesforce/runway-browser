@@ -30,17 +30,14 @@ with webpack and aren't processed by the web server at all.
 You should see a very basic counter model come up.
 
 To see other models, symlink them underneath the `dist/models/` directory, then
-pass a `?model=path/to/model`, stripping off the `.model` and `.js` extensions.
-For example, navigating to
-<http://localhost:3030/?model=elevators/elevators> will load
-`dist/models/elevators/elevators.model` and
-`dist/models/elevators/elevators.js(x)`.
+pass `?model=path/to/directory`. For example, navigating to
+<http://localhost:3030/?model=elevators> will load
+`dist/models/elevators/package.json`. The `package.json` file describes where
+to find the spec and view. Otherwise, Runway will look default to files named
+after the directory (`dist/models/elevators/elevators.model` and
+`dist/models/elevators/elevators.js` here).
 Be sure to load only trustworthy view files, since those may run arbitrary
 JavaScript code within your browser.
-
-Some models include a notion of time. The units of time and default speed are
-currently passed through query parameters in the URL, such as
-`?model=raft/raft&clock=ms&speed=50`. Expect this to change soon.
 
 ## Writing a View
 
