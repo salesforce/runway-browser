@@ -12,6 +12,7 @@
     ],
     "author": "Diego Ongaro <dongaro@salesforce.com>",
     "license": "MIT",
+    "runway-label": "Too Many Bananas",
     "models": {
       "main": "correct",
       "correct": {
