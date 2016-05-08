@@ -1,0 +1,75 @@
+[
+  {
+    "name": "runway-model-toomanybananas",
+    "version": "0.1.0",
+    "description": "Too Many Bananas model for use in Runway",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/SalesforceEng/runway-model-toomanybananas.git"
+    },
+    "keywords": [
+      "runway"
+    ],
+    "author": "Diego Ongaro <dongaro@salesforce.com>",
+    "license": "MIT",
+    "models": {
+      "main": "correct",
+      "correct": {
+        "name": "Too Many Bananas: Correct",
+        "spec": "toomanybananas.model",
+        "view": "toomanybananas.jsx"
+      },
+      "broken": {
+        "name": "Too Many Bananas: Broken",
+        "spec": "broken.model",
+        "view": "toomanybananas.jsx"
+      }
+    }
+  },
+  {
+    "name": "runway-model-elevators",
+    "version": "0.1.0",
+    "description": "Elevator model for use in Runway",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/SalesforceEng/runway-model-elevators.git"
+    },
+    "keywords": [
+      "runway"
+    ],
+    "author": "Diego Ongaro <dongaro@salesforce.com>",
+    "license": "MIT",
+    "models": {
+      "main": {
+        "name": "Elevators",
+        "spec": "elevators.model",
+        "view": "elevators.jsx",
+        "clock": "s",
+        "slowdown": 0.250
+      }
+    }
+  },
+  {
+    "name": "runway-model-raft",
+    "version": "0.1.0",
+    "description": "Model of Raft for use in Runway",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/ongardie/runway-model-raft.git"
+    },
+    "keywords": [
+      "runway"
+    ],
+    "author": "Diego Ongaro <ongardie@gmail.com>",
+    "license": "MIT",
+    "models": {
+      "main": {
+        "name": "Raft",
+        "spec": "raft.model",
+        "view": "raft.js",
+        "clock": "ms",
+        "speed": 50
+      }
+    }
+  }
+]

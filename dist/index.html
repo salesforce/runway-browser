@@ -13,11 +13,31 @@
   <body>
     <script type="text/javascript" src="bundle.js" charset="utf-8"></script>
 
-    <div class="container-fluid">
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <!-- This remains in place on narrow screens -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="?">Runway</a>
+        </div>
 
-      <div class="page-header">
-        <h2>Runway <small></small></h2>
-      </div>
+        <!-- This gets collapsed on narrow screens -->
+        <div class="collapse navbar-collapse" id="navbar-collapse">
+          <div id="models-nav"></div>
+          <ul class="nav navbar-nav navbar-right">
+            <li id="navbar-about"><a href="?about=1">About</a></li>
+            <li><a href="https://groups.google.com/forum/#!forum/runway-dev" target="_blank">Mailing List <span class="glyphicon glyphicon-new-window"></span></a></li>
+            <li><a href="https://github.com/SalesforceEng/runway-browser" target="_blank">GitHub <span class="glyphicon glyphicon-new-window"></span></a></li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+
+    <div class="container-fluid">
 
       <div>
         <div>
