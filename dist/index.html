@@ -39,22 +39,9 @@
 
     <div class="container-fluid">
 
-      <div>
-        <div>
-          Playback
-          <input type="checkbox" id="playback" />
-          <button id="slower" class="btn btn-default">-</button>
-          <button id="faster" class="btn btn-default">+</button>
-        </div>
-        <div>
-          Simulate (background)
-          <input type="checkbox" id="simulate" />
-        </div>
-      </div>
-
       <div id="rulecontrols" class="btn-toolbar" style="margin: 10px auto"></div>
 
-      <pre><code id="error" style="color: red"></code></pre>
+      <pre style="display: none"><code id="error" style="color: red"></code></pre>
 
       <div id="viewwrapper" style="width: 400px; height: 400px">
         <svg id="view" version="1.1" viewbox="0 0 1000 1000"
@@ -75,6 +62,20 @@
           xmlns:xlink="http://www.w3.org/1999/xlink">
         </svg>
       </div>
+
+      <div>
+        <div>
+          Playback
+          <input type="checkbox" id="playback" />
+          <button id="slower" class="btn btn-default">-</button>
+          <button id="faster" class="btn btn-default">+</button>
+        </div>
+        <div>
+          Simulate (background)
+          <input type="checkbox" id="simulate" />
+        </div>
+      </div>
+
 
       <div id="tabs">
         <!-- Nav tabs -->
