@@ -13,19 +13,20 @@
     "author": "Diego Ongaro <dongaro@salesforce.com>",
     "license": "MIT",
     "runway-label": "Too Many Bananas",
-    "models": {
-      "main": "correct",
-      "correct": {
-        "name": "Too Many Bananas: Correct",
-        "spec": "toomanybananas.model",
-        "view": "toomanybananas.jsx"
-      },
-      "broken": {
-        "name": "Too Many Bananas: Broken",
+    "models": [
+      {
+        "id": "broken",
+        "label": "Too Many Bananas: Broken",
         "spec": "broken.model",
         "view": "toomanybananas.jsx"
+      },
+      {
+        "id": "correct",
+        "label": "Too Many Bananas: Correct",
+        "spec": "toomanybananas.model",
+        "view": "toomanybananas.jsx"
       }
-    }
+    ]
   },
   {
     "name": "runway-model-elevators",
@@ -40,15 +41,16 @@
     ],
     "author": "Diego Ongaro <dongaro@salesforce.com>",
     "license": "MIT",
-    "models": {
-      "main": {
+    "models": [
+      {
+        "id": "elevators",
         "name": "Elevators",
         "spec": "elevators.model",
         "view": "elevators.jsx",
         "clock": "s",
         "slowdown": 0.250
       }
-    }
+    ]
   },
   {
     "name": "runway-model-raft",
@@ -63,14 +65,15 @@
     ],
     "author": "Diego Ongaro <ongardie@gmail.com>",
     "license": "MIT",
-    "models": {
-      "main": {
+    "models": [
+      {
+        "id": "raft",
         "name": "Raft",
         "spec": "raft.model",
         "view": "raft.js",
         "clock": "ms",
         "speed": 50
       }
-    }
+    ]
   }
 ]
