@@ -5,7 +5,14 @@ systems, visualize them, and interact with them. It embeds
 [runway-compiler](https://github.com/salesforce/runway-compiler) to parse
 and execute model files.
 
+Here's an [example](https://runway.systems):
+
+[![Too Many Bananas simulation screencast](screencast.gif)](https://runway.systems)
+
 ## Setup
+
+You can try this out on <https://runway.systems>, but if you're developing a
+model, you'll probably find it more comfortable to run runway-browser locally.
 
 First make sure you have `node` and `npm` (node package manager) installed.
 Then run `npm install` to install dependencies.
