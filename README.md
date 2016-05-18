@@ -2,7 +2,7 @@
 
 This provides a web interface to Runway, so you can run models of distributed
 systems, visualize them, and interact with them. It embeds
-[runway-compiler](https://github.com/SalesforceEng/runway-compiler) to parse
+[runway-compiler](https://github.com/salesforce/runway-compiler) to parse
 and execute model files.
 
 ## Setup
@@ -76,4 +76,4 @@ to understand are:
 - Don't be afraid to embrace some "globals" in your view. It's a lot easier
   than passing around the model everywhere, for example.
 - Access variables from the model using runway-compiler's
-  [JavaScript API](https://github.com/SalesforceEng/runway-compiler/blob/master/doc/JAVASCRIPT-API.md).
+  [JavaScript API](https://github.com/salesforce/runway-compiler/blob/master/doc/JAVASCRIPT-API.md).

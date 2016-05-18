@@ -5,7 +5,7 @@
     "description": "Too Many Bananas model for use in Runway",
     "repository": {
       "type": "git",
-      "url": "https://github.com/SalesforceEng/runway-model-toomanybananas.git"
+      "url": "https://github.com/salesforce/runway-model-toomanybananas.git"
     },
     "keywords": [
       "runway"
@@ -34,7 +34,7 @@
     "description": "Elevator model for use in Runway",
     "repository": {
       "type": "git",
-      "url": "https://github.com/SalesforceEng/runway-model-elevators.git"
+      "url": "https://github.com/salesforce/runway-model-elevators.git"
     },
     "keywords": [
       "runway"
