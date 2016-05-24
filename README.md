@@ -5,6 +5,11 @@ systems, visualize them, and interact with them. It embeds
 [runway-compiler](https://github.com/salesforce/runway-compiler) to parse
 and execute model files.
 
+Runway is a newly released project (May 2016), and we're actively working on
+introductory materials and documentation. Existing resources include:
+ - [wiki](https://github.com/salesforce/runway-browser/wiki)
+ - [runway-dev mailing list](https://groups.google.com/forum/#!forum/runway-dev)
+
 Here's an [example](https://runway.systems):
 
 [![Too Many Bananas simulation screencast](screencast.gif)](https://runway.systems)
