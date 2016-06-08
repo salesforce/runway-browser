@@ -11,7 +11,7 @@
     "main": {
       "name": "Counter",
       "spec": "counter.model",
-      "view": "counter.jsx"
+      "view": "counter.js"
     }
   }
 }
