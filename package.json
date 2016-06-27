@@ -36,7 +36,7 @@
     "webpack": "^1.12.2"
   },
   "scripts": {
-    "postinstall": "npm ls --prod --json > dist/deps.json; npm run webpack",
+    "postinstall": "npm ls --prod --json > dist/deps.json && npm run webpack",
     "webpack": "./node_modules/.bin/webpack",
     "start": "nws -d ./dist -p ${PORT:-8080}",
     "test": "make test"
