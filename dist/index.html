@@ -64,10 +64,23 @@
 
       <div>
         <div class="control">
-          Playback
-          <input type="checkbox" id="playback" />
-          <button id="slower" class="btn btn-default">-</button>
-          <button id="faster" class="btn btn-default">+</button>
+          <div style="display: none">
+            <!-- #playback is relied on in the codebase, so I just hid it -->
+            Playback
+            <input type="checkbox" id="playback" />
+          </div>
+          <div class="btn-group" role="group" aria-label="playbackgroup">
+            <button id="slower" class="btn btn-default">
+              <span class="glyphicon glyphicon-minus"></span>&nbsp;
+            </button>
+            <button id="playbutton" class="btn btn-default">
+              <span class="glyphicon glyphicon-play play"></span>&nbsp;
+              <span class="glyphicon glyphicon-pause pause" style="display: none"></span>&nbsp;
+            </button>
+            <button id="faster" class="btn btn-default">
+              <span class="glyphicon glyphicon-plus"></span>&nbsp;
+            </button>
+          </div>
           <button id="details" class="btn btn-default">
             <span class="glyphicon glyphicon-blackboard"></span>
             Details
