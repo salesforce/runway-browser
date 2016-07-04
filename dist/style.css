@@ -46,3 +46,16 @@ table.statedump tr th
 {
   border: 1px solid black;
 }
+
+.control {
+  margin-bottom: 10px;
+}
+
+#playback {
+  margin: 20px;
+  /* All browsers except webkit*/
+  transform: scale(3.0);
+
+  /* Webkit browsers*/
+  -webkit-transform: scale(3.0);
+}

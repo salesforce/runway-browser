@@ -12,7 +12,7 @@
   </head>
   <body>
     <script type="text/javascript" src="bundle.js" charset="utf-8"></script>
-
+    <script type="text/javascript" src="demo.js" charset="utf-8"></script>
     <nav class="navbar navbar-default">
       <div class="container-fluid">
         <!-- This remains in place on narrow screens -->
@@ -64,17 +64,18 @@
       </div>
 
       <div>
-        <div>
+        <div class="control">
           Playback
           <input type="checkbox" id="playback" />
           <button id="slower" class="btn btn-default">-</button>
           <button id="faster" class="btn btn-default">+</button>
+          <button id="details" onclick="hideDetails()" class="btn btn-default">Details</button>
         </div>
-        <div>
+        <!-- <div>
           Simulate (background)
           <input type="checkbox" id="simulate" />
         </div>
-      </div>
+      </div> -->
 
 
       <div id="tabs">
