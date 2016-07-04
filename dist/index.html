@@ -12,7 +12,6 @@
   </head>
   <body>
     <script type="text/javascript" src="bundle.js" charset="utf-8"></script>
-
     <nav class="navbar navbar-default">
       <div class="container-fluid">
         <!-- This remains in place on narrow screens -->
@@ -64,11 +63,15 @@
       </div>
 
       <div>
-        <div>
+        <div class="control">
           Playback
           <input type="checkbox" id="playback" />
           <button id="slower" class="btn btn-default">-</button>
           <button id="faster" class="btn btn-default">+</button>
+          <button id="details" class="btn btn-default">
+            <span class="glyphicon glyphicon-blackboard"></span>
+            Details
+          </button>
         </div>
         <div>
           Simulate (background)
