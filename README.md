@@ -9,6 +9,7 @@ Runway is a newly released project (May 2016), and we're actively working on
 introductory materials and documentation. Existing resources include:
  - [intro blog post](https://medium.com/salesforce-open-source/runway-intro-dc0d9578e248),
    includes recording of talk and demos of Too Many Bananas, Elevators, Raft models
+ - [USENIX ;login: article](https://www.usenix.org/publications/login/fall2016/ongaro)
  - [wiki](https://github.com/salesforce/runway-browser/wiki)
  - [runway-dev mailing list](https://groups.google.com/forum/#!forum/runway-dev)
 
