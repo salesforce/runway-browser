@@ -11,6 +11,7 @@ introductory materials and documentation. Existing resources include:
    includes recording of talk and demos of Too Many Bananas, Elevators, Raft models
  - [USENIX ;login: article](https://www.usenix.org/publications/login/fall2016/ongaro)
  - [wiki](https://github.com/salesforce/runway-browser/wiki)
+ - [specification language guide](https://github.com/salesforce/runway-compiler/blob/master/doc/LANGUAGE-GUIDE.md)
  - [runway-dev mailing list](https://groups.google.com/forum/#!forum/runway-dev)
 
 Here's an [example](https://runway.systems):
